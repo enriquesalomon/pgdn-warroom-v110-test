@@ -238,7 +238,7 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
     const minutes = String(now.getMinutes()).padStart(2, "0"); // Ensure 2 digits
     const seconds = String(now.getSeconds()).padStart(2, "0"); // Ensure 2 digits
 
-    return `${month}-${day}-${year}/${hours}:${minutes}:${seconds}`;
+    return `${month}-${day}-${year}${hours}:${minutes}:${seconds}`;
   };
 
   // Open the modal and generate a QR Code

@@ -20,7 +20,7 @@ const Voters = () => {
     <>
       <Row type="horizontal">
         {/* <Heading as="h2">{"ORGANIZED VOTERS (ATO)"}</Heading> */}
-        <Heading as="h2">{"LIST OF ELECTORATES ASENSO ID (Under Dev)"}</Heading>
+        <Heading as="h2">{"LIST OF ELECTORATES ASENSO ID"}</Heading>
         <BarangayFilterAll />
       </Row>
       <hr className="border-t-1 border-gray-300" />

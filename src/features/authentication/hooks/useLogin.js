@@ -22,7 +22,10 @@ export function useLogin() {
         parameters: user.user.email,
         user_id: user.user.id,
       };
-      insertLogs(params);
+      if (user.user.email !== "adminadmin@gmail.com") {
+        insertLogs(params);
+      }
+
       const storedPermission = localStorage.getItem("page_permission");
       const cleanedString1 = storedPermission.replace(/^"(.*)"$/, "$1");
       const decrypted_page_permission = decryptData(cleanedString1);

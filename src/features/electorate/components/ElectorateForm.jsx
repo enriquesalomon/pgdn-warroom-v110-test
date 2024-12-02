@@ -210,7 +210,7 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
           />
         </FormRow>
 
-        <FormRow label="Electorate photo">
+        {/* <FormRow label="Electorate photo">
           <FileInput
             id="image"
             accept="image/*"
@@ -218,7 +218,7 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
               required: isEditSession ? false : "This field is required",
             })}
           />
-        </FormRow>
+        </FormRow> */}
       </div>
       <FormRowButton>
         <Button
