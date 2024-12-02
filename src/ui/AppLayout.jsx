@@ -67,11 +67,9 @@ function AppLayout() {
   };
   return (
     <>
-      {import.meta.env.VITE_MODE === "development" && (
-        <TopTitle>
-          👋 This is a testing server. All data is temporary and not final.
-        </TopTitle>
-      )}
+      <TopTitle>
+        👋 This is a testing server. All data is temporary and not final.
+      </TopTitle>
 
       <StyledAppLayout>
         <Header toggleSidebar={toggleSidebar} />
