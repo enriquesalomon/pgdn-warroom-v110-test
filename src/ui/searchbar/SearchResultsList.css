@@ -1,0 +1,21 @@
+.results-list {
+  position: absolute;
+  top: calc(100% + 5px); /* Adjust the distance from the SearchBar as needed */
+  left: 0;
+  z-index: 999; /* Ensure the SearchResultsList appears above other content */
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-height: 400px; /* Set a max-height or adjust as needed */
+  overflow-y: auto;
+  /* Enable vertical scrolling if needed */
+}
+
+.results-list .result-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.results-list .result-item:hover {
+  background-color: #f2f2f2;
+}
