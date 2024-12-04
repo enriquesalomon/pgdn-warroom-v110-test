@@ -37,6 +37,7 @@ import SpecialElectorate from "./pages/SpecialElectorate";
 // import Leaders from "./pages/Leaders";
 import RptTeamList from "./pages/RptTeamList";
 import RptLeaderHierarchy from "./pages/RptLeaderHierarchy";
+import Events from "./pages/Events";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -73,7 +74,7 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="kamada" element={<Kamada />} />
               <Route path="baco" element={<Baco />} />
-              {/* <Route path="leaders" element={<Leaders />} /> */}
+              <Route path="events" element={<Events />} />
               <Route path="electorate" element={<Electorate />} />
               <Route path="users" element={<Users />} />
               <Route path="settings" element={<Settings />} />

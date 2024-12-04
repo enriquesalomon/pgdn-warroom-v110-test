@@ -9,6 +9,7 @@ import { useState } from "react";
 import supabase from "../../../services/supabase";
 import ImageCopperDraggable from "./ImageCopperDraggable";
 import styled from "styled-components";
+import { replaceSpecialChars } from "../../../utils/helpers";
 const Stacked = styled.div`
   display: flex;
   flex-direction: column;
@@ -81,11 +82,11 @@ function ElectoratesRow({ electorate, index, debouncedSearchTerm }) {
     <Table.Row>
       <div>{index + 1}</div>
       <div>{precinctno}</div>
-      <div>{lastname}</div>
-      <div>{firstname}</div>
-      <div>{middlename}</div>
+      <div>{replaceSpecialChars(lastname)}</div>
+      <div>{replaceSpecialChars(firstname)}</div>
+      <div>{replaceSpecialChars(middlename)}</div>
       {/* <div>{purok}</div> */}
-      <div>{brgy}</div>
+      <div>{replaceSpecialChars(purok) + ", " + brgy}</div>
       <div className="flex items-center space-x-2">
         <input
           type="checkbox"
@@ -114,7 +115,7 @@ function ElectoratesRow({ electorate, index, debouncedSearchTerm }) {
             <Menus.List id={electorateId}>
               <Modal.Open opens="img_crop">
                 <Menus.Button icon={<AiOutlineIdcard />}>
-                  Upload Picture|Signature|QRCode
+                  Upload Picture|Signature|QRCode|ColorCode
                 </Menus.Button>
               </Modal.Open>
               {/* <Modal.Open opens="view_card">

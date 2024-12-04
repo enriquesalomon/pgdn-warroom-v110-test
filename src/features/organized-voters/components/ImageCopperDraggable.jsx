@@ -6,7 +6,17 @@ import imageCompression from "browser-image-compression";
 import { QRCodeCanvas } from "qrcode.react";
 import { useInvalidateQuery } from "../hooks/useInvalidateQuery";
 import { formatToSixDigits } from "../../../utils/helpers";
+import styled from "styled-components";
+import Heading from "../../../ui/Heading";
+const StyledBookingDataBox = styled.section`
+  /* Box */
+  background-color: var(--color-orange-500);
+  border: 1px solid var(--color-grey-100);
+  border-radius: var(--border-radius-md);
+  padding: 1rem 2rem;
 
+  overflow: hidden;
+`;
 const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
   const {
     id: electorateId,
@@ -27,23 +37,39 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
     image,
     signature,
     qr_code_url,
+    asenso_color_code_url,
   } = electorate;
 
   // Example usage:
   const formattedIdNumber = formatToSixDigits(electorateId);
-
-  console.log("image");
+  //setting booleans if images are existed
+  const hasPic = image ? true : false;
+  const hasSignature = signature ? true : false;
+  const hasAsensoColorcode = asenso_color_code_url ? true : false;
   // Set initial image from avatar or fallback to blank profile picture
+  const srcNoAsensoColor = "/colorcode.png";
   const pic = image ? image : "/blank-profile-picture.png";
   const sig = signature ? signature : "/signature-blank.jpg";
+  const asenso = asenso_color_code_url
+    ? asenso_color_code_url
+    : srcNoAsensoColor;
   const qrcodepic = qr_code_url ? qr_code_url : "/qr-placeholder.png";
   const [imagePic, setImagePic] = useState(pic); // Set initial image
   const [imageSig, setImageSig] = useState(sig); // Set initial image
   const [imageQr, setQrPreview] = useState(qrcodepic);
 
+  const [srcAsenso, setSrc] = useState(asenso); // Initial image src
+
+  const [srcUpdatedAsenso, setsrcUpdatedAsenso] = useState(asenso); // Initial image src
+
+  const handleImageChangeAsenso = (newSrc) => {
+    setSrc(newSrc);
+  };
+
   const [modalOpenPic, setmodalOpenPic] = useState(false);
   const [modalOpenSig, setmodalOpenSig] = useState(false);
   const [modalOpenQr, setIsModalOpenQr] = useState(false);
+  const [modalOpenAsensoCode, setIsModalOpenAsensoCode] = useState(false);
 
   const [isCropped, setIsCropped] = useState(false);
 
@@ -109,6 +135,7 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
   };
   // Save the cropped image and upload to Supabase
   const handleSave = async () => {
+    console.log("croppedImage", croppedImage);
     if (croppedImage) {
       const compressedImage = await compressImage(croppedImage); // Compress image before uploading
       await uploadImageToSupabase(compressedImage, "avatars");
@@ -117,6 +144,14 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
       setIsCropped(false);
     }
   };
+  // // Save the cropped image and upload to Supabase
+  // const handleUploadAsensoColor = async () => {
+  //   console.log("asensoColor", srcAsenso);
+  //   const compressedImage = await compressImage(srcAsenso); // Compress image before uploading
+  //   await uploadImageAsensoToSupabase(compressedImage, "asensocolor");
+  //   setImageAsenso(URL.createObjectURL(compressedImage)); // Update preview with the uploaded image
+  //   setIsModalOpenAsensoCode(false);
+  // };
 
   // Save the cropped image and upload to Supabase
   const handleSaveSig = async () => {
@@ -146,18 +181,118 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
     }
   };
 
+  const handleUploadAsensoColor = async () => {
+    // Check if the image is already a path from the public folder
+    let imageBlob = null;
+
+    // If srcAsenso is a string and points to a public folder image (e.g., "/AGM.png")
+    if (typeof srcAsenso === "string" && srcAsenso.startsWith("/")) {
+      // Fetch the image from the public directory
+      const imageUrl = `${window.location.origin}${srcAsenso}`; // Construct the full URL to the image
+      const response = await fetch(imageUrl);
+      const blob = await response.blob(); // Convert to Blob
+      imageBlob = blob; // Assign the Blob
+    } else {
+      // If srcAsenso is already a Blob (e.g., from input file), use it directly
+      imageBlob = srcAsenso;
+    }
+
+    // Proceed with compression and upload
+    const compressedImage = await compressImageAsenso(imageBlob); // Compress the image before uploading
+    await uploadImageAsensoToSupabase(compressedImage, "asensocolor");
+    setSrc(URL.createObjectURL(compressedImage)); // Update preview with the uploaded image
+    setsrcUpdatedAsenso(URL.createObjectURL(compressedImage));
+    setIsModalOpenAsensoCode(false);
+  };
+
+  // Function to compress image before uploading
+  const compressImageAsenso = async (imageBlob) => {
+    try {
+      if (!imageBlob || !imageBlob.type.startsWith("image/")) {
+        alert("Invalid image file.");
+        return imageBlob;
+      }
+
+      const options = {
+        maxSizeMB: 1, // Max size in MB
+        maxWidthOrHeight: 1024, // Max width or height in px
+        useWebWorker: false, // Disable web worker for simplicity
+      };
+
+      const compressedBlob = await imageCompression(imageBlob, options); // Compress the image
+      return compressedBlob;
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      alert("Image compression failed: " + error.message);
+      return imageBlob; // Return the original image if compression fails
+    }
+  };
+
+  // Function to upload image Blob to Supabase storage Asenso bucket
+  const uploadImageAsensoToSupabase = async (blob, bucket) => {
+    setLoading(true);
+    try {
+      const fileName = `${Date.now()}_asensocolor.png`; // Unique file name
+
+      const { error: storageError, data } = await supabase.storage
+        .from(bucket)
+        .upload(`electorates/${fileName}`, blob);
+
+      if (storageError) {
+        throw storageError;
+      } else {
+        if (hasAsensoColorcode) {
+          const url = asenso_color_code_url;
+          // Split the URL to get the file path
+          const filePath = url.split("/public/asensocolor/")[1];
+          console.log("this the filepath of the previous image", filePath);
+          //removing the previous image that is replaced
+          await supabase.storage.from(bucket).remove([filePath]);
+        }
+      }
+
+      const imagePath = `${supabaseUrl}/storage/v1/object/public/${bucket}/electorates/${fileName}`;
+
+      const { error: updateError } = await supabase
+        .from("electorates")
+        .update({ asenso_color_code_url: imagePath })
+        .eq("id", electorateId);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      setLoading(false);
+      invalidateQueries();
+      alert("Asenso Color Code Image uploaded and updated successfully!");
+      // setImageUrl(imagePath);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      setLoading(false);
+      alert("Upload failed.");
+    }
+  };
   // Function to upload image Blob to Supabase storage
   const uploadImageToSupabase = async (blob, bucket) => {
     setLoading(true);
     try {
       const fileName = `${Date.now()}_avatar.png`; // Unique file name
 
-      const { error: storageError } = await supabase.storage
+      const { error: storageError, data } = await supabase.storage
         .from(bucket)
         .upload(`electorates/${fileName}`, blob);
 
       if (storageError) {
         throw storageError;
+      } else {
+        if (hasPic) {
+          const url = image;
+          // Split the URL to get the file path
+          const filePath = url.split("/public/avatars/")[1];
+          console.log("this the filepath of the previous image", filePath);
+          //removing the previous image that is replaced
+          await supabase.storage.from(bucket).remove([filePath]);
+        }
       }
 
       const imagePath = `${supabaseUrl}/storage/v1/object/public/${bucket}/electorates/${fileName}`;
@@ -174,7 +309,7 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
       setLoading(false);
       invalidateQueries();
       alert("Image uploaded and updated successfully!");
-      setImageUrl(imagePath);
+      // setImageUrl(imagePath);
     } catch (error) {
       console.error("Error uploading image:", error);
       setLoading(false);
@@ -193,6 +328,14 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
 
       if (storageError) {
         throw storageError;
+      } else {
+        if (hasSignature) {
+          const url = signature;
+          // Split the URL to get the file path
+          const filePath = url.split("/public/avatars/")[1];
+          //removing the previous signature image that is replaced
+          await supabase.storage.from(bucket).remove([filePath]);
+        }
       }
 
       const imagePath = `${supabaseUrl}/storage/v1/object/public/${bucket}/electorates/${fileName}`;
@@ -209,7 +352,7 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
       setLoading(false);
       invalidateQueries();
       alert("Image uploaded and updated successfully!");
-      setImageUrl(imagePath);
+      // setImageUrl(imagePath);
       console.log("Image uploaded:", imagePath);
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -247,23 +390,38 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
       console.log("qrcodepic: ", qrcodepic);
 
       const randomString = generateRandomString(16);
-      // setQrCodeData(randomString);
+      // // setQrCodeData(randomString);
+      // setQrCodeData(
+      //   `${
+      //     firstname +
+      //     middlename +
+      //     lastname +
+      //     randomString +
+      //     getCurrentDateTime()
+      //   }`
+      // );
+      // Remove spaces from the names
+      const sanitizedFirstname = firstname.replace(/\s+/g, "");
+      const sanitizedMiddlename = middlename.replace(/\s+/g, "");
+      const sanitizedLastname = lastname.replace(/\s+/g, "");
+
+      // Set QR code data
       setQrCodeData(
-        `${
-          firstname +
-          middlename +
-          lastname +
-          randomString +
-          getCurrentDateTime()
-        }`
+        `${sanitizedFirstname}${sanitizedMiddlename}${sanitizedLastname}${randomString}${getCurrentDateTime()}`
       );
+
       setIsModalOpenQr(true);
     }
   };
-
-  // Close the modal
+  const handleOpenModalAsensoCode = () => {
+    setIsModalOpenAsensoCode(true);
+  };
   const handleCloseModalQr = () => {
     setIsModalOpenQr(false);
+  };
+  // Close the modal
+  const handleCloseModalAsensoColorCode = () => {
+    setIsModalOpenAsensoCode(false);
   };
 
   // Upload the QR code image to Supabase
@@ -324,17 +482,36 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100 flex-col">
+      {/* <StyledBookingDataBox>
+        <Heading as="h1">
+          <span className="text-white">
+            {formattedIdNumber} &nbsp; {lastname}, {firstname}
+            &nbsp; {middlename} &nbsp;
+          </span>
+        </Heading>
+      </StyledBookingDataBox>
+      <StyledBookingDataBox>
+        <Heading as="h1">
+          <span className="text-white">
+            {formattedIdNumber} &nbsp; {lastname}, {firstname}
+            &nbsp; {middlename} &nbsp;
+          </span>
+        </Heading>
+      </StyledBookingDataBox> */}
       <div className="flex gap-8 items-center mb-2 ">
         <span className="text-4xl">
           {formattedIdNumber} &nbsp; {lastname}, {firstname}
           &nbsp; {middlename} &nbsp;
         </span>
       </div>
-      <div className="mb-8">
+      <div className="mb-2">
         <span className="text-4xl">
-          {precinctno} &nbsp;{purok}
+          {purok}, {brgy}
         </span>
       </div>
+      {/* <div>{image}</div>
+      <div>{signature}</div> */}
+      <div>__________________________________________</div>
       <div className="flex gap-8 items-center mb-8"></div>
 
       <div className="grid grid-cols-3 gap-4">
@@ -395,6 +572,17 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
         <div className=" text-center">ID PICTURE</div>
         <div className=" text-center">SIGNATURE</div>
         <div className=" text-center">QR CODE</div>
+      </div>
+      <div>__________________________________________</div>
+
+      <div className="flex flex-col items-center mt-4">
+        <img
+          src={srcUpdatedAsenso}
+          className="object-contain h-60 w-120 cursor-pointer"
+          alt="QR Code Preview"
+          onClick={handleOpenModalAsensoCode} // Call the modal on image click
+        />
+        <span className="text-center mt-2">ASENSO COLOR CODE</span>
       </div>
 
       {/* Modal (Picture) */}
@@ -513,6 +701,133 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
               </button>
               <button
                 onClick={handleUploadQrCodeQr}
+                // className="bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-600"
+                className="bg-green-500 text-white px-4 py-2 rounded"
+                disabled={loading}
+              >
+                {loading ? "Uploading..." : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {modalOpenAsensoCode && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-150">
+            <h2 className="text-2xl font-bold mb-4 text-center">
+              SET ASENSO COLOR CODE
+            </h2>
+            <div className="flex justify-center">
+              <div className="flex flex-col items-center mt-4">
+                {/* Image */}
+                <img
+                  src={srcAsenso}
+                  className="object-contain h-40 w-120 cursor-pointer"
+                  alt="QR Code Preview"
+                  onClick={() => console.log("Image clicked!")} // Example click handler
+                />
+                {/* <span className="text-center mt-2"></span> */}
+
+                {/* Radio Buttons */}
+                <div className="flex mt-4 space-x-4">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="image"
+                      value="path/to/image1.jpg"
+                      checked={srcAsenso === "/ORIGINAL.png"} // Checked if current src is Image 1
+                      onChange={() => handleImageChangeAsenso("/ORIGINAL.png")}
+                      className="cursor-pointer"
+                    />
+                    <span>ORIGINAL</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="image"
+                      value="path/to/image1.jpg"
+                      checked={srcAsenso === "/GM.png"}
+                      onChange={() => handleImageChangeAsenso("/GM.png")}
+                      className="cursor-pointer"
+                    />
+                    <span>GM</span>
+                  </label>
+
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="image"
+                      value="path/to/image2.jpg"
+                      checked={srcAsenso === "/AGM.png"}
+                      onChange={() => handleImageChangeAsenso("/AGM.png")}
+                      className="cursor-pointer"
+                    />
+                    <span>AGM</span>
+                  </label>
+
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="image"
+                      value="path/to/image3.jpg"
+                      checked={srcAsenso === "/LEGEND.png"}
+                      onChange={() => handleImageChangeAsenso("/LEGEND.png")}
+                      className="cursor-pointer"
+                    />
+                    <span>LEGEND</span>
+                  </label>
+                </div>
+                <div className="flex mt-4 space-x-4">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="image"
+                      value="path/to/image1.jpg"
+                      checked={srcAsenso === "/ELITE.png"}
+                      onChange={() => handleImageChangeAsenso("/ELITE.png")}
+                      className="cursor-pointer"
+                    />
+                    <span>ELITE</span>
+                  </label>
+
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="image"
+                      value="path/to/image2.jpg"
+                      checked={srcAsenso === "/TOWER.png"}
+                      onChange={() => handleImageChangeAsenso("/TOWER.png")}
+                      className="cursor-pointer"
+                    />
+                    <span>TOWER</span>
+                  </label>
+
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="image"
+                      value="path/to/image3.jpg"
+                      checked={srcAsenso === "/WARRIOR.png"}
+                      onChange={() => handleImageChangeAsenso("/WARRIOR.png")}
+                      className="cursor-pointer"
+                    />
+                    <span>WARRIOR</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <p className="text-center mt-4 text-gray-600">{qrCodeData}</p>
+            <div className="flex justify-center space-x-4 mt-6">
+              <button
+                onClick={handleCloseModalAsensoColorCode}
+                // className="bg-gray-300 text-gray-700 px-4 py-2 rounded"
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded"
+                disabled={loading}
+              >
+                Close
+              </button>
+              <button
+                onClick={handleUploadAsensoColor}
                 // className="bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-600"
                 className="bg-green-500 text-white px-4 py-2 rounded"
                 disabled={loading}

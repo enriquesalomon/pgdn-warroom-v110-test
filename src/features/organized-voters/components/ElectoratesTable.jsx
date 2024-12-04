@@ -16,7 +16,7 @@ import { useSearchParams } from "react-router-dom";
 import { barangayOptions } from "../../../utils/constants";
 import { useQueryClient } from "@tanstack/react-query";
 import { insertLogs } from "../../../utils/recordUserActivity";
-import { formatToSixDigits } from "../../../utils/helpers";
+import { formatToSixDigits, replaceSpecialChars } from "../../../utils/helpers";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
@@ -84,6 +84,7 @@ function ElectoratesTable() {
   const allow_export = userData.user_metadata.account_role === "Super Admin";
 
   let sortedElectorates = electorates;
+  console.log("electorates asenso_color_code_url", JSON.stringify(electorates));
 
   useEffect(() => {
     setExceldataElectorates(sortedElectorates);
@@ -116,23 +117,29 @@ function ElectoratesTable() {
       { header: "Purok", key: "purok", width: 20 },
       { header: "Barangay", key: "brgy", width: 20 },
       { header: "Birthdate", key: "birthdate", width: 15 },
+      { header: "Qr Code", key: "qr_code", width: 15 },
       { header: "Image Path", key: "image", width: 50 },
       { header: "Signature Path", key: "signature", width: 50 },
       { header: "QR Code Path", key: "qr_code_url", width: 50 },
+      { header: "Asenso Color Code", key: "asenso_color_code_url", width: 50 },
       { header: "ID Printed Status", key: "id_printed_status", width: 20 },
     ];
 
     rows.forEach((row) => {
       const formattedId = formatToSixDigits(row.id); // Format the ID
+      const fname = replaceSpecialChars(row.firstname);
+      const mname = replaceSpecialChars(row.middlename);
+      const lname = replaceSpecialChars(row.lastname);
       sheet.addRow({
         ...row,
         id: formattedId, // Use the formatted ID
-        // image: `${row.id}_avatar.png`,
-        // signature: `${row.id}_signature.png`,
-        // qr_code_url: `${row.id}_qrcode.png`,
+        firstname: fname,
+        middlename: mname,
+        lastname: lname,
         image: `${downloadFolder}\\ElectoratesImages\\${row.id}_avatar.png`, // Updated path
         signature: `${downloadFolder}\\ElectoratesImages\\${row.id}_signature.png`, // Updated path
         qr_code_url: `${downloadFolder}\\ElectoratesImages\\${row.id}_qrcode.png`, // Updated path
+        asenso_color_code_url: `${downloadFolder}\\ElectoratesImages\\${row.id}_asensocolor.png`, // Updated path
       });
     });
 
@@ -161,7 +168,7 @@ function ElectoratesTable() {
     let completedFiles = 0;
 
     for (const row of rows) {
-      const { id, image, signature, qr_code_url } = row;
+      const { id, image, signature, qr_code_url, asenso_color_code_url } = row;
 
       const imageBlob = await fetchBlob(image);
       zip.file(`${id}_avatar.png`, imageBlob);
@@ -175,6 +182,11 @@ function ElectoratesTable() {
 
       const qrCodeBlob = await fetchBlob(qr_code_url);
       zip.file(`${id}_qrcode.png`, qrCodeBlob);
+      completedFiles++;
+      updateProgress(completedFiles, totalFiles);
+
+      const colorCodeBlob = await fetchBlob(asenso_color_code_url);
+      zip.file(`${id}_asensocolor.png`, colorCodeBlob);
       completedFiles++;
       updateProgress(completedFiles, totalFiles);
     }
@@ -303,8 +315,7 @@ function ElectoratesTable() {
               <div>Lastname</div>
               <div>Firstname</div>
               <div>Middlename</div>
-              {/* <div>Address</div> */}
-              <div>Brgy</div>
+              <div>Address</div>
               <div>ID Print Status</div>
               <div>Pending Items</div>
               <div></div>

@@ -26,7 +26,7 @@ export const pageOptions = [
   { value: "team_request", label: "Request" },
   { value: "special_electorate", label: "Special Electorates" },
   { value: "baco", label: "Baco" },
-  // { value: "leaders", label: "Leaders" },
+  { value: "events", label: "Events" },
   { value: "services", label: "Services" },
   { value: "users", label: "Users" },
   { value: "account", label: "My Profile" },
@@ -53,7 +53,7 @@ export const pageOptions_staff = [
   { value: "team_request", label: "Request" },
   { value: "special_electorate", label: "Special Electorates" },
   { value: "baco", label: "Baco" },
-  // { value: "leaders", label: "Leaders" },
+  { value: "events", label: "Events" },
   { value: "voters_ato", label: "Asenso ID" },
   { value: "services", label: "Services" },
   { value: "account", label: "My Profile" },
@@ -72,7 +72,7 @@ export const pageOptions_administrator = [
   { value: "team_request", label: "Request" },
   { value: "special_electorate", label: "Special Electorates" },
   { value: "baco", label: "Baco" },
-  // { value: "leaders", label: "Leaders" },
+  { value: "events", label: "Events" },
   { value: "services", label: "Services" },
   { value: "users", label: "Users" },
   { value: "account", label: "My Profile" },
@@ -117,6 +117,8 @@ export const actionOptions = [
   "activation/deactivation user",
   "add admin user",
   "update admin user",
+  "add events",
+  "update events",
 ];
 export const actionOptions_staff = [
   "update electorate",
@@ -128,6 +130,8 @@ export const actionOptions_staff = [
   "add services",
   "update services",
   "delete services",
+  "add events",
+  "update events",
 ];
 export const actionOptions_administrator = [
   "add baco",
@@ -150,6 +154,8 @@ export const actionOptions_administrator = [
   // "update PL user",
   "view app password",
   "activation/deactivation user",
+  "add events",
+  "update events",
 ];
 export const brgy_allow = [
   "Alegria",

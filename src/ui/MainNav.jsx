@@ -16,6 +16,7 @@ import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { TbFileReport } from "react-icons/tb";
 import { PiCirclesThreePlusBold } from "react-icons/pi";
 import { FaPersonChalkboard } from "react-icons/fa6";
+import { MdOutlineEvent } from "react-icons/md";
 // Keyframes for shaking animation
 const shake = keyframes`
   0% { transform: translateX(0); }
@@ -285,6 +286,26 @@ function MainNav() {
       showverticalline: true,
     },
   ];
+  const sidebarLinks_events_monitoring = [
+    {
+      route: "/events",
+      // icon: <FaPersonChalkboard />,
+      label: "Event Manager",
+      showverticalline: true,
+    },
+    {
+      route: "/attendance",
+      // icon: <AiOutlineIdcard />,
+      label: "Attendance",
+      showverticalline: true,
+    },
+    {
+      route: "/event_settings",
+      // icon: <AiOutlineIdcard />,
+      label: "Settings",
+      showverticalline: true,
+    },
+  ];
 
   const sidebarLinks_report = [
     {
@@ -414,6 +435,48 @@ function MainNav() {
           {activeCollapse === "votersMonitoring" && (
             <NavList>
               {sidebarLinks_voters_monitoring.map(
+                ({ route, icon, label, showverticalline }) =>
+                  permissions.includes(route.replace("/", "")) && (
+                    <li key={route}>
+                      <StyledNavLink
+                        to={route}
+                        showverticalline={showverticalline ? "true" : undefined}
+                      >
+                        {/* {icon} */}
+                        <span className="ml-14">{label}</span>
+                      </StyledNavLink>
+                    </li>
+                  )
+              )}
+            </NavList>
+          )}
+        </>
+      )}
+
+      {sidebarLinks_events_monitoring.some(({ route }) =>
+        permissions.includes(route.replace("/", ""))
+      ) && (
+        <>
+          <NavList>
+            <StyledNavLinkCollapsable
+              onClick={() => toggleCollapse("events")}
+              isactives={activeCollapse === "events" ? "true" : undefined}
+            >
+              <LabelWithIconContainer>
+                <MdOutlineEvent />
+                <span>EVENTS</span>
+              </LabelWithIconContainer>
+              {activeCollapse === "events" ? (
+                <IoIosArrowDown />
+              ) : (
+                <MdOutlineKeyboardArrowRight />
+              )}
+            </StyledNavLinkCollapsable>
+          </NavList>
+
+          {activeCollapse === "events" && (
+            <NavList>
+              {sidebarLinks_events_monitoring.map(
                 ({ route, icon, label, showverticalline }) =>
                   permissions.includes(route.replace("/", "")) && (
                     <li key={route}>

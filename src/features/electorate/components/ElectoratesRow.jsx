@@ -61,7 +61,7 @@ function ElectoratesRow({ sector, electorate, index, searchTerm }) {
       <div>{replaceSpecialChars(lastname)}</div>
       <div>{replaceSpecialChars(firstname)}</div>
       <div>{replaceSpecialChars(middlename)}</div>
-      <div>{purok}</div>
+      <div>{replaceSpecialChars(purok)}</div>
       <div>{brgy}</div>
       <div>{city}</div>
 
