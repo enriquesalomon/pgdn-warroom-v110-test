@@ -38,6 +38,7 @@ function ElectoratesRow({ electorate, index, debouncedSearchTerm }) {
     image,
     signature,
     qr_code_url,
+    asenso_color_code_url,
   } = electorate;
   console.log("electorate row data", JSON.stringify(electorate));
 
@@ -86,7 +87,10 @@ function ElectoratesRow({ electorate, index, debouncedSearchTerm }) {
       <div>{replaceSpecialChars(firstname)}</div>
       <div>{replaceSpecialChars(middlename)}</div>
       {/* <div>{purok}</div> */}
-      <div>{replaceSpecialChars(purok) + ", " + brgy}</div>
+      <div class="w-54 overflow-hidden truncate">
+        {replaceSpecialChars(purok) + ", " + brgy}
+      </div>
+
       <div className="flex items-center space-x-2">
         <input
           type="checkbox"
@@ -104,6 +108,9 @@ function ElectoratesRow({ electorate, index, debouncedSearchTerm }) {
         )}
         {qr_code_url === null && (
           <span className="text-lg text-red-700">No QR Code</span>
+        )}
+        {asenso_color_code_url === null && (
+          <span className="text-lg text-red-700">No Color Code</span>
         )}
       </Stacked>
 

@@ -66,7 +66,6 @@ const Dots = styled.div`
 `;
 function ElectoratesTable() {
   const [progress, setProgress] = useState(0); // Progress value
-  const [isLoadingDownload, setIsLoadingDownload] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false); // To track process state
   const [exceldataElectorates, setExceldataElectorates] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
