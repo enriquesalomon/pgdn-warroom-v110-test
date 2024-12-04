@@ -113,8 +113,7 @@ function ElectoratesTable() {
       { header: "Middle Name", key: "middlename", width: 15 },
       { header: "Last Name", key: "lastname", width: 15 },
       { header: "Gender", key: "gender", width: 10 },
-      { header: "Purok", key: "purok", width: 20 },
-      { header: "Barangay", key: "brgy", width: 20 },
+      { header: "Address", key: "address", width: 20 },
       { header: "Birthdate", key: "birthdate", width: 15 },
       { header: "Qr Code", key: "qr_code", width: 15 },
       { header: "Image Path", key: "image", width: 50 },
@@ -126,15 +125,18 @@ function ElectoratesTable() {
 
     rows.forEach((row) => {
       const formattedId = formatToSixDigits(row.id); // Format the ID
-      const fname = replaceSpecialChars(row.firstname);
-      const mname = replaceSpecialChars(row.middlename);
-      const lname = replaceSpecialChars(row.lastname);
+      const fname = replaceSpecialChars(row.firstname ?? "");
+      const mname = replaceSpecialChars(row.middlename ?? "");
+      const lname = replaceSpecialChars(row.lastname ?? "");
+      const prkk = replaceSpecialChars(row.purok ?? "");
+      const brgyy = replaceSpecialChars(row.brgy);
       sheet.addRow({
         ...row,
         id: formattedId, // Use the formatted ID
         firstname: fname,
         middlename: mname,
         lastname: lname,
+        address: prkk + ", " + brgyy,
         image: `${downloadFolder}\\ElectoratesImages\\${row.id}_avatar.png`, // Updated path
         signature: `${downloadFolder}\\ElectoratesImages\\${row.id}_signature.png`, // Updated path
         qr_code_url: `${downloadFolder}\\ElectoratesImages\\${row.id}_qrcode.png`, // Updated path
