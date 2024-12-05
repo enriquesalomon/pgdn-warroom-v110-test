@@ -15,11 +15,11 @@ export function useInvalidateQuery(debouncedSearchTerm) {
   console.log("searched page:", page);
   console.log("searched searchText:", debouncedSearchTerm);
 
-  if (debouncedSearchTerm) {
-    alert("debouncedSearchTerm not empty");
-  } else {
-    debouncedSearchTerm = "";
-  }
+  // if (debouncedSearchTerm) {
+  //   alert("debouncedSearchTerm not empty");
+  // } else {
+  //   debouncedSearchTerm = "";
+  // }
   return () => {
     // queryClient.invalidateQueries({
     //   queryKey: ["all_electorates_per_brgy", brgy, page, "filven"],

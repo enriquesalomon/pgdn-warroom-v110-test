@@ -140,7 +140,7 @@ function ElectoratesTable() {
         image: `${downloadFolder}\\ElectoratesImages\\${row.id}_avatar.png`, // Updated path
         signature: `${downloadFolder}\\ElectoratesImages\\${row.id}_signature.png`, // Updated path
         qr_code_url: `${downloadFolder}\\ElectoratesImages\\${row.id}_qrcode.png`, // Updated path
-        asenso_color_code_url: `${downloadFolder}\\ElectoratesImages\\${row.id}_asensocolor.png`, // Updated path
+        asenso_color_code_url: `${downloadFolder}\\ElectoratesImages\\${row.id}_asensocolor.jpeg`, // Updated path
       });
     });
 
@@ -187,7 +187,7 @@ function ElectoratesTable() {
       updateProgress(completedFiles, totalFiles);
 
       const colorCodeBlob = await fetchBlob(asenso_color_code_url);
-      zip.file(`${id}_asensocolor.png`, colorCodeBlob);
+      zip.file(`${id}_asensocolor.jpeg`, colorCodeBlob);
       completedFiles++;
       updateProgress(completedFiles, totalFiles);
     }

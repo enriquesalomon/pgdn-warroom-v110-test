@@ -735,8 +735,8 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
                       type="radio"
                       name="image"
                       value="path/to/image1.jpg"
-                      checked={srcAsenso === "/ORIGINAL.png"} // Checked if current src is Image 1
-                      onChange={() => handleImageChangeAsenso("/ORIGINAL.png")}
+                      checked={srcAsenso === "/ORIGINAL.jpeg"} // Checked if current src is Image 1
+                      onChange={() => handleImageChangeAsenso("/ORIGINAL.jpeg")}
                       className="cursor-pointer"
                     />
                     <span>ORIGINAL</span>
@@ -746,8 +746,8 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
                       type="radio"
                       name="image"
                       value="path/to/image1.jpg"
-                      checked={srcAsenso === "/GM.png"}
-                      onChange={() => handleImageChangeAsenso("/GM.png")}
+                      checked={srcAsenso === "/GM.jpeg"}
+                      onChange={() => handleImageChangeAsenso("/GM.jpeg")}
                       className="cursor-pointer"
                     />
                     <span>GM</span>
@@ -758,8 +758,8 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
                       type="radio"
                       name="image"
                       value="path/to/image2.jpg"
-                      checked={srcAsenso === "/AGM.png"}
-                      onChange={() => handleImageChangeAsenso("/AGM.png")}
+                      checked={srcAsenso === "/AGM.jpeg"}
+                      onChange={() => handleImageChangeAsenso("/AGM.jpeg")}
                       className="cursor-pointer"
                     />
                     <span>AGM</span>
@@ -770,8 +770,8 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
                       type="radio"
                       name="image"
                       value="path/to/image3.jpg"
-                      checked={srcAsenso === "/LEGEND.png"}
-                      onChange={() => handleImageChangeAsenso("/LEGEND.png")}
+                      checked={srcAsenso === "/LEGEND.jpeg"}
+                      onChange={() => handleImageChangeAsenso("/LEGEND.jpeg")}
                       className="cursor-pointer"
                     />
                     <span>LEGEND</span>
@@ -783,8 +783,8 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
                       type="radio"
                       name="image"
                       value="path/to/image1.jpg"
-                      checked={srcAsenso === "/ELITE.png"}
-                      onChange={() => handleImageChangeAsenso("/ELITE.png")}
+                      checked={srcAsenso === "/ELITE.jpeg"}
+                      onChange={() => handleImageChangeAsenso("/ELITE.jpeg")}
                       className="cursor-pointer"
                     />
                     <span>ELITE</span>
@@ -795,8 +795,8 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
                       type="radio"
                       name="image"
                       value="path/to/image2.jpg"
-                      checked={srcAsenso === "/TOWER.png"}
-                      onChange={() => handleImageChangeAsenso("/TOWER.png")}
+                      checked={srcAsenso === "/TOWER.jpeg"}
+                      onChange={() => handleImageChangeAsenso("/TOWER.jpeg")}
                       className="cursor-pointer"
                     />
                     <span>TOWER</span>
@@ -807,8 +807,8 @@ const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
                       type="radio"
                       name="image"
                       value="path/to/image3.jpg"
-                      checked={srcAsenso === "/WARRIOR.png"}
-                      onChange={() => handleImageChangeAsenso("/WARRIOR.png")}
+                      checked={srcAsenso === "/WARRIOR.jpeg"}
+                      onChange={() => handleImageChangeAsenso("/WARRIOR.jpeg")}
                       className="cursor-pointer"
                     />
                     <span>WARRIOR</span>
