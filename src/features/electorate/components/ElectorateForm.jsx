@@ -31,6 +31,7 @@ const StyledSelect = styled.select`
 `;
 
 function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
+  console.log("updated birthdate", JSON.stringify(electorateToEdit));
   const queryClient = useQueryClient();
   const { actionPermission } = useActionPermissionContext();
   const isAllowedAction = parseAction(actionPermission, "update electorate");

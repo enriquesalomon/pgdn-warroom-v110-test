@@ -9,9 +9,11 @@ export function useInvalidateQuery(debouncedSearchTerm) {
   const brgy = searchParams.get("sortBy") || barangayOptions[1].value;
   const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
   const printed_status = searchParams.get("printed_status") || "all";
+  const id_requirments = searchParams.get("id_requirments") || "all";
   //   const searchText = searchParams.get("searchText") || "";
   console.log("searched brgy:", brgy);
   console.log("searched printed_status:", printed_status);
+  console.log("searched id_requirments:", id_requirments);
   console.log("searched page:", page);
   console.log("searched searchText:", debouncedSearchTerm);
 
@@ -30,6 +32,7 @@ export function useInvalidateQuery(debouncedSearchTerm) {
         "electorates_ato",
         brgy,
         printed_status,
+        id_requirments,
         page,
         debouncedSearchTerm,
       ],

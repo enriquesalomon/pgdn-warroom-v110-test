@@ -2,7 +2,10 @@ import Spinner from "../../../ui/Spinner";
 import Table from "../../../ui/Table";
 import Menus from "../../../ui/Menus";
 import Button from "../../../ui/Button";
-import { useElectoratesAto } from "../hooks/useElectoratesAto";
+import {
+  useColorCodeBase,
+  useElectoratesAto,
+} from "../hooks/useElectoratesAto";
 
 import ElectoratesRow from "./ElectoratesRow";
 import Search from "../../../ui/Search";
@@ -72,6 +75,8 @@ function ElectoratesTable() {
   const [debouncedSearchTerm] = useDebounce(searchTerm, 500); // Debounce search term
   const { isPending, electorates, count } =
     useElectoratesAto(debouncedSearchTerm);
+
+  const { isPending: isPending1, data: data_colorCode } = useColorCodeBase();
   const [downloadPath, setDownloadPath] = useState("");
   const [showModal, setShowModal] = useState(false); // Modal state to show the input form
   const [searchParams] = useSearchParams();
@@ -321,7 +326,7 @@ function ElectoratesTable() {
               <div>Pending Items</div>
               <div></div>
             </Table.Header>
-            {isPending ? (
+            {isPending || isPending1 ? (
               <Spinner />
             ) : (
               <>
@@ -329,6 +334,7 @@ function ElectoratesTable() {
                   data={sortedElectorates}
                   render={(electorate, index) => (
                     <ElectoratesRow
+                      data_colorCode={data_colorCode}
                       debouncedSearchTerm={debouncedSearchTerm}
                       electorate={electorate}
                       key={electorate.id}

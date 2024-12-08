@@ -24,7 +24,12 @@ const Stacked = styled.div`
     font-size: 1.2rem;
   } */
 `;
-function ElectoratesRow({ electorate, index, debouncedSearchTerm }) {
+function ElectoratesRow({
+  electorate,
+  index,
+  debouncedSearchTerm,
+  data_colorCode,
+}) {
   const {
     id: electorateId,
     precinctno,
@@ -40,7 +45,10 @@ function ElectoratesRow({ electorate, index, debouncedSearchTerm }) {
     qr_code_url,
     asenso_color_code_url,
   } = electorate;
-  console.log("electorate row data", JSON.stringify(electorate));
+  console.log(
+    "electorate row data data_colorCode",
+    JSON.stringify(data_colorCode)
+  );
 
   // const [isChecked, setIsChecked] = useState(false);
   const [isChecked, setIsChecked] = useState(!!id_printed_status); // Initialize with idprint_status
@@ -87,7 +95,7 @@ function ElectoratesRow({ electorate, index, debouncedSearchTerm }) {
       <div>{replaceSpecialChars(firstname)}</div>
       <div>{replaceSpecialChars(middlename)}</div>
       {/* <div>{purok}</div> */}
-      <div class="w-54 overflow-hidden truncate">
+      <div className="w-54 overflow-hidden truncate">
         {replaceSpecialChars(purok) + ", " + brgy}
       </div>
 
@@ -136,6 +144,7 @@ function ElectoratesRow({ electorate, index, debouncedSearchTerm }) {
               <div className="mt-6">
                 {/* <ImageCropper electorate={electorate} /> */}
                 <ImageCopperDraggable
+                  data_colorCode={data_colorCode}
                   electorate={electorate}
                   debouncedSearchTerm={debouncedSearchTerm}
                 />

@@ -8,12 +8,16 @@ import { useInvalidateQuery } from "../hooks/useInvalidateQuery";
 import { formatToSixDigits } from "../../../utils/helpers";
 import styled from "styled-components";
 import Heading from "../../../ui/Heading";
+const StyledBookingDataBox = styled.section`
+  /* Box */
+  background-color: var(--color-orange-500);
+  border: 1px solid var(--color-grey-100);
+  border-radius: var(--border-radius-md);
+  padding: 1rem 2rem;
 
-const ImageCopperDraggable = ({
-  electorate,
-  debouncedSearchTerm,
-  data_colorCode,
-}) => {
+  overflow: hidden;
+`;
+const ImageCopperDraggable = ({ electorate, debouncedSearchTerm }) => {
   const {
     id: electorateId,
     lastname,
@@ -46,7 +50,6 @@ const ImageCopperDraggable = ({
   const srcNoAsensoColor = "/colorcode.png";
   const pic = image ? image : "/blank-profile-picture.png";
   const sig = signature ? signature : "/signature-blank.jpg";
-
   const asenso = asenso_color_code_url
     ? asenso_color_code_url
     : srcNoAsensoColor;
@@ -59,62 +62,8 @@ const ImageCopperDraggable = ({
 
   const [srcUpdatedAsenso, setsrcUpdatedAsenso] = useState(asenso); // Initial image src
 
-  const originalImage = data_colorCode?.find(
-    (item) => item.code === "ORIGINAL"
-  )?.image_link;
-  const gmImage = data_colorCode?.find(
-    (item) => item.code === "GM"
-  )?.image_link;
-  const agmImage = data_colorCode?.find(
-    (item) => item.code === "AGM"
-  )?.image_link;
-  const legendImage = data_colorCode?.find(
-    (item) => item.code === "LEGEND"
-  )?.image_link;
-  const eliteImage = data_colorCode?.find(
-    (item) => item.code === "ELITE"
-  )?.image_link;
-  const towerImage = data_colorCode?.find(
-    (item) => item.code === "TOWER"
-  )?.image_link;
-  const warriorImage = data_colorCode?.find(
-    (item) => item.code === "WARRIOR"
-  )?.image_link;
   const handleImageChangeAsenso = (newSrc) => {
-    let newImageSrce;
-
-    switch (newSrc) {
-      case "/ORIGINAL.jpeg":
-        newImageSrce = originalImage;
-        break;
-      case "/GM.jpeg":
-        newImageSrce = gmImage;
-        break;
-      case "/AGM.jpeg":
-        newImageSrce = agmImage;
-        break;
-      case "/LEGEND.jpeg":
-        newImageSrce = legendImage;
-
-        break;
-      case "/ELITE.jpeg":
-        newImageSrce = eliteImage;
-
-        break;
-      case "/TOWER.jpeg":
-        newImageSrce = towerImage;
-
-        break;
-      case "/WARRIOR.jpeg":
-        newImageSrce = warriorImage;
-
-        break;
-      default:
-        newImageSrce = null;
-        break;
-    }
-    console.log("image change color", newSrc);
-    setSrc(newImageSrce);
+    setSrc(newSrc);
   };
 
   const [modalOpenPic, setmodalOpenPic] = useState(false);
@@ -123,10 +72,12 @@ const ImageCopperDraggable = ({
   const [modalOpenAsensoCode, setIsModalOpenAsensoCode] = useState(false);
 
   const [isCropped, setIsCropped] = useState(false);
+
   const [croppedImage, setCroppedImage] = useState(null);
   const [croppedImageSig, setCroppedImageSig] = useState(null);
   const [cropper, setCropper] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState(null);
   const [qrCodeData, setQrCodeData] = useState("");
 
   const invalidateQueries = useInvalidateQuery(debouncedSearchTerm);
@@ -193,6 +144,14 @@ const ImageCopperDraggable = ({
       setIsCropped(false);
     }
   };
+  // // Save the cropped image and upload to Supabase
+  // const handleUploadAsensoColor = async () => {
+  //   console.log("asensoColor", srcAsenso);
+  //   const compressedImage = await compressImage(srcAsenso); // Compress image before uploading
+  //   await uploadImageAsensoToSupabase(compressedImage, "asensocolor");
+  //   setImageAsenso(URL.createObjectURL(compressedImage)); // Update preview with the uploaded image
+  //   setIsModalOpenAsensoCode(false);
+  // };
 
   // Save the cropped image and upload to Supabase
   const handleSaveSig = async () => {
@@ -222,12 +181,78 @@ const ImageCopperDraggable = ({
     }
   };
 
+  const handleUploadAsensoColor = async () => {
+    // Check if the image is already a path from the public folder
+    let imageBlob = null;
+
+    // If srcAsenso is a string and points to a public folder image (e.g., "/AGM.png")
+    if (typeof srcAsenso === "string" && srcAsenso.startsWith("/")) {
+      // Fetch the image from the public directory
+      const imageUrl = `${window.location.origin}${srcAsenso}`; // Construct the full URL to the image
+      const response = await fetch(imageUrl);
+      const blob = await response.blob(); // Convert to Blob
+      imageBlob = blob; // Assign the Blob
+    } else {
+      // If srcAsenso is already a Blob (e.g., from input file), use it directly
+      imageBlob = srcAsenso;
+    }
+
+    // Proceed with compression and upload
+    const compressedImage = await compressImageAsenso(imageBlob); // Compress the image before uploading
+    await uploadImageAsensoToSupabase(compressedImage, "asensocolor");
+    setSrc(URL.createObjectURL(compressedImage)); // Update preview with the uploaded image
+    setsrcUpdatedAsenso(URL.createObjectURL(compressedImage));
+    setIsModalOpenAsensoCode(false);
+  };
+
+  // Function to compress image before uploading
+  const compressImageAsenso = async (imageBlob) => {
+    try {
+      if (!imageBlob || !imageBlob.type.startsWith("image/")) {
+        alert("Invalid image file.");
+        return imageBlob;
+      }
+
+      const options = {
+        maxSizeMB: 1, // Max size in MB
+        maxWidthOrHeight: 1024, // Max width or height in px
+        useWebWorker: false, // Disable web worker for simplicity
+      };
+
+      const compressedBlob = await imageCompression(imageBlob, options); // Compress the image
+      return compressedBlob;
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      alert("Image compression failed: " + error.message);
+      return imageBlob; // Return the original image if compression fails
+    }
+  };
+
   // Function to upload image Blob to Supabase storage Asenso bucket
-  const updateAsensoUrl = async () => {
+  const uploadImageAsensoToSupabase = async (blob, bucket) => {
     setLoading(true);
     try {
-      const imagePath = srcAsenso;
-      console.log("uploaded url", imagePath);
+      const fileName = `${Date.now()}_asensocolor.png`; // Unique file name
+
+      const { error: storageError, data } = await supabase.storage
+        .from(bucket)
+        .upload(`electorates/${fileName}`, blob);
+
+      if (storageError) {
+        throw storageError;
+      } else {
+        if (hasAsensoColorcode) {
+          const url = asenso_color_code_url;
+          // Split the URL to get the file path
+          const filePath = url.split("/public/asensocolor/")[1];
+          console.log("this the filepath of the previous image", filePath);
+          //removing the previous image that is replaced
+          await supabase.storage.from(bucket).remove([filePath]);
+        }
+      }
+
+      const imagePath = `${supabaseUrl}/storage/v1/object/public/${bucket}/electorates/${fileName}`;
+
       const { error: updateError } = await supabase
         .from("electorates")
         .update({ asenso_color_code_url: imagePath })
@@ -235,12 +260,11 @@ const ImageCopperDraggable = ({
 
       if (updateError) {
         throw updateError;
-      } else {
-        setLoading(false);
-        invalidateQueries();
-        alert("Asenso Color Code Image uploaded and updated successfully!");
       }
 
+      setLoading(false);
+      invalidateQueries();
+      alert("Asenso Color Code Image uploaded and updated successfully!");
       // setImageUrl(imagePath);
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -248,14 +272,6 @@ const ImageCopperDraggable = ({
       alert("Upload failed.");
     }
   };
-  const handleUploadAsensoColor = async () => {
-    updateAsensoUrl();
-    setIsModalOpenAsensoCode(false);
-
-    // setSrc("/ORIGINAL.jpeg");
-    setsrcUpdatedAsenso(srcAsenso);
-  };
-
   // Function to upload image Blob to Supabase storage
   const uploadImageToSupabase = async (blob, bucket) => {
     setLoading(true);
@@ -454,9 +470,34 @@ const ImageCopperDraggable = ({
       setLoading(false);
     }
   };
+  // Function to download the image
+  // const handleDownload = () => {
+  //   if (imageUrl) {
+  //     const a = document.createElement("a");
+  //     a.href = imageUrl;
+  //     a.download = imageUrl.split("/").pop(); // Use the file name from the URL
+  //     a.click();
+  //   }
+  // };
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100 flex-col">
+      {/* <StyledBookingDataBox>
+        <Heading as="h1">
+          <span className="text-white">
+            {formattedIdNumber} &nbsp; {lastname}, {firstname}
+            &nbsp; {middlename} &nbsp;
+          </span>
+        </Heading>
+      </StyledBookingDataBox>
+      <StyledBookingDataBox>
+        <Heading as="h1">
+          <span className="text-white">
+            {formattedIdNumber} &nbsp; {lastname}, {firstname}
+            &nbsp; {middlename} &nbsp;
+          </span>
+        </Heading>
+      </StyledBookingDataBox> */}
       <div className="flex gap-8 items-center mb-2 ">
         <span className="text-4xl">
           {formattedIdNumber} &nbsp; {lastname}, {firstname}

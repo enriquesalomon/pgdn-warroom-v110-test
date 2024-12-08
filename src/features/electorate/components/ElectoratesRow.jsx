@@ -37,8 +37,25 @@ function ElectoratesRow({ sector, electorate, index, searchTerm }) {
     is_legend,
     is_elite,
   } = electorate;
-
+  console.log("test", JSON.stringify(electorate));
   let ato = false;
+
+  // Reformat birthdate from dd/mm/yyy to yyyy-mm-dd to pass into the date picker input
+  // Check if birthdate exists and is in the expected format
+  if (electorate.birthdate) {
+    const parts = electorate.birthdate.split("/");
+
+    if (parts.length === 3) {
+      // Ensure the split array has 3 elements
+      const day = parts[0].padStart(2, "0");
+      const month = parts[1].padStart(2, "0");
+      const year = parts[2];
+
+      electorate.birthdate = `${year}-${month}-${day}`;
+    } else {
+      console.error("Unexpected birthdate format:", electorate.birthdate);
+    }
+  }
   if (
     precinctleader !== null ||
     isbaco === true ||
