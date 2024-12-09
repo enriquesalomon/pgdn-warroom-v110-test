@@ -32,6 +32,7 @@ function ElectorateForm({
   searchText,
   debouncedSearchTerm,
 }) {
+  console.log("modified dob", JSON.stringify(electorateToEdit));
   const invalidateQueries = useInvalidateQuery(debouncedSearchTerm);
   const queryClient = useQueryClient();
   const { actionPermission } = useActionPermissionContext();

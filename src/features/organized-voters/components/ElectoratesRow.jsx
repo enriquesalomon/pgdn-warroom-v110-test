@@ -52,6 +52,43 @@ function ElectoratesRow({
     JSON.stringify(data_colorCode)
   );
 
+  // Reformat birthdate from dd/mm/yyy to yyyy-mm-dd to pass into the date picker input
+  // Check if birthdate exists and is in the expected format
+  // if (electorate.birthdate) {
+  //   const parts = electorate.birthdate.split("/");
+
+  //   if (parts.length === 3) {
+  //     // Ensure the split array has 3 elements
+  //     const day = parts[0].padStart(2, "0");
+  //     const month = parts[1].padStart(2, "0");
+  //     const year = parts[2];
+
+  //     electorate.birthdate = `${year}-${month}-${day}`;
+  //   } else {
+  //     console.error("Unexpected birthdate format:", electorate.birthdate);
+  //   }
+  // }
+
+  if (electorate.birthdate && electorate.birthdate.includes("/")) {
+    const parts = electorate.birthdate.split("/");
+
+    if (parts.length === 3) {
+      // Ensure the split array has 3 elements
+      const day = parts[0].padStart(2, "0");
+      const month = parts[1].padStart(2, "0");
+      const year = parts[2];
+
+      electorate.birthdate = `${year}-${month}-${day}`;
+    } else {
+      console.error("Unexpected birthdate format:", electorate.birthdate);
+    }
+  } else {
+    console.log(
+      "Birthdate does not contain a '/' or is undefined:",
+      electorate.birthdate
+    );
+  }
+
   // const [isChecked, setIsChecked] = useState(false);
   const [isChecked, setIsChecked] = useState(!!id_printed_status); // Initialize with idprint_status
 
