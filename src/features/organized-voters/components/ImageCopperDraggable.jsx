@@ -391,7 +391,7 @@ const ImageCopperDraggable = ({
 
       // Set QR code data
       setQrCodeData(
-        `${sanitizedFirstname}${sanitizedMiddlename}${sanitizedLastname}${randomString}${getCurrentDateTime()}`
+        `${sanitizedFirstname}${sanitizedMiddlename}${sanitizedLastname}${randomString}${electorateId}`
       );
 
       setIsModalOpenQr(true);
