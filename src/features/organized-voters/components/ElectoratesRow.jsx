@@ -10,6 +10,8 @@ import supabase from "../../../services/supabase";
 import ImageCopperDraggable from "./ImageCopperDraggable";
 import styled from "styled-components";
 import { replaceSpecialChars } from "../../../utils/helpers";
+import { HiPencil } from "react-icons/hi2";
+import ElectorateForm from "./ElectorateForm";
 const Stacked = styled.div`
   display: flex;
   flex-direction: column;
@@ -138,7 +140,17 @@ function ElectoratesRow({
                   View Card
                 </Menus.Button>
               </Modal.Open> */}
+              <Modal.Open opens="edit">
+                <Menus.Button icon={<HiPencil />}>Edit Details</Menus.Button>
+              </Modal.Open>
             </Menus.List>
+            <Modal.Window name="edit" heightvar="90%">
+              <ElectorateForm
+                // searchText={searchTerm}
+                electorateToEdit={electorate}
+                debouncedSearchTerm={debouncedSearchTerm}
+              />
+            </Modal.Window>
 
             <Modal.Window name="img_crop" heightvar="100%" widthvar="100%">
               <div className="mt-6">

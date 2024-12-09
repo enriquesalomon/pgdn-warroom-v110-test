@@ -374,20 +374,18 @@ const ImageCopperDraggable = ({
       console.log("qrcodepic: ", qrcodepic);
 
       const randomString = generateRandomString(16);
-      // // setQrCodeData(randomString);
-      // setQrCodeData(
-      //   `${
-      //     firstname +
-      //     middlename +
-      //     lastname +
-      //     randomString +
-      //     getCurrentDateTime()
-      //   }`
-      // );
       // Remove spaces from the names
-      const sanitizedFirstname = firstname.replace(/\s+/g, "");
-      const sanitizedMiddlename = middlename.replace(/\s+/g, "");
-      const sanitizedLastname = lastname.replace(/\s+/g, "");
+      // Provide a default value if any name is null
+      // Remove spaces and special characters from the names
+      const sanitizedFirstname = (firstname || "")
+        .replace(/[^a-zA-Z0-9]/g, "")
+        .replace(/\s+/g, "");
+      const sanitizedMiddlename = (middlename || "")
+        .replace(/[^a-zA-Z0-9]/g, "")
+        .replace(/\s+/g, "");
+      const sanitizedLastname = (lastname || "")
+        .replace(/[^a-zA-Z0-9]/g, "")
+        .replace(/\s+/g, "");
 
       // Set QR code data
       setQrCodeData(
