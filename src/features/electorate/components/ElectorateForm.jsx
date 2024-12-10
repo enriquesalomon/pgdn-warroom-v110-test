@@ -62,6 +62,9 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
 
     const image =
       typeof data.image === "string" ? data.image : data.image?.[0] || null;
+    if (data.birthdate) {
+      data.birthdate = data.birthdate.split("-").reverse().join("/");
+    }
 
     if (isEditSession)
       editElectorate(

@@ -42,7 +42,7 @@ function ElectoratesRow({ sector, electorate, index, searchTerm }) {
 
   // Reformat birthdate from dd/mm/yyy to yyyy-mm-dd to pass into the date picker input
   // Check if birthdate exists and is in the expected format
-  if (electorate.birthdate) {
+  if (electorate.birthdate && electorate.birthdate.includes("/")) {
     const parts = electorate.birthdate.split("/");
 
     if (parts.length === 3) {
@@ -55,6 +55,11 @@ function ElectoratesRow({ sector, electorate, index, searchTerm }) {
     } else {
       console.error("Unexpected birthdate format:", electorate.birthdate);
     }
+  } else {
+    console.log(
+      "Birthdate does not contain a '/' or is undefined:",
+      electorate.birthdate
+    );
   }
   if (
     precinctleader !== null ||

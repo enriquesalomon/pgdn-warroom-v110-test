@@ -1,10 +1,8 @@
 import Modal from "../../../ui/Modal";
 import Table from "../../../ui/Table";
-import ButtonIcon from "../../../ui/ButtonIcon";
 import { AiOutlineIdcard } from "react-icons/ai";
 import IDCard from "./IDCard";
 import Menus from "../../../ui/Menus";
-import Tag from "../../../ui/Tag";
 import { useState } from "react";
 import supabase from "../../../services/supabase";
 import ImageCopperDraggable from "./ImageCopperDraggable";
@@ -12,6 +10,7 @@ import styled from "styled-components";
 import { replaceSpecialChars } from "../../../utils/helpers";
 import { HiPencil } from "react-icons/hi2";
 import ElectorateForm from "./ElectorateForm";
+import { MdFileDownload } from "react-icons/md";
 const Stacked = styled.div`
   display: flex;
   flex-direction: column;
@@ -51,23 +50,6 @@ function ElectoratesRow({
     "electorate row data data_colorCode",
     JSON.stringify(data_colorCode)
   );
-
-  // Reformat birthdate from dd/mm/yyy to yyyy-mm-dd to pass into the date picker input
-  // Check if birthdate exists and is in the expected format
-  // if (electorate.birthdate) {
-  //   const parts = electorate.birthdate.split("/");
-
-  //   if (parts.length === 3) {
-  //     // Ensure the split array has 3 elements
-  //     const day = parts[0].padStart(2, "0");
-  //     const month = parts[1].padStart(2, "0");
-  //     const year = parts[2];
-
-  //     electorate.birthdate = `${year}-${month}-${day}`;
-  //   } else {
-  //     console.error("Unexpected birthdate format:", electorate.birthdate);
-  //   }
-  // }
 
   if (electorate.birthdate && electorate.birthdate.includes("/")) {
     const parts = electorate.birthdate.split("/");
@@ -180,10 +162,195 @@ function ElectoratesRow({
               <Modal.Open opens="edit">
                 <Menus.Button icon={<HiPencil />}>Edit Details</Menus.Button>
               </Modal.Open>
+
+              {electorate?.image && electorate.image.trim() !== "" && (
+                <Menus.Button
+                  icon={<MdFileDownload />}
+                  onClick={async () => {
+                    const fetchBlob = async (image) => {
+                      try {
+                        const response = await fetch(image);
+                        if (!response.ok) {
+                          throw new Error(`Failed to download ${image}`);
+                        }
+                        return await response.blob();
+                      } catch (error) {
+                        console.error("Error downloading file:", error);
+                        alert("Failed to download the file. Please try again.");
+                      }
+                    };
+
+                    const url = electorate?.image; // Replace with the actual URL
+                    const filename = `${electorateId}_avatar.png`; // Name of the downloaded file
+
+                    try {
+                      const blob = await fetchBlob(url);
+                      if (blob) {
+                        const link = document.createElement("a");
+                        const blobUrl = URL.createObjectURL(blob);
+
+                        link.href = blobUrl;
+                        link.download = filename; // Set the filename for the download
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        // Revoke the Blob URL after download
+                        URL.revokeObjectURL(blobUrl);
+                      }
+                    } catch (error) {
+                      console.error("Error handling the download:", error);
+                    }
+                  }}
+                >
+                  Download ID Picture
+                </Menus.Button>
+              )}
+
+              {electorate?.signature && electorate.signature.trim() !== "" && (
+                <Menus.Button
+                  icon={<MdFileDownload />}
+                  onClick={async () => {
+                    const fetchBlob = async (signature) => {
+                      try {
+                        const response = await fetch(signature);
+                        if (!response.ok) {
+                          throw new Error(`Failed to download ${signature}`);
+                        }
+                        return await response.blob();
+                      } catch (error) {
+                        console.error("Error downloading file:", error);
+                        alert("Failed to download the file. Please try again.");
+                      }
+                    };
+
+                    const url = electorate?.signature; // Replace with the actual URL
+                    const filename = `${electorateId}_signature.png`; // Name of the downloaded file
+
+                    try {
+                      const blob = await fetchBlob(url);
+                      if (blob) {
+                        const link = document.createElement("a");
+                        const blobUrl = URL.createObjectURL(blob);
+
+                        link.href = blobUrl;
+                        link.download = filename; // Set the filename for the download
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        // Revoke the Blob URL after download
+                        URL.revokeObjectURL(blobUrl);
+                      }
+                    } catch (error) {
+                      console.error("Error handling the download:", error);
+                    }
+                  }}
+                >
+                  Download Signature
+                </Menus.Button>
+              )}
+
+              {electorate?.qr_code_url &&
+                electorate.qr_code_url.trim() !== "" && (
+                  <Menus.Button
+                    icon={<MdFileDownload />}
+                    onClick={async () => {
+                      const fetchBlob = async (qr_code_url) => {
+                        try {
+                          const response = await fetch(qr_code_url);
+                          if (!response.ok) {
+                            throw new Error(
+                              `Failed to download ${qr_code_url}`
+                            );
+                          }
+                          return await response.blob();
+                        } catch (error) {
+                          console.error("Error downloading file:", error);
+                          alert(
+                            "Failed to download the file. Please try again."
+                          );
+                        }
+                      };
+
+                      const url = electorate?.qr_code_url; // Replace with the actual URL
+                      const filename = `${electorateId}_qrcode.png`; // Name of the downloaded file
+
+                      try {
+                        const blob = await fetchBlob(url);
+                        if (blob) {
+                          const link = document.createElement("a");
+                          const blobUrl = URL.createObjectURL(blob);
+
+                          link.href = blobUrl;
+                          link.download = filename; // Set the filename for the download
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+
+                          // Revoke the Blob URL after download
+                          URL.revokeObjectURL(blobUrl);
+                        }
+                      } catch (error) {
+                        console.error("Error handling the download:", error);
+                      }
+                    }}
+                  >
+                    Download QR Code
+                  </Menus.Button>
+                )}
+
+              {electorate?.asenso_color_code_url &&
+                electorate.asenso_color_code_url.trim() !== "" && (
+                  <Menus.Button
+                    icon={<MdFileDownload />}
+                    onClick={async () => {
+                      const fetchBlob = async (asenso_color_code_url) => {
+                        try {
+                          const response = await fetch(asenso_color_code_url);
+                          if (!response.ok) {
+                            throw new Error(
+                              `Failed to download ${asenso_color_code_url}`
+                            );
+                          }
+                          return await response.blob();
+                        } catch (error) {
+                          console.error("Error downloading file:", error);
+                          alert(
+                            "Failed to download the file. Please try again."
+                          );
+                        }
+                      };
+
+                      const url = electorate?.asenso_color_code_url;
+                      const filename = `${electorateId}_asensocolor.jpeg`; // Name of the downloaded file
+
+                      try {
+                        const blob = await fetchBlob(url);
+                        if (blob) {
+                          const link = document.createElement("a");
+                          const blobUrl = URL.createObjectURL(blob);
+
+                          link.href = blobUrl;
+                          link.download = filename; // Set the filename for the download
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+
+                          // Revoke the Blob URL after download
+                          URL.revokeObjectURL(blobUrl);
+                        }
+                      } catch (error) {
+                        console.error("Error handling the download:", error);
+                      }
+                    }}
+                  >
+                    Download Asenso Color Code
+                  </Menus.Button>
+                )}
             </Menus.List>
             <Modal.Window name="edit" heightvar="90%">
               <ElectorateForm
-                // searchText={searchTerm}
                 electorateToEdit={electorate}
                 debouncedSearchTerm={debouncedSearchTerm}
               />

@@ -61,9 +61,9 @@ function ElectorateForm({
       user_id: userData.id,
     };
 
-    // const image =
-    //   typeof data.image === "string" ? data.image : data.image?.[0] || null;
-
+    if (data.birthdate) {
+      data.birthdate = data.birthdate.split("-").reverse().join("/");
+    }
     if (isEditSession)
       editElectorate(
         { newElectorateData: { ...data }, id: editId },
