@@ -300,6 +300,12 @@ function MainNav() {
       showverticalline: true,
     },
     {
+      route: "/event_attendees",
+      // icon: <AiOutlineIdcard />,
+      label: "Attendees",
+      showverticalline: true,
+    },
+    {
       route: "/event_settings",
       // icon: <AiOutlineIdcard />,
       label: "Settings",
@@ -336,6 +342,12 @@ function MainNav() {
       route: "/rpt_ulogs",
       icon: <PiUserListLight />,
       label: "User Logs",
+      showverticalline: true,
+    },
+    {
+      route: "/rpt_event_attendees",
+      icon: <PiUserListLight />,
+      label: "Event Attendees",
       showverticalline: true,
     },
   ];

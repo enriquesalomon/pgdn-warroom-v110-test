@@ -22,6 +22,7 @@ import Heading from "../../../ui/Heading";
 import SectorTable from "../../sector/components/SectorTable";
 import AssTypeTable from "../../asstype/components/AssTypeTable";
 import PrecinctTable from "../../clustered-precincts/components/PrecinctTable";
+import EventTypeTable from "../../event-type/components/EventTypeTable";
 const StyledCard = styled.div`
   border: 1px solid var(--color-grey-200);
 
@@ -76,23 +77,6 @@ function SettingsPage() {
         </div>
       ),
     },
-    // {
-    //   title: "Data Analysis",
-    //   content: (
-    //     <div>
-    //       <DataAnalysisTab
-    //         userData={userData}
-    //         projected_turnout={projected_turnout}
-    //         projected_winning_votes={projected_winning_votes}
-    //         projected_pl={projected_pl}
-    //         projected_members={projected_members}
-    //         max_teammembers_included_leader={max_teammembers_included_leader}
-    //         isUpdating={isUpdating}
-    //         updateSetting={updateSetting}
-    //       />
-    //     </div>
-    //   ),
-    // },
     {
       title: "Sector",
       content: (
@@ -114,6 +98,14 @@ function SettingsPage() {
       content: (
         <div>
           <PrecinctTab />
+        </div>
+      ),
+    },
+    {
+      title: "Event Type",
+      content: (
+        <div>
+          <EventTypeTab />
         </div>
       ),
     },
@@ -152,14 +144,6 @@ const ValidationTab = ({
     let confirmation = false;
 
     if (!currentState && otherRunningValidations) {
-      // //checking if no requests is pending
-      // if (requests.data && requests.data.length > 0) {
-      //   alert(
-      //     "You can't turn this validation on because there are still Pending Requests need to be completed."
-      //   );
-      //   return null;
-      // }
-
       alert(
         "You can't turn this validation on because other validations are still running."
       );
@@ -442,5 +426,20 @@ const PrecinctTab = () => {
     </>
   );
 };
+const EventTypeTab = () => {
+  return (
+    <>
+      <div className="mt-12">
+        <div className=" mb-5 flex text-2xl font-semibold mt-12">
+          EVENT TYPE
+        </div>
 
+        <hr className="border-t-1 border-gray-300" />
+        <Row className="mt-6">
+          <EventTypeTable />
+        </Row>
+      </div>
+    </>
+  );
+};
 export default SettingsPage;

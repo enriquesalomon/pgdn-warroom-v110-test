@@ -7,6 +7,7 @@ import Menus from "../../../ui/Menus";
 import { useDeleteElectorate } from "../hooks/useDeleteElectorate";
 import { useActionPermissionContext } from "../../../context/ActionPermissionContext";
 import { replaceSpecialChars } from "../../../utils/helpers";
+import styled from "styled-components";
 
 // const Img = styled.img`
 //   display: block;
@@ -16,7 +17,11 @@ import { replaceSpecialChars } from "../../../utils/helpers";
 //   object-position: center;
 //   transform: scale(1.5) translateX(-7px);
 // `;
-
+const Stacked = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+`;
 function ElectoratesRow({ sector, electorate, index, searchTerm }) {
   const { actionPermission } = useActionPermissionContext();
   const { isDeleting, deleteElectorate } = useDeleteElectorate();
@@ -36,6 +41,10 @@ function ElectoratesRow({ sector, electorate, index, searchTerm }) {
     is_agm,
     is_legend,
     is_elite,
+    remarks_18_30,
+    remarks_pwd,
+    remarks_illiterate,
+    remarks_senior_citizen,
   } = electorate;
   console.log("test", JSON.stringify(electorate));
   let ato = false;
@@ -85,7 +94,12 @@ function ElectoratesRow({ sector, electorate, index, searchTerm }) {
       <div>{replaceSpecialChars(middlename)}</div>
       <div>{replaceSpecialChars(purok)}</div>
       <div>{brgy}</div>
-      <div>{city}</div>
+      <Stacked>
+        <span>{remarks_18_30 ? "18-30" : ""}</span>
+        <span> {remarks_pwd ? "PWD" : ""}</span>
+        <span> {remarks_illiterate ? "Illiterate" : ""}</span>
+        <span> {remarks_senior_citizen ? "Senior Citizen" : ""}</span>
+      </Stacked>
 
       <div>
         <Modal>

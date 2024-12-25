@@ -82,11 +82,23 @@ function ElectoratesTable() {
   const [searchParams] = useSearchParams();
   const brgy = searchParams.get("sortBy") || barangayOptions[1].value;
   const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
+  const voter_type = searchParams.get("voter_type") || "all";
 
   const queryClient = useQueryClient();
   const userData = queryClient.getQueryData(["user"]);
   const allow_export = userData.user_metadata.account_role === "Super Admin";
 
+  let filteredData = []; // Initialize with an empty array
+  let newCount = count;
+  if (voter_type === "warrior") {
+    filteredData = electorates.filter((item) => item.isleader !== true);
+    newCount = filteredData.length; // Calculate the count of filtered data
+  } else {
+    filteredData = electorates;
+    newCount = count;
+  }
+
+  // let sortedElectorates = filteredData;
   let sortedElectorates = electorates;
   console.log("electorates asenso_color_code_url", JSON.stringify(electorates));
 
@@ -334,6 +346,7 @@ function ElectoratesTable() {
                   data={sortedElectorates}
                   render={(electorate, index) => (
                     <ElectoratesRow
+                      page={page}
                       data_colorCode={data_colorCode}
                       debouncedSearchTerm={debouncedSearchTerm}
                       electorate={electorate}

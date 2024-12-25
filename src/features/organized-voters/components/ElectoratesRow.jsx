@@ -11,6 +11,7 @@ import { replaceSpecialChars } from "../../../utils/helpers";
 import { HiPencil } from "react-icons/hi2";
 import ElectorateForm from "./ElectorateForm";
 import { MdFileDownload } from "react-icons/md";
+import { PAGE_SIZE } from "../../../utils/constants";
 const Stacked = styled.div`
   display: flex;
   flex-direction: column;
@@ -26,6 +27,7 @@ const Stacked = styled.div`
   } */
 `;
 function ElectoratesRow({
+  page,
   electorate,
   index,
   debouncedSearchTerm,
@@ -110,7 +112,7 @@ function ElectoratesRow({
 
   return (
     <Table.Row>
-      <div>{index + 1}</div>
+      <div>{(page - 1) * PAGE_SIZE + index + 1}</div>
       <div>{precinctno}</div>
       <div>{replaceSpecialChars(lastname)}</div>
       <div>{replaceSpecialChars(firstname)}</div>

@@ -8,6 +8,7 @@ import ElectoratesTable from "../features/organized-voters/components/Electorate
 import BarangayFilterAll from "../ui/BarangayFilterAll";
 import ListFilter from "../features/organized-voters/components/ListFilter";
 import ListFilter2 from "../features/organized-voters/components/ListFilter2";
+import ListFilter3 from "../features/organized-voters/components/ListFilter3";
 
 const Voters = () => {
   const { pagePermission } = usePagePermissionContext();
@@ -28,8 +29,9 @@ const Voters = () => {
         <div></div>
       </Row> */}
       <Row type="horizontal">
-        <ListFilter /> <ListFilter2 />
+        <ListFilter /> <ListFilter2 /> <ListFilter3 />
       </Row>
+
       <Row>
         <ElectoratesTable />
       </Row>

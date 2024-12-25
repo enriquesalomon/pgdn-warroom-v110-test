@@ -5,7 +5,7 @@ export async function getAllElectorates_Per_Brgy({ brgy, page, searchTerm }) {
   let query = supabase
     .from("electorates")
     .select(
-      "id,precinctno, firstname,middlename,lastname,birthdate,brgy,completeaddress,purok,city,profession,religion,image,sector,precinctleader,isbaco,is_gm,is_agm,is_legend,is_elite",
+      "id,precinctno, firstname,middlename,lastname,birthdate,brgy,completeaddress,purok,city,profession,religion,image,sector,precinctleader,isbaco,is_gm,is_agm,is_legend,is_elite,remarks_18_30,remarks_pwd,remarks_illiterate,remarks_senior_citizen",
       {
         count: "exact",
       }

@@ -75,10 +75,10 @@ const ImageCopperDraggable = ({
     (item) => item.code === "ELITE"
   )?.image_link;
   const towerImage = data_colorCode?.find(
-    (item) => item.code === "TOWER"
+    (item) => item.code === "TOWER_NEW"
   )?.image_link;
   const warriorImage = data_colorCode?.find(
-    (item) => item.code === "WARRIOR"
+    (item) => item.code === "WARRIOR_NEW"
   )?.image_link;
   const handleImageChangeAsenso = (newSrc) => {
     let newImageSrce;
@@ -101,11 +101,11 @@ const ImageCopperDraggable = ({
         newImageSrce = eliteImage;
 
         break;
-      case "/TOWER.jpeg":
+      case "/TOWER_NEW.jpeg":
         newImageSrce = towerImage;
 
         break;
-      case "/WARRIOR.jpeg":
+      case "/WARRIOR_NEW.jpeg":
         newImageSrce = warriorImage;
 
         break;
@@ -727,7 +727,7 @@ const ImageCopperDraggable = ({
                       type="radio"
                       name="image"
                       value="path/to/image3.jpg"
-                      checked={srcAsenso === "/LEGEND.jpeg"}
+                      // checked={srcAsenso === "/LEGEND.jpeg"}
                       onChange={() => handleImageChangeAsenso("/LEGEND.jpeg")}
                       className="cursor-pointer"
                     />
@@ -753,7 +753,9 @@ const ImageCopperDraggable = ({
                       name="image"
                       value="path/to/image2.jpg"
                       // checked={srcAsenso === "/TOWER.jpeg"}
-                      onChange={() => handleImageChangeAsenso("/TOWER.jpeg")}
+                      onChange={() =>
+                        handleImageChangeAsenso("/TOWER_NEW.jpeg")
+                      }
                       className="cursor-pointer"
                     />
                     <span>TOWER</span>
@@ -765,7 +767,9 @@ const ImageCopperDraggable = ({
                       name="image"
                       value="path/to/image3.jpg"
                       // checked={srcAsenso === "/WARRIOR.jpeg"}
-                      onChange={() => handleImageChangeAsenso("/WARRIOR.jpeg")}
+                      onChange={() =>
+                        handleImageChangeAsenso("/WARRIOR_NEW.jpeg")
+                      }
                       className="cursor-pointer"
                     />
                     <span>WARRIOR</span>

@@ -143,6 +143,7 @@ export async function getElectoratesIDCard({
   id_requirments,
   page,
   searchTerm,
+  voter_type,
 }) {
   let query = supabase
     .from("electorates")
@@ -170,7 +171,8 @@ export async function getElectoratesIDCard({
     query = query
       .not("image", "is", null)
       .not("signature", "is", null)
-      .not("qr_code_url", "is", null);
+      .not("qr_code_url", "is", null)
+      .not("asenso_color_code_url", "is", null);
     console.log("complete------xx");
   }
   if (id_requirments === "incomplete") {
@@ -181,6 +183,29 @@ export async function getElectoratesIDCard({
     console.log("incomplete------xx");
   }
 
+  switch (voter_type) {
+    case "gm":
+      query = query.eq("is_gm", true);
+      break;
+    case "agm":
+      query = query.eq("is_agm", true);
+      break;
+    case "legend":
+      query = query.eq("is_legend", true);
+      break;
+    case "elite":
+      query = query.eq("is_elite", true);
+      break;
+    case "tower":
+      query = query.eq("isleader", true);
+      break;
+    case "warrior":
+      query = query.not("precinctleader", "is", null);
+      break;
+    default:
+      // Optional: handle unexpected cases
+      break;
+  }
   if (searchTerm) {
     query = query.or(
       `lastname.ilike.%${searchTerm}%,firstname.ilike.%${searchTerm}%,middlename.ilike.%${searchTerm}%`

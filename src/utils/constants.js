@@ -27,10 +27,12 @@ export const pageOptions = [
   { value: "special_electorate", label: "Special Electorates" },
   { value: "baco", label: "Baco" },
   { value: "events", label: "Events" },
+  { value: "event_attendees", label: "Event Attendees" },
   { value: "services", label: "Services" },
   { value: "users", label: "Users" },
   { value: "account", label: "My Profile" },
   { value: "settings", label: "Settings" },
+  { value: "rpt_event_attendees", label: "Report Event Attendees" },
   { value: "rpt_servicesbeneficiary", label: "Report Services Beneficiary" },
   // { value: "rpt_electorate_validated", label: "Report Electorate Validated" },
   {
@@ -54,9 +56,11 @@ export const pageOptions_staff = [
   { value: "special_electorate", label: "Special Electorates" },
   { value: "baco", label: "Baco" },
   { value: "events", label: "Events" },
+  { value: "event_attendees", label: "Event Attendees" },
   { value: "voters_ato", label: "Asenso ID" },
   { value: "services", label: "Services" },
   { value: "account", label: "My Profile" },
+  { value: "rpt_event_attendees", label: "Report Event Attendees" },
   { value: "rpt_servicesbeneficiary", label: "Report Services Beneficiary" },
 ];
 export const pageOptions_field_staff = [
@@ -73,6 +77,7 @@ export const pageOptions_administrator = [
   { value: "special_electorate", label: "Special Electorates" },
   { value: "baco", label: "Baco" },
   { value: "events", label: "Events" },
+  { value: "event_attendees", label: "Event Attendees" },
   { value: "services", label: "Services" },
   { value: "users", label: "Users" },
   { value: "account", label: "My Profile" },
@@ -91,6 +96,7 @@ export const pageOptions_administrator = [
     value: "rpt_leader_hierarchy",
     label: "Report Leaders Hierarchy",
   },
+  { value: "rpt_event_attendees", label: "Report Event Attendees" },
   { value: "rpt_ulogs", label: "Report User Logs" },
 ];
 
@@ -117,8 +123,11 @@ export const actionOptions = [
   "activation/deactivation user",
   "add admin user",
   "update admin user",
-  "add events",
-  "update events",
+  "add event",
+  "update event",
+  "delete event",
+  "activation/deactivation event",
+  "add/remove event attendees",
 ];
 export const actionOptions_staff = [
   "update electorate",
@@ -130,8 +139,11 @@ export const actionOptions_staff = [
   "add services",
   "update services",
   "delete services",
-  "add events",
-  "update events",
+  "add event",
+  "update event",
+  "delete event",
+  "activation/deactivation event",
+  "add/remove event attendees",
 ];
 export const actionOptions_administrator = [
   "add baco",
@@ -154,8 +166,11 @@ export const actionOptions_administrator = [
   // "update PL user",
   "view app password",
   "activation/deactivation user",
-  "add events",
-  "update events",
+  "add event",
+  "update event",
+  "delete event",
+  "activation/deactivation event",
+  "add/remove event attendees",
 ];
 export const brgy_allow = [
   "Alegria",
@@ -352,3 +367,9 @@ export const validationIds = {
   "3v": 3,
   "4finalvalidation": 4,
 };
+export const electorate_pcvl_remarks = [
+  { value: "18-30", label: "Age 18-30" },
+  { value: "Illiterate", label: "Illiterate" },
+  { value: "PWD", label: "PWD" },
+  { value: "Senior Citizen", label: "Senior Citizen" },
+];

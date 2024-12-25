@@ -98,3 +98,10 @@ export const replaceSpecialChars = (str) => {
 export function formatToSixDigits(number) {
   return number.toString().padStart(6, "0");
 }
+export function convertTo12HourFormat(time24) {
+  const [hours, minutes] = time24.split(":");
+  const hourNum = parseInt(hours, 10);
+  const period = hourNum >= 12 ? "PM" : "AM";
+  const hour12 = hourNum % 12 || 12; // Convert 0 or 12/24-hour to 12-hour format
+  return `${hour12.toString().padStart(2, "0")}:${minutes}${period}`;
+}

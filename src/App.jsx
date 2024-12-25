@@ -38,7 +38,8 @@ import SpecialElectorate from "./pages/SpecialElectorate";
 import RptTeamList from "./pages/RptTeamList";
 import RptLeaderHierarchy from "./pages/RptLeaderHierarchy";
 import Events from "./pages/Events";
-
+import EventAttendees from "./pages/EventAttendees";
+import RptEventAttendees from "./pages/RptEventAttendees";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -75,6 +76,8 @@ function App() {
               <Route path="kamada" element={<Kamada />} />
               <Route path="baco" element={<Baco />} />
               <Route path="events" element={<Events />} />
+              <Route path="event_attendees" element={<EventAttendees />} />
+
               <Route path="electorate" element={<Electorate />} />
               <Route path="users" element={<Users />} />
               <Route path="settings" element={<Settings />} />
@@ -108,6 +111,10 @@ function App() {
                 element={<RptLeaderHierarchy />}
               />
               <Route path="rpt_ulogs" element={<RptUserLogs />} />
+              <Route
+                path="rpt_event_attendees"
+                element={<RptEventAttendees />}
+              />
             </Route>
 
             <Route path="login" element={<Login />} />

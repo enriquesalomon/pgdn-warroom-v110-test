@@ -144,7 +144,8 @@ function ElectoratesTable() {
           <div>Middlename</div>
           <div>Purok</div>
           <div>Brgy</div>
-          <div>City</div>
+          <div>Remarks</div>
+          {/* <div>City</div> */}
           <div></div>
         </Table.Header>
         {isPending ? (

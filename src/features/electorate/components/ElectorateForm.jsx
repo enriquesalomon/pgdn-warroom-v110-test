@@ -16,11 +16,13 @@ import SpinnerMini from "../../../ui/SpinnerMini";
 import styled from "styled-components";
 import {
   barangayOptions,
+  electorate_pcvl_remarks,
   // sectorOptions
 } from "../../../utils/constants";
 import { useSector } from "../hooks/useElectorates";
 import { useEffect, useState } from "react";
 import FormRowButton from "../../../ui/FormRowButton";
+import { default as ReactSelect, components } from "react-select";
 const StyledSelect = styled.select`
   border: 1px solid var(--color-grey-300);
   background-color: var(--color-grey-0);
@@ -29,8 +31,75 @@ const StyledSelect = styled.select`
   box-shadow: var(--shadow-sm);
   width: 19.7rem;
 `;
-
+const Option = (props) => {
+  return (
+    <div>
+      <components.Option {...props}>
+        <input
+          type="checkbox"
+          checked={props.isSelected}
+          onChange={() => null}
+        />{" "}
+        <label>{props.label}</label>
+      </components.Option>
+    </div>
+  );
+};
 function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
+  const [stateRemarks, setStateRemarks] = useState({ optionSelected: [] });
+  // States for specific options
+  const [isAge1830, setIsAge1830] = useState(false);
+  const [isIlliterate, setIsIlliterate] = useState(false);
+  const [isPwd, setIsPwd] = useState(false);
+  const [isSenior, setISSenior] = useState(false);
+  useEffect(() => {
+    // Map database fields to electorate_pcvl_remarks options
+    const initialSelected = electorate_pcvl_remarks.filter((option) => {
+      if (option.value === "18-30" && electorateToEdit.remarks_18_30)
+        return true;
+      if (option.value === "PWD" && electorateToEdit.remarks_pwd) return true;
+      if (option.value === "Illiterate" && electorateToEdit.remarks_illiterate)
+        return true;
+      if (
+        option.value === "Senior Citizen" &&
+        electorateToEdit.remarks_senior_citizen
+      )
+        return true;
+      return false;
+    });
+
+    setStateRemarks({ optionSelected: initialSelected });
+  }, []);
+  const handleChange = (selected) => {
+    setStateRemarks({
+      optionSelected: selected,
+    });
+    console.log("remarks data", selected);
+    // Check if specific values are present in optionSelected
+    const selectedValues = selected.map((option) => option.value);
+
+    if (selectedValues.includes("18-30")) {
+      setIsAge1830(true);
+    } else {
+      setIsAge1830(false);
+    }
+
+    if (selectedValues.includes("Illiterate")) {
+      setIsIlliterate(true);
+    } else {
+      setIsIlliterate(false);
+    }
+    if (selectedValues.includes("PWD")) {
+      setIsPwd(true);
+    } else {
+      setIsPwd(false);
+    }
+    if (selectedValues.includes("Senior Citizen")) {
+      setISSenior(true);
+    } else {
+      setISSenior(false);
+    }
+  };
   console.log("updated birthdate", JSON.stringify(electorateToEdit));
   const queryClient = useQueryClient();
   const { actionPermission } = useActionPermissionContext();
@@ -47,7 +116,10 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
     defaultValues: isEditSession ? editValues : {},
   });
   const { errors } = formState;
-
+  const remarks_18_30 = isAge1830 ? true : false;
+  const remarks_pwd = isPwd ? true : false;
+  const remarks_illiterate = isIlliterate ? true : false;
+  const remarks_senior_citizen = isSenior ? true : false;
   function onSubmit(data) {
     const userData = queryClient.getQueryData(["user"]);
     const action = !isEditSession
@@ -68,7 +140,17 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
 
     if (isEditSession)
       editElectorate(
-        { newElectorateData: { ...data, image }, id: editId },
+        {
+          newElectorateData: {
+            ...data,
+            image,
+            remarks_18_30,
+            remarks_pwd,
+            remarks_illiterate,
+            remarks_senior_citizen,
+          },
+          id: editId,
+        },
         {
           onSuccess: (data) => {
             insertLogs(params);
@@ -203,6 +285,19 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
               </option>
             ))}
           </StyledSelect>
+        </FormRow>
+        <FormRow label="Remarks" error={errors?.remarks?.message}>
+          <ReactSelect
+            options={electorate_pcvl_remarks}
+            isMulti
+            closeMenuOnSelect={false}
+            hideSelectedOptions={false}
+            components={{
+              Option,
+            }}
+            onChange={handleChange}
+            value={stateRemarks.optionSelected}
+          />
         </FormRow>
 
         <FormRow label="Birthdate" error={errors?.birthdate?.message}>

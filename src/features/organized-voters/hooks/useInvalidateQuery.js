@@ -10,6 +10,7 @@ export function useInvalidateQuery(debouncedSearchTerm) {
   const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
   const printed_status = searchParams.get("printed_status") || "all";
   const id_requirments = searchParams.get("id_requirments") || "all";
+  const voter_type = searchParams.get("voter_type") || "all";
   //   const searchText = searchParams.get("searchText") || "";
   console.log("searched brgy:", brgy);
   console.log("searched printed_status:", printed_status);
@@ -35,6 +36,7 @@ export function useInvalidateQuery(debouncedSearchTerm) {
         id_requirments,
         page,
         debouncedSearchTerm,
+        voter_type,
       ],
     });
   };

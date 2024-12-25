@@ -15,7 +15,7 @@ export function useElectoratesAto(searchTerm) {
   const [searchParams] = useSearchParams();
   const printed_status = searchParams.get("printed_status") || "all";
   const id_requirments = searchParams.get("id_requirments") || "all";
-
+  const voter_type = searchParams.get("voter_type") || "all";
   const brgy = searchParams.get("sortBy") || barangayOptions[1].value;
   // PAGINATION
   const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
@@ -32,6 +32,7 @@ export function useElectoratesAto(searchTerm) {
     id_requirments,
     page,
     searchTerm,
+    voter_type,
   ];
 
   const { data, isPending: isLoading } = useQuery({
@@ -43,6 +44,7 @@ export function useElectoratesAto(searchTerm) {
         id_requirments,
         page,
         searchTerm,
+        voter_type,
       });
       return { data, count };
     },
@@ -76,7 +78,7 @@ export function useElectoratesAto(searchTerm) {
     // Prefetch next page
     if (page < pageCount) {
       queryClient.prefetchQuery({
-        queryKey: ["electorates_ato", brgy, page - 1, searchTerm],
+        queryKey: ["electorates_ato", brgy, page - 1, searchTerm, voter_type],
         queryFn: () =>
           getElectoratesIDCard({
             brgy,
@@ -84,6 +86,7 @@ export function useElectoratesAto(searchTerm) {
             id_requirments,
             page: page - 1,
             searchTerm,
+            voter_type,
           }),
         // staleTime: 5 * 60 * 1000, // 5 minute
       });
@@ -99,6 +102,7 @@ export function useElectoratesAto(searchTerm) {
           id_requirments,
           page - 1,
           searchTerm,
+          voter_type,
         ],
         queryFn: () =>
           getElectoratesIDCard({
@@ -107,6 +111,7 @@ export function useElectoratesAto(searchTerm) {
             id_requirments,
             page: page - 1,
             searchTerm,
+            voter_type,
           }),
         // staleTime: 5 * 60 * 1000, // 5 minute
       });
@@ -119,6 +124,7 @@ export function useElectoratesAto(searchTerm) {
     page,
     searchTerm,
     pageCount,
+    voter_type,
   ]);
 
   return { isPending: isLoading, error, electorates, count };
