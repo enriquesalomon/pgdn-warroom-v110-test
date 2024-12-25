@@ -9,6 +9,7 @@ import { PiAirplaneTakeoffBold } from "react-icons/pi";
 import { BsBuildings } from "react-icons/bs";
 // import { HiOutlineBuildingLibrary } from "react-icons/hi2";
 import { GiChurch } from "react-icons/gi";
+import { useNavigate } from "react-router-dom";
 
 function Stats({
   tot_Electorates,
@@ -19,29 +20,54 @@ function Stats({
   total_JEHOVAH,
   tot_Ato_groundManagement,
 }) {
+  const navigate = useNavigate();
+  const handleElectorates = () => {
+    navigate("/electorate"); // Replace '/target-page' with your desired route
+  };
+
+  const handleElectoratesAto = () => {
+    navigate("/rpt_electorate_classification?assigned=1"); // Replace '/target-page' with your desired route
+  };
+  const handleElectoratesDiliUnval = () => {
+    navigate("/rpt_electorate_classification?assigned=0"); // Replace '/target-page' with your desired route
+  };
+  const handleElectoratesOT = () => {
+    navigate("/rpt_electorate_classification?assigned=4"); // Replace '/target-page' with your desired route
+  };
+  const handleElectoratesINC = () => {
+    navigate("/rpt_electorate_classification?assigned=5"); // Replace '/target-page' with your desired route
+  };
+  const handleElectoratesJH = () => {
+    navigate("/rpt_electorate_classification?assigned=6"); // Replace '/target-page' with your desired route
+  };
   return (
     <>
-      <Stat
-        title="Total Electorates"
-        color="blue"
-        icon={<FaPersonChalkboard />}
-        value={tot_Electorates}
-      />
+      <div onClick={handleElectorates}>
+        <Stat
+          title="Total Electorates"
+          color="blue"
+          icon={<FaPersonChalkboard />}
+          value={tot_Electorates}
+        />
+      </div>
+
       <Stat
         title="Total Validated"
         color="green"
         icon={<LiaUserTagSolid />}
         value={tot_Validated + tot_Ato_groundManagement}
       />
-      <Stat
-        title="Total Unvalidated / DILI"
-        color="grey"
-        icon={<TbUserQuestion />}
-        value={tot_Electorates - (tot_Validated + tot_Ato_groundManagement)}
-      />
+      <div onClick={handleElectoratesDiliUnval}>
+        <Stat
+          title="Total Unvalidated / DILI"
+          color="grey"
+          icon={<TbUserQuestion />}
+          value={tot_Electorates - (tot_Validated + tot_Ato_groundManagement)}
+        />
+      </div>
 
       <div className="grid grid-cols-subgrid gap-4 col-span-4">
-        <div className="col-start-1">
+        <div className="col-start-1" onClick={handleElectoratesAto}>
           <Stat
             title="Total Ato"
             color="orange"
@@ -73,7 +99,7 @@ function Stats({
             value={tot_Deceased}
           />
         </div> */}
-        <div className="col-start-2">
+        <div className="col-start-2" onClick={handleElectoratesOT}>
           <Stat
             title="TOTAL OUT OF TOWN"
             color="blue"
@@ -81,7 +107,7 @@ function Stats({
             value={total_OT}
           />
         </div>
-        <div className="col-start-3">
+        <div className="col-start-3" onClick={handleElectoratesINC}>
           <Stat
             title="TOTAL INC"
             color="grey"
@@ -89,7 +115,7 @@ function Stats({
             value={total_INC}
           />
         </div>
-        <div className="col-start-1">
+        <div className="col-start-1" onClick={handleElectoratesJH}>
           <Stat
             title="TOTAL JEHOVAH"
             color="grey"

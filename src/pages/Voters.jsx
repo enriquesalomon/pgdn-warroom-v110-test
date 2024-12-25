@@ -29,7 +29,8 @@ const Voters = () => {
         <div></div>
       </Row> */}
       <Row type="horizontal">
-        <ListFilter /> <ListFilter2 /> <ListFilter3 />
+        <ListFilter /> <ListFilter2 />
+        <ListFilter3 />
       </Row>
 
       <Row>

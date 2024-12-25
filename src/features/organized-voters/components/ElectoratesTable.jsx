@@ -90,16 +90,120 @@ function ElectoratesTable() {
 
   let filteredData = []; // Initialize with an empty array
   let newCount = count;
-  if (voter_type === "warrior") {
-    filteredData = electorates.filter((item) => item.isleader !== true);
-    newCount = filteredData.length; // Calculate the count of filtered data
-  } else {
-    filteredData = electorates;
-    newCount = count;
+
+  switch (voter_type) {
+    case "gm":
+      filteredData = electorates.filter((item) =>
+        item.asenso_color_code_url?.includes("/GM.jpeg")
+      );
+      newCount = filteredData.length;
+      break;
+    case "agm":
+      filteredData = electorates.filter((item) =>
+        item.asenso_color_code_url?.includes("/AGM.jpeg")
+      );
+      newCount = filteredData.length;
+      break;
+    case "legend":
+      filteredData = electorates.filter((item) =>
+        item.asenso_color_code_url?.includes("/LEGEND.jpeg")
+      );
+      newCount = filteredData.length;
+      break;
+    case "elite":
+      filteredData = electorates.filter((item) =>
+        item.asenso_color_code_url?.includes("/ELITE.jpeg")
+      );
+      newCount = filteredData.length;
+      break;
+    case "tower":
+      filteredData = electorates.filter(
+        (item) =>
+          item.asenso_color_code_url &&
+          (item.asenso_color_code_url.includes("/TOWER.jpeg") ||
+            item.asenso_color_code_url.includes("/TOWER_NEW.jpeg"))
+      );
+      newCount = filteredData.length;
+      break;
+    case "warrior":
+      filteredData = electorates.filter(
+        (item) =>
+          item.asenso_color_code_url &&
+          (item.asenso_color_code_url.includes("/WARRIOR.jpeg") ||
+            item.asenso_color_code_url.includes("/WARRIOR_NEW.jpeg"))
+      );
+      newCount = filteredData.length;
+      break;
+    default:
+      filteredData = electorates;
+      newCount = count;
   }
 
-  // let sortedElectorates = filteredData;
-  let sortedElectorates = electorates;
+  // if (voter_type === "warrior") {
+  //   filteredData = electorates.filter((item) => item.isleader !== true);
+  //   newCount = filteredData.length;
+  // }
+  // if (voter_type === "gm") {
+  //   filteredData = electorates.filter((item) => {
+  //     return (
+  //       item.asenso_color_code_url &&
+  //       item.asenso_color_code_url.includes("/GM.jpeg")
+  //     );
+  //   });
+  //   newCount = filteredData.length;
+  // } else if (voter_type === "agm") {
+  //   filteredData = electorates.filter((item) => {
+  //     return (
+  //       item.asenso_color_code_url &&
+  //       item.asenso_color_code_url.includes("/AGM.jpeg")
+  //     );
+  //   });
+
+  //   newCount = filteredData.length;
+  // } else if (voter_type === "legend") {
+  //   filteredData = electorates.filter((item) => {
+  //     return (
+  //       item.asenso_color_code_url &&
+  //       item.asenso_color_code_url.includes("/LEGEND.jpeg")
+  //     );
+  //   });
+
+  //   newCount = filteredData.length;
+  // } else if (voter_type === "elite") {
+  //   filteredData = electorates.filter((item) => {
+  //     return (
+  //       item.asenso_color_code_url &&
+  //       item.asenso_color_code_url.includes("/ELITE.jpeg")
+  //     );
+  //   });
+
+  //   newCount = filteredData.length;
+  // } else if (voter_type === "tower") {
+  //   filteredData = electorates.filter((item) => {
+  //     return (
+  //       item.asenso_color_code_url &&
+  //       (item.asenso_color_code_url.includes("/TOWER.jpeg") ||
+  //         item.asenso_color_code_url.includes("/TOWER_NEW.jpeg"))
+  //     );
+  //   });
+
+  //   newCount = filteredData.length;
+  // } else if (voter_type === "warrior") {
+  //   filteredData = electorates.filter((item) => {
+  //     return (
+  //       item.asenso_color_code_url &&
+  //       (item.asenso_color_code_url.includes("/WARRIOR.jpeg") ||
+  //         item.asenso_color_code_url.includes("/WARRIOR_NEW.jpeg"))
+  //     );
+  //   });
+
+  //   newCount = filteredData.length;
+  // } else {
+  //   filteredData = electorates;
+  //   newCount = count;
+  // }
+
+  let sortedElectorates = filteredData;
   console.log("electorates asenso_color_code_url", JSON.stringify(electorates));
 
   useEffect(() => {
@@ -356,7 +460,7 @@ function ElectoratesTable() {
                   )}
                 />
                 <Table.Footer>
-                  <Pagination count={count} />
+                  <Pagination count={newCount} />
                 </Table.Footer>
               </>
             )}

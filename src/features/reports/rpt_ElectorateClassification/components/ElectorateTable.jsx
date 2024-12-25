@@ -69,6 +69,8 @@ function ElectorateTable() {
       tag = "";
       break;
   }
+
+  const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
   // const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
   const csvConfig = mkConfig({
     showTitle: true,
@@ -168,6 +170,7 @@ function ElectorateTable() {
                 data={sortedElectorates}
                 render={(electorate, index) => (
                   <TableRow
+                    page={page}
                     scannedvoters={true}
                     electorate={electorate}
                     key={electorate.id}

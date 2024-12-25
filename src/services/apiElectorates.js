@@ -152,11 +152,6 @@ export async function getElectoratesIDCard({
     })
     .eq("brgy", brgy)
     .order("lastname", { ascending: true });
-  // .not("qr_code", "is", null)
-  // .or(
-  //   `precinctleader.not.is.null,isbaco.eq.true,is_gm.eq.true,is_agm.eq.true,is_legend.eq.true,is_elite.eq.true`
-  // );
-  ///to add condition if 2ndvalidation is true
 
   if (printed_status === "printed") {
     query = query.eq("id_printed_status", true);
@@ -183,29 +178,30 @@ export async function getElectoratesIDCard({
     console.log("incomplete------xx");
   }
 
-  switch (voter_type) {
-    case "gm":
-      query = query.eq("is_gm", true);
-      break;
-    case "agm":
-      query = query.eq("is_agm", true);
-      break;
-    case "legend":
-      query = query.eq("is_legend", true);
-      break;
-    case "elite":
-      query = query.eq("is_elite", true);
-      break;
-    case "tower":
-      query = query.eq("isleader", true);
-      break;
-    case "warrior":
-      query = query.not("precinctleader", "is", null);
-      break;
-    default:
-      // Optional: handle unexpected cases
-      break;
-  }
+  //this voter_type is not used due to filtering of ID card set in the colorcode
+  // switch (voter_type) {
+  //   case "gm":
+  //     query = query.eq("is_gm", true);
+  //     break;
+  //   case "agm":
+  //     query = query.eq("is_agm", true);
+  //     break;
+  //   case "legend":
+  //     query = query.eq("is_legend", true);
+  //     break;
+  //   case "elite":
+  //     query = query.eq("is_elite", true);
+  //     break;
+  //   case "tower":
+  //     query = query.eq("isleader", true);
+  //     break;
+  //   case "warrior":
+  //     query = query.not("precinctleader", "is", null);
+  //     break;
+  //   default:
+  //     // Optional: handle unexpected cases
+  //     break;
+  // }
   if (searchTerm) {
     query = query.or(
       `lastname.ilike.%${searchTerm}%,firstname.ilike.%${searchTerm}%,middlename.ilike.%${searchTerm}%`

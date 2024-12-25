@@ -75,8 +75,8 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="kamada" element={<Kamada />} />
               <Route path="baco" element={<Baco />} />
-              <Route path="events" element={<Events />} />
-              <Route path="event_attendees" element={<EventAttendees />} />
+              {/* <Route path="events" element={<Events />} />
+              <Route path="event_attendees" element={<EventAttendees />} /> */}
 
               <Route path="electorate" element={<Electorate />} />
               <Route path="users" element={<Users />} />
@@ -111,10 +111,10 @@ function App() {
                 element={<RptLeaderHierarchy />}
               />
               <Route path="rpt_ulogs" element={<RptUserLogs />} />
-              <Route
+              {/* <Route
                 path="rpt_event_attendees"
                 element={<RptEventAttendees />}
-              />
+              /> */}
             </Route>
 
             <Route path="login" element={<Login />} />

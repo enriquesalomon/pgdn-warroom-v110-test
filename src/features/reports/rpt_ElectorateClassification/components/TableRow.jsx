@@ -1,7 +1,8 @@
 import Table from "../../../../ui/Table";
+import { PAGE_SIZE } from "../../../../utils/constants";
 import { replaceSpecialChars } from "../../../../utils/helpers";
 
-function TableRow({ electorate, index, scannedvoters }) {
+function TableRow({ page, electorate, index, scannedvoters }) {
   const {
     id: electorateId,
     precinctno,
@@ -14,7 +15,7 @@ function TableRow({ electorate, index, scannedvoters }) {
   } = electorate;
   return (
     <Table.Row>
-      <div>{index + 1}</div>
+      <div>{(page - 1) * PAGE_SIZE + index + 1}</div>
       <div>{precinctno}</div>
       <div>{replaceSpecialChars(lastname)}</div>
       <div>{replaceSpecialChars(firstname)}</div>

@@ -297,6 +297,7 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
             }}
             onChange={handleChange}
             value={stateRemarks.optionSelected}
+            menuPlacement="top"
           />
         </FormRow>
 
