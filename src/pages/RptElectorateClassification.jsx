@@ -10,10 +10,7 @@ import ListFilter from "../features/reports/rpt_ElectorateClassification/compone
 
 const RptElectorateClassification = () => {
   const { pagePermission } = usePagePermissionContext();
-  const isAllowed = parsePage(
-    pagePermission,
-    "rpt_electorate_team_assignments"
-  );
+  const isAllowed = parsePage(pagePermission, "rpt_electorate_classification");
   if (!isAllowed) {
     // If isDashboardAllowed is false, return null or an alternative component/message
     return <UnAuthorized headerText="Page Not Found" />;

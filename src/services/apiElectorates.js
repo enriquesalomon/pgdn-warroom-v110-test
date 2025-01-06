@@ -141,6 +141,7 @@ export async function getElectoratesIDCard({
   brgy,
   printed_status,
   id_requirments,
+  inc_requirments,
   page,
   searchTerm,
   voter_type,
@@ -171,11 +172,23 @@ export async function getElectoratesIDCard({
     console.log("complete------xx");
   }
   if (id_requirments === "incomplete") {
-    query = query.or(`image.is.null,signature.is.null,qr_code_url.is.null`);
-    // query = query.or(
-    //   `image.not.is.null,signature.not.is.null,qr_code_url.not.is.null`
-    // );
-    console.log("incomplete------xx");
+    if (inc_requirments === "all") {
+      query = query.or(
+        `image.is.null,signature.is.null,qr_code_url.is.null,asenso_color_code_url.is.null`
+      );
+    }
+    if (inc_requirments === "no_pic") {
+      query = query.is("image", null);
+    }
+    if (inc_requirments === "no_sig") {
+      query = query.is("signature", null);
+    }
+    if (inc_requirments === "no_qr") {
+      query = query.is("qr_code_url", null);
+    }
+    if (inc_requirments === "no_colorcode") {
+      query = query.is("asenso_color_code_url", null);
+    }
   }
 
   //this voter_type is not used due to filtering of ID card set in the colorcode

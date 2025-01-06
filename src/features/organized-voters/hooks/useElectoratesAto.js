@@ -15,6 +15,7 @@ export function useElectoratesAto(searchTerm) {
   const [searchParams] = useSearchParams();
   const printed_status = searchParams.get("printed_status") || "all";
   const id_requirments = searchParams.get("id_requirments") || "all";
+  const inc_requirments = searchParams.get("inc_requirments") || "all";
   const voter_type = searchParams.get("voter_type") || "all";
   const brgy = searchParams.get("sortBy") || barangayOptions[1].value;
   // PAGINATION
@@ -30,6 +31,7 @@ export function useElectoratesAto(searchTerm) {
     brgy,
     printed_status,
     id_requirments,
+    inc_requirments,
     page,
     searchTerm,
     voter_type,
@@ -42,6 +44,7 @@ export function useElectoratesAto(searchTerm) {
         brgy,
         printed_status,
         id_requirments,
+        inc_requirments,
         page,
         searchTerm,
         voter_type,
@@ -78,12 +81,23 @@ export function useElectoratesAto(searchTerm) {
     // Prefetch next page
     if (page < pageCount) {
       queryClient.prefetchQuery({
-        queryKey: ["electorates_ato", brgy, page - 1, searchTerm, voter_type],
+        // queryKey: ["electorates_ato", brgy, page - 1, searchTerm, voter_type],
+        queryKey: [
+          "electorates_ato",
+          brgy,
+          printed_status,
+          id_requirments,
+          inc_requirments,
+          page - 1,
+          searchTerm,
+          voter_type,
+        ],
         queryFn: () =>
           getElectoratesIDCard({
             brgy,
             printed_status,
             id_requirments,
+            inc_requirments,
             page: page - 1,
             searchTerm,
             voter_type,
@@ -100,6 +114,7 @@ export function useElectoratesAto(searchTerm) {
           brgy,
           printed_status,
           id_requirments,
+          inc_requirments,
           page - 1,
           searchTerm,
           voter_type,
@@ -109,6 +124,7 @@ export function useElectoratesAto(searchTerm) {
             brgy,
             printed_status,
             id_requirments,
+            inc_requirments,
             page: page - 1,
             searchTerm,
             voter_type,
@@ -121,6 +137,7 @@ export function useElectoratesAto(searchTerm) {
     brgy,
     printed_status,
     id_requirments,
+    inc_requirments,
     page,
     searchTerm,
     pageCount,

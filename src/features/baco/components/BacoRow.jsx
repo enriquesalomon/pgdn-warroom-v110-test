@@ -18,17 +18,13 @@ import { useDeactivateBaco } from "../hooks/useDeactivateBaco";
 import { useQueryClient } from "@tanstack/react-query";
 import { insertLogs } from "../../../utils/recordUserActivity";
 import { useDeleteBaco } from "../hooks/useDeleteBaco";
-import { parseAction } from "../../../utils/helpers";
 
 function BacoRow({ electorate, index, searchText }) {
-  console.log("searchTerm---", searchText);
   const queryClient = useQueryClient();
   const userData = queryClient.getQueryData(["user"]);
   const { isDeactivating, deactivateBaco } = useDeactivateBaco();
   const { isActivating, activateBaco } = useActivateBaco();
-  const { actionPermission } = useActionPermissionContext();
   const { isDeleting, deleteBaco } = useDeleteBaco();
-  // const isAllowedAction = parseAction(actionPermission, "delete baco");
   const {
     id: electorateId,
     lastname,

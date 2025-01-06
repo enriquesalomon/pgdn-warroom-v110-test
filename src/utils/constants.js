@@ -294,6 +294,29 @@ export const barangayOptions = [
     return barangay; // Return as is
   }
 });
+export const religionOptions = [
+  { value: "", label: "SELECT RELIGION" },
+  "Roman Catholic",
+  "Islam",
+  "Iglesia ni Cristo",
+  "Seventh Day Adventist",
+  "Aglipay",
+  "Iglesia Filipina Independiente",
+  "Bible Baptist Church",
+  "United Church of Christ in the Philippines",
+  "Jehovah's Witness",
+  "Church of Christ",
+  "Other religious affiliations",
+].map((barangay) => {
+  if (typeof barangay === "string") {
+    return {
+      value: barangay.toUpperCase(),
+      label: barangay.toUpperCase(),
+    };
+  } else {
+    return barangay; // Return as is
+  }
+});
 
 export const leaderTypeOptions = [
   { value: "", label: "SELECT TYPE" },

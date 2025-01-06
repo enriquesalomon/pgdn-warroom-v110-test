@@ -17,6 +17,7 @@ import styled from "styled-components";
 import {
   barangayOptions,
   electorate_pcvl_remarks,
+  religionOptions,
   // sectorOptions
 } from "../../../utils/constants";
 import { useSector } from "../hooks/useElectorates";
@@ -257,13 +258,25 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
           <Input value="PAGADIAN" type="text" id="city" disabled />
         </FormRow>
 
-        <FormRow label="Religion" error={errors?.religion?.message}>
+        {/* <FormRow label="Religion" error={errors?.religion?.message}>
           <Input
             type="text"
             id="religion"
             disabled={isWorking}
             {...register("religion")}
           />
+        </FormRow> */}
+        <FormRow label="Religion" error={errors?.religion?.message}>
+          <StyledSelect
+            id="religion"
+            {...register("religion", { required: "This field is required" })}
+          >
+            {religionOptions.map((religion) => (
+              <option key={religion.value} value={religion.value}>
+                {religion.label}
+              </option>
+            ))}
+          </StyledSelect>
         </FormRow>
 
         <FormRow label="Profession" error={errors?.profession?.message}>
@@ -275,7 +288,11 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
           />
         </FormRow>
         <FormRow label="Sector" error={errors?.sector?.message}>
-          <StyledSelect disabled={isWorking} id="brgy" {...register("sector")}>
+          <StyledSelect
+            disabled={isWorking}
+            id="sector"
+            {...register("sector")}
+          >
             <option key="" value="">
               SELECT SECTOR
             </option>

@@ -87,7 +87,7 @@ function BacoForm({ electorateToEdit = {}, onCloseModal, searchText }) {
   }
 
   function onError(errors) {
-    // console.log(errors);
+    console.log(errors);
   }
   const handleElectorateSelect = (electorate) => {
     const { id, firstname, middlename, lastname, brgy, purok } = electorate;
