@@ -4,6 +4,8 @@ import Row from "../ui/Row";
 import UnAuthorized from "../ui/UnAuthorized";
 import { usePagePermissionContext } from "../context/PagePermissionContext";
 import { parsePage } from "../utils/helpers";
+import DashboardFilter from "../features/kamada/components/DashboardFilter";
+// import GMap from "../ui/GMap";
 
 function Kamada() {
   const { pagePermission } = usePagePermissionContext();
@@ -25,7 +27,7 @@ function Kamada() {
     <>
       <Row type="horizontal">
         <Heading as="h2">KAMADA</Heading>
-        {/* <DashboardFilter /> */}
+        <DashboardFilter />
       </Row>
       <hr className="border-t-1 border-gray-300" />
       <DashboardLayout />

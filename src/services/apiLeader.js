@@ -5,14 +5,14 @@ export async function getAllElectorates_Per_Brgy({ brgy, page, searchTerm }) {
   let query = supabase
     .from("electorates")
     .select(
-      "id,precinctno, firstname,middlename,lastname,birthdate,brgy,completeaddress,purok,city,profession,religion,image,sector,precinctleader,isbaco,is_gm,is_agm,is_legend,is_elite,remarks_18_30,remarks_pwd,remarks_illiterate,remarks_senior_citizen",
+      "id,precinctno, firstname,middlename,lastname,name_ext,birthdate,brgy,completeaddress,purok,rmks,city,profession,religion,image,sector,precinctleader,isbaco,is_gm,is_agm,is_legend,is_elite,isleader_type,remarks_18_30,remarks_pwd,remarks_illiterate,remarks_senior_citizen,islubas_type,qr_code",
       {
         count: "exact",
       }
     )
 
     .eq("brgy", brgy)
-    // .order("id", { ascending: false });
+    // .order("lastname", { ascending: true });
     .order("precinctno", { ascending: true }) // First order by precinctno
     .order("lastname", { ascending: true }); // Then order by lastname
 
@@ -23,6 +23,42 @@ export async function getAllElectorates_Per_Brgy({ brgy, page, searchTerm }) {
   }
 
   if (!searchTerm && page) {
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+    query = query.range(from, to);
+  }
+
+  const { data, error, count } = await query;
+
+  if (error) {
+    console.error(error);
+    throw new Error("electorates could not be loaded");
+  }
+  return { data, count };
+}
+export async function getAllElectorates_for_SurveyForm({
+  brgy,
+  precint,
+  page,
+}) {
+  console.log("pasdasdasd", precint);
+  let query = supabase
+    .from("electorates")
+    .select(
+      "id,precinctno, firstname,middlename,lastname,name_ext,purok,survey_tag",
+      {
+        count: "exact",
+      }
+    )
+    .eq("brgy", brgy)
+    // .order("lastname", { ascending: true });
+    .order("precinctno", { ascending: true }) // First order by precinctno
+    .order("lastname", { ascending: true }); // Then order by lastname
+
+  if (precint !== "ALL PRECINCT") {
+    query = query.eq("precinctno", precint);
+  }
+  if (page) {
     const from = (page - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
     query = query.range(from, to);
@@ -77,6 +113,7 @@ export async function getElectorates_forLeader({ brgy, page, searchTerm }) {
   }
   return { data, count };
 }
+
 export async function getLeaders({ type, brgy, page, searchTerm }) {
   let query = supabase
     .from("electorates")

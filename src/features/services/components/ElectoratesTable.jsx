@@ -5,7 +5,7 @@ import Menus from "../../../ui/Menus";
 
 import ElectoratesRow from "./ElectoratesRow";
 import Search from "../../../ui/Search";
-import { useState } from "react";
+import { useRef, useState } from "react";
 // import Pagination from "../../../ui/Pagination";
 import PaginationTblModal from "../../../ui/PaginationTblModal";
 import { useDebounce } from "use-debounce";
@@ -13,6 +13,7 @@ import Row from "../../../ui/Row";
 import Heading from "../../../ui/Heading";
 import BarangayFilter from "../../../ui/BarangayFilter";
 import { useElectoratesPer_Brgy2 } from "../hooks/useServices";
+import { useReactToPrint } from "react-to-print";
 
 function ElectoratesTable({ onSelectElectorate, onCloseModal }) {
   const viewable_brgy = localStorage.getItem("viewable_brgy");

@@ -2,12 +2,14 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchAllData_Team_List,
   getTeamList,
+  getTeamListByGroup,
 } from "../../../../services/apiTeams";
 import { useSearchParams } from "react-router-dom";
 import { PAGE_SIZE, barangayOptions } from "../../../../utils/constants";
 import { useEffect } from "react";
 import { useState } from "react";
 import supabase from "../../../../services/supabase";
+import { getBrgy_Precincts } from "../../../../services/apiPrecinct";
 
 export function useElectorate(searchTerm) {
   const queryClient = useQueryClient();
@@ -31,14 +33,15 @@ export function useElectorate(searchTerm) {
   } = useQuery({
     queryKey,
     queryFn: async () => {
-      const { data, count } = await getTeamList({
+      const { data, count } = await getTeamListByGroup({
         brgy,
         page,
         searchTerm,
       });
       return { data, count };
     },
-    staleTime: 10 * 60 * 1000, // 10 minute
+    // staleTime: 10 * 60 * 1000, // 10 minute
+    staleTime: 0,
     onSuccess: ({ data, count }) => {
       setElectorates(data || []);
       setCount(count || 0);
@@ -73,7 +76,7 @@ export function useElectorate(searchTerm) {
             page: page - 1,
             searchTerm,
           }),
-        staleTime: 10 * 60 * 1000, // 10 minute
+        staleTime: 0,
       });
     }
 
@@ -87,7 +90,7 @@ export function useElectorate(searchTerm) {
             page: page - 1,
             searchTerm,
           }),
-        staleTime: 10 * 60 * 1000, // 10 minute
+        staleTime: 0,
       });
     }
   }, [queryClient, brgy, page, searchTerm, pageCount]);
@@ -140,20 +143,6 @@ const fetchNames = async (id) => {
   return data;
 };
 
-export const useLegend = (parameter) => {
-  return useQuery({
-    queryKey: ["legend", parameter],
-    queryFn: () => fetchNames(parameter),
-    enabled: !!parameter, // This ensures the second query only runs if parameter is provided
-  });
-};
-export const useElite = (parameter) => {
-  return useQuery({
-    queryKey: ["elite", parameter],
-    queryFn: () => fetchNames(parameter),
-    enabled: !!parameter, // This ensures the second query only runs if parameter is provided
-  });
-};
 export const useTower = (parameter) => {
   return useQuery({
     queryKey: ["tower", parameter],
@@ -161,3 +150,48 @@ export const useTower = (parameter) => {
     enabled: !!parameter, // This ensures the second query only runs if parameter is provided
   });
 };
+
+const fetchFirstSelectData = async (brgy) => {
+  // let { data, error } = await supabase.rpc("get_precinct_numbers_brgy", {
+  //   barangay: brgy,
+  // });
+
+  // if (error) throw new Error(error.message);
+  // return data;
+
+  const { data, error } = await supabase
+    .from("clustered_precincts")
+    .select("*")
+    .eq("barangay", brgy);
+
+  if (error) {
+    console.error(error);
+    throw new Error("clustered_precincts could not be loaded");
+  }
+  return data;
+};
+export const useFirstSelectData = () => {
+  const [searchParams] = useSearchParams(); // FILTER
+  const brgy = searchParams.get("sortBy") || "BOGAYO";
+  return useQuery({
+    queryKey: ["firstSelectData", brgy],
+    queryFn: () => fetchFirstSelectData(brgy), // Pass the brgy parameter to the query function
+    enabled: !!brgy, // Only fetch data if brgy is not null
+  });
+};
+
+export function useBrgyPrecincts() {
+  const [searchParams] = useSearchParams();
+  const brgy = searchParams.get("sortBy") || barangayOptions[1].value;
+  const {
+    isPending,
+    error,
+    data: all_precincts,
+  } = useQuery({
+    queryKey: ["all_precincts"],
+    // queryFn: getSettings(),
+    queryFn: () => getBrgy_Precincts(brgy),
+  });
+
+  return { isPending, error, all_precincts };
+}

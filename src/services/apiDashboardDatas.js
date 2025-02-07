@@ -10,6 +10,7 @@ import {
   outoftown,
   inc,
   jehovah,
+  nvs,
 } from "../utils/constants";
 
 export async function getCountElectorates() {
@@ -22,18 +23,84 @@ export async function getCountElectorates() {
   }
   return { count };
 }
-export async function getCountValidated(validationType) {
-  const val_id = validationIds[validationType] || 1;
-
+export async function getCountLubas() {
   const { error, count } = await supabase
-    .from("electorate_validations")
-    .select("id", { count: "exact" });
-  // .eq("validation_id", val_id);
+    .from("electorates")
+    .select("id", { count: "exact" })
+    .neq("islubas_type", "N/A");
   if (error) {
     console.error(error);
-    throw new Error("getCountValidated could not be loaded");
+    throw new Error("Electorates could not be loaded");
   }
   return { count };
+}
+export async function getCountValidated(validationType) {
+  console.log("xx checking the survey tag", validationType);
+  const condition = validationMapping[validationType] || "Survey";
+
+  if (validationType === "Survey") {
+    if (condition === "Survey") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .neq("survey_tag", null);
+
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+
+      return { count };
+    } else {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq(condition, true);
+
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+  } else {
+    if (validationType === "1v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .neq("firstvalidation_tag", null)
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "2v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .neq("secondvalidation_tag", null)
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "3v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .neq("thirdvalidation_tag", null)
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+  }
 }
 
 export async function getCountUnValidated(validationType) {
@@ -51,17 +118,92 @@ export async function getCountUnValidated(validationType) {
 }
 
 export async function getCountAto(validationType) {
-  const val_id = validationIds[validationType] || 1;
-  const { error, count } = await supabase
-    .from("electorate_validations")
-    .select("id", { count: "exact" })
-    .eq("result", ato);
-  // .eq("validation_id", val_id);
-  if (error) {
-    console.error(error);
-    throw new Error("Counting Ato could not be loaded");
+  if (validationType === "Survey" || validationType === null) {
+    const { error, count } = await supabase
+      .from("electorates")
+      .select("id", { count: "exact" })
+      .eq("survey_tag", "ATO");
+    if (error) {
+      console.error(error);
+      throw new Error("Counting Ato could not be loaded");
+    }
+    return { count };
+  } else {
+    const val_id = validationIds[validationType] || 1;
+    const { error, count } = await supabase
+      .from("electorate_validations")
+      .select("id", { count: "exact" })
+      .eq("result", ato)
+      .eq("validation_id", val_id);
+    if (error) {
+      console.error(error);
+      throw new Error("Counting Ato could not be loaded");
+    }
+    return { count };
   }
-  return { count };
+}
+
+export async function getCountDili(validationType) {
+  if (validationType === "Survey" || validationType === null) {
+    const { error, count } = await supabase
+      .from("electorates")
+      .select("id", { count: "exact" })
+      .eq("survey_tag", "DILI");
+    if (error) {
+      console.error(error);
+      throw new Error("Counting Ato could not be loaded");
+    }
+    return { count };
+  } else {
+    // const val_id = validationIds[validationType] || 1;
+    // const { error, count } = await supabase
+    //   .from("electorate_validations")
+    //   .select("id", { count: "exact" })
+    //   .eq("result", dili)
+    //   .eq("validation_id", val_id);
+    // if (error) {
+    //   console.error(error);
+    //   throw new Error("Counting Ato could not be loaded");
+    // }
+    // return { count };
+
+    if (validationType === "1v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("firstvalidation_tag", "DILI")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "2v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("secondvalidation_tag", "DILI")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "3v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("thirdvalidation_tag", "DILI")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+  }
 }
 export async function getCountAto_VotersMonitoring(validationType) {
   let count = 0;
@@ -85,103 +227,323 @@ export async function getCountAto_VotersMonitoring(validationType) {
   return { count };
 }
 
-export async function getCountDili(validationType) {
-  const val_id = validationIds[validationType] || 1;
-  //VERSION 4
-  const { error, count } = await supabase
-    .from("electorates")
-    .select("id", { count: "exact" })
-    .filter("precinctleader", "is", null)
-    .filter("voters_type", "is", null)
-    .filter("isbaco", "is", null)
-    .filter("is_gm", "is", null)
-    .filter("is_agm", "is", null)
-    .filter("is_legend", "is", null)
-    .filter("is_elite", "is", null);
-  //VERSION 3
-  // const { error, count } = await supabase
-  //   .from("electorates")
-  //   .select("id", { count: "exact" })
-  //   .is("precinctleader", null)
-  //   .is("voters_type", null);
-
-  if (error) {
-    console.error(error);
-    throw new Error("Counting dili could not be loaded");
-  }
-  return { count };
-}
-
 export async function getCountUndecided(validationType) {
-  const val_id = validationIds[validationType] || 1;
-  const { error, count } = await supabase
-    .from("electorate_validations")
-    .select("id", { count: "exact" })
-    .eq("result", undecided)
-    .eq("validation_id", val_id);
-  if (error) {
-    console.error(error);
-    throw new Error("Counting undecided could not be loaded");
+  if (validationType === "Survey" || validationType === null) {
+    const { error, count } = await supabase
+      .from("electorates")
+      .select("id", { count: "exact" })
+      .eq("survey_tag", "UNDECIDED");
+    if (error) {
+      console.error(error);
+      throw new Error("Counting Ato could not be loaded");
+    }
+    return { count };
+  } else {
+    if (validationType === "1v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("firstvalidation_tag", "UNDECIDED")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "2v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("secondvalidation_tag", "UNDECIDED")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "3v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("thirdvalidation_tag", "UNDECIDED")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
   }
-  return { count };
 }
 
 export async function getCountDeceased(validationType) {
-  const val_id = validationIds[validationType] || 1;
-  const { error, count } = await supabase
-    .from("electorate_validations")
-    .select("id", { count: "exact" })
-    .eq("result", deceased)
-    .eq("validation_id", val_id);
-  if (error) {
-    console.error(error);
-    throw new Error("Counting deceased could not be loaded");
+  if (validationType === "Survey" || validationType === null) {
+    const { error, count } = await supabase
+      .from("electorates")
+      .select("id", { count: "exact" })
+      .eq("survey_tag", "DECEASED");
+    if (error) {
+      console.error(error);
+      throw new Error("Counting Ato could not be loaded");
+    }
+    return { count };
+  } else {
+    if (validationType === "1v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("firstvalidation_tag", "DECEASED")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "2v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("secondvalidation_tag", "DECEASED")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "3v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("thirdvalidation_tag", "DECEASED")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
   }
-  return { count };
+}
+export async function getCountNVS(validationType) {
+  if (validationType === "Survey" || validationType === null) {
+    const { error, count } = await supabase
+      .from("electorates")
+      .select("id", { count: "exact" })
+      .eq("survey_tag", "NVS");
+    if (error) {
+      console.error(error);
+      throw new Error("Counting Ato could not be loaded");
+    }
+    return { count };
+  } else {
+    if (validationType === "1v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("firstvalidation_tag", "NVS")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "2v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("secondvalidation_tag", "NVS")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "3v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("thirdvalidation_tag", "NVS")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+  }
 }
 
 export async function getCountOT(validationType) {
-  const val_id = validationIds[validationType] || 1;
-  const { error, count } = await supabase
-    .from("electorate_validations")
-    .select("id", { count: "exact" })
-    .eq("result", outoftown);
-  // .eq("validation_id", val_id);
-  if (error) {
-    console.error(error);
-    throw new Error("Counting OT could not be loaded");
+  if (validationType === "Survey" || validationType === null) {
+    const { error, count } = await supabase
+      .from("electorates")
+      .select("id", { count: "exact" })
+      .eq("survey_tag", "OUT OF TOWN");
+    if (error) {
+      console.error(error);
+      throw new Error("Counting Ato could not be loaded");
+    }
+    return { count };
+  } else {
+    const val_id = validationIds[validationType] || 1;
+    const { error, count } = await supabase
+      .from("electorate_validations")
+      .select("id", { count: "exact" })
+      .eq("result", outoftown)
+      .eq("validation_id", val_id);
+    if (error) {
+      console.error(error);
+      throw new Error("Counting OT could not be loaded");
+    }
+    return { count };
   }
-  return { count };
 }
 export async function getCountINC(validationType) {
-  const val_id = validationIds[validationType] || 1;
-  const { error, count } = await supabase
-    .from("electorate_validations")
-    .select("id", { count: "exact" })
-    .eq("result", inc);
-  // .eq("validation_id", val_id);
-  if (error) {
-    console.error(error);
-    throw new Error("Counting inc could not be loaded");
+  if (validationType === "Survey" || validationType === null) {
+    const { error, count } = await supabase
+      .from("electorates")
+      .select("id", { count: "exact" })
+      .eq("survey_tag", "INC");
+    if (error) {
+      console.error(error);
+      throw new Error("Counting Ato could not be loaded");
+    }
+    return { count };
+  } else {
+    if (validationType === "1v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("firstvalidation_tag", "INC")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "2v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("secondvalidation_tag", "INC")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "3v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("thirdvalidation_tag", "INC")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
   }
-
-  return { count };
 }
 export async function getCountJEHOVAH(validationType) {
+  if (validationType === "Survey" || validationType === null) {
+    const { error, count } = await supabase
+      .from("electorates")
+      .select("id", { count: "exact" })
+      .eq("survey_tag", "JEHOVAH");
+    if (error) {
+      console.error(error);
+      throw new Error("Counting Ato could not be loaded");
+    }
+    return { count };
+  } else {
+    if (validationType === "1v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("firstvalidation_tag", "JEHOVAH")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "2v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("secondvalidation_tag", "JEHOVAH")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+    if (validationType === "3v") {
+      const { error, count } = await supabase
+        .from("electorates")
+        .select("id", { count: "exact" })
+        .eq("thirdvalidation_tag", "JEHOVAH")
+        .is("precinctleader", null);
+      if (error) {
+        console.error(error);
+        throw new Error("Electorates could not be loaded");
+      }
+      return { count };
+    }
+  }
+}
+export async function getCountPerBrgy_BarChart(validationType) {
   const val_id = validationIds[validationType] || 1;
-  const { error, count } = await supabase
+  const { data, error } = await supabase
     .from("electorate_validations")
-    .select("id", { count: "exact" })
-    .eq("result", jehovah);
-  // .eq("validation_id", val_id);
+    .select("result, brgy")
+    .eq("validation_id", val_id);
+
   if (error) {
     console.error(error);
-    throw new Error("Counting jehovah could not be loaded");
+    throw new Error("getCountPerBrgy Ato could not be loaded");
   }
-  return { count };
+  return { data };
 }
 
-export async function getCountPerBrgy() {
+// export async function getCountPerBrgy() {
+//   const { data, error } = await supabase.rpc(
+//     "get_voters_scanned_count_by_brgy"
+//   );
+
+//   if (error) {
+//     console.error(error);
+//     throw new Error("getCountPerBrgy Ato could not be loaded");
+//   }
+//   return { data };
+// }
+export async function getCountPerBrgy(validationType) {
+  const val_id = validationIds[validationType] || 1;
+  const { data, error } = await supabase
+    .from("electorate_validations")
+    .select("result, brgy")
+    .eq("validation_id", val_id);
+
+  if (error) {
+    console.error(error);
+    throw new Error("getCountPerBrgy Ato could not be loaded");
+  }
+  return { data };
+}
+
+export async function getCountVotersScannedPerBrgy() {
   const { data, error } = await supabase.rpc(
     "get_voters_scanned_count_by_brgy"
   );
@@ -192,10 +554,14 @@ export async function getCountPerBrgy() {
   }
   return { data };
 }
-
 export async function getCountPerBrgy_Unvalidated(validationType) {
   const val_id = validationIds[validationType] || 1;
-  const { data, error } = await supabase.rpc("count_electorates_unvalidated");
+  const { data, error } = await supabase.rpc(
+    "get_counts_unvalidated_per_brgy",
+    {
+      validation_id_param: val_id,
+    }
+  );
 
   if (error) {
     console.error(error);
@@ -203,6 +569,17 @@ export async function getCountPerBrgy_Unvalidated(validationType) {
   }
   return { data };
 }
+
+// export async function getCountPerBrgy_Unvalidated(validationType) {
+//   const val_id = validationIds[validationType] || 1;
+//   const { data, error } = await supabase.rpc("count_electorates_unvalidated");
+
+//   if (error) {
+//     console.error(error);
+//     throw new Error("getCountPerBrgy Ato could not be loaded");
+//   }
+//   return { data };
+// }
 
 // below is the functions use for fetching datas in Voters Monitoring
 export async function getCount3rdV_ato(validationType) {
@@ -216,6 +593,7 @@ export async function getCount3rdV_ato(validationType) {
     console.error(error);
     throw new Error("getCount3rdV_ato could not be loaded");
   }
+  console.log("xxxxx---", count);
   return { count };
 }
 
@@ -250,15 +628,39 @@ export async function getLatesScanned(validationType) {
 
 export async function getKamadaResult(validationType) {
   const val_id = validationIds[validationType] || 1;
+
   const { data, error } = await supabase.rpc(
-    "calculate_projected_data_kamada_v5"
+    "calculate_projected_data_kamada_v5",
+    { validation_id_params: val_id }
   );
+  if (error) {
+    console.error(error);
+  }
 
-  // const { data, error } = await supabase.rpc(
-  //   "calculate_projected_data_kamada_v4"
-  // );
+  return { data };
+}
+export async function getSurveyResult() {
+  const { data, error } = await supabase.rpc("get_survey_count");
+  if (error) {
+    console.error(error);
+  }
 
-  console.log("calculate projected", JSON.stringify(data));
+  return { data };
+}
+export async function getcount_LP_LM_LDC_W() {
+  const { data, error } = await supabase.rpc("count_affiliates_per_barangay");
+  if (error) {
+    console.error(error);
+  }
+
+  return { data };
+}
+export async function getNotTeamResult(validationType) {
+  const { data, error } = await supabase.rpc("get_not_team_validation_count", {
+    validationtype_param: validationType,
+  });
+
+  // const { data, error } = await supabase.rpc("get_not_team_validation_count");
   if (error) {
     console.error(error);
   }
@@ -287,19 +689,32 @@ export async function getCountAto_groundLeaders(validationType) {
 }
 
 export async function getCountPerBrgy_Summary(validationType) {
-  const val_id = validationIds[validationType] || 1;
-  const { data, error } = await supabase.rpc("get_summary_counts_per_barangay");
-  // const { data, error } = await supabase
-  //   .from("electorates")
-  //   .select(`id,brgy`, {
-  //     count: "exact",
-  //   })
-  //   .is("precinctleader", null)
-  //   .is("voters_type", null);
-
-  if (error) {
-    console.error(error);
-    throw new Error("getCountPerBrgy Ato could not be loaded");
+  if (validationType === "Survey") {
+    const val_id = 1;
+    const { data, error } = await supabase.rpc(
+      "get_electorate_survey_counts_per_brgy"
+    );
+    // const { data, error } = await supabase.rpc("get_summary_counts_per_barangay");
+    console.log("surveys", JSON.stringify(data));
+    if (error) {
+      console.error(error);
+      throw new Error(
+        "get_electorate_survey_counts_per_brgy Ato could not be loaded"
+      );
+    }
+    return { data };
+  } else {
+    const val_id = validationIds[validationType] || 1;
+    const { data, error } = await supabase.rpc(
+      "get_electorate_validation_counts_per_brgy",
+      { validation_id_param: val_id }
+    );
+    // const { data, error } = await supabase.rpc("get_summary_counts_per_barangay");
+    console.log("round validation", JSON.stringify(data));
+    if (error) {
+      console.error(error);
+      throw new Error("getCountPerBrgy Ato could not be loaded");
+    }
+    return { data };
   }
-  return { data };
 }

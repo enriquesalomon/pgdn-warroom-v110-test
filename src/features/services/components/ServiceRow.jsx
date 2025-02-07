@@ -36,7 +36,7 @@ function ServiceRow({ services, index }) {
       <div>{assistance_type}</div>
       <div>{date_availed}</div>
       <div className="truncate max-w-lg">{description}</div>
-      <div>
+      <div className="no-print">
         <Modal>
           <Menus.Menu>
             <Menus.Toggle id={servicesId} />

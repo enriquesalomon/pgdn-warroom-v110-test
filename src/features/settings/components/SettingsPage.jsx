@@ -21,8 +21,9 @@ import Row from "../../../ui/Row";
 import Heading from "../../../ui/Heading";
 import SectorTable from "../../sector/components/SectorTable";
 import AssTypeTable from "../../asstype/components/AssTypeTable";
-import PrecinctTable from "../../clustered-precincts/components/PrecinctTable";
+// import PrecinctTab from "../../clustered-precincts/components/PrecinctTab";
 import EventTypeTable from "../../event-type/components/EventTypeTable";
+import PrecinctTable from "./../../clustered-precincts/components/PrecinctTable";
 const StyledCard = styled.div`
   border: 1px solid var(--color-grey-200);
 
@@ -77,6 +78,23 @@ function SettingsPage() {
         </div>
       ),
     },
+    // {
+    //   title: "Data Analysis",
+    //   content: (
+    //     <div>
+    //       <DataAnalysisTab
+    //         userData={userData}
+    //         projected_turnout={projected_turnout}
+    //         projected_winning_votes={projected_winning_votes}
+    //         projected_pl={projected_pl}
+    //         projected_members={projected_members}
+    //         max_teammembers_included_leader={max_teammembers_included_leader}
+    //         isUpdating={isUpdating}
+    //         updateSetting={updateSetting}
+    //       />
+    //     </div>
+    //   ),
+    // },
     {
       title: "Sector",
       content: (
@@ -110,7 +128,6 @@ function SettingsPage() {
       ),
     },
   ];
-
   return (
     <>
       <Tab tabs={tabs} />
@@ -131,7 +148,7 @@ const ValidationTab = ({
       ? validations.map((validation) => validation && validation.isrunning)
       : []
   );
-
+  console.log("validation json", JSON.stringify(validations));
   const toggleSwitch = (index) => {
     const currentState = toggles[index];
     let alertMessage = "";
@@ -142,24 +159,37 @@ const ValidationTab = ({
     );
 
     let confirmation = false;
+    console.log("currentState json", JSON.stringify(currentState));
+    console.log("validation id", JSON.stringify(validations[index].id));
+    if (validations[index].islock === false) {
+      if (!currentState && otherRunningValidations) {
+        // //checking if no requests is pending
+        // if (requests.data && requests.data.length > 0) {
+        //   alert(
+        //     "You can't turn this validation on because there are still Pending Requests need to be completed."
+        //   );
+        //   return null;
+        // }
 
-    if (!currentState && otherRunningValidations) {
-      alert(
-        "You can't turn this validation on because other validations are still running."
-      );
-    } else {
-      if (currentState) {
-        alertMessage =
-          "Are you sure you want to turn this " +
-          validations[index].validation_name +
-          " validations off.?";
+        alert(
+          "You can't turn this validation on because other validations are still running."
+        );
       } else {
-        alertMessage =
-          "Are you sure you want to turn this " +
-          validations[index].validation_name +
-          " validations on.?";
+        if (currentState) {
+          alertMessage =
+            "Are you sure you want to turn this " +
+            validations[index].validation_name +
+            " validations off.?";
+        } else {
+          alertMessage =
+            "Are you sure you want to turn this " +
+            validations[index].validation_name +
+            " validations on.?";
+        }
+        confirmation = window.confirm(alertMessage);
       }
-      confirmation = window.confirm(alertMessage);
+    } else {
+      alert("You can't turn this validation on because it is already locked.");
     }
 
     if (confirmation) {
@@ -226,7 +256,7 @@ const ValidationTab = ({
                     <div
                       className={`absolute left-0 w-8 h-8 rounded-full shadow-md transform transition-transform duration-300 ${
                         toggles[index]
-                          ? "bg-orange-400 translate-x-8"
+                          ? "bg-green-800 translate-x-8"
                           : "bg-gray-400"
                       }`}
                     ></div>
@@ -262,14 +292,15 @@ const ValidationTab = ({
                     {/* STATUS: {toggles[index] ? "ON" : "OFF"} */}
                     STATUS:{" "}
                     {toggles[index] === true && <Tag type="green"> ON</Tag>}
-                    {toggles[index] === false && <Tag type="red">OFF</Tag>}
+                    {toggles[index] === false && <Tag type="red">OFF</Tag>}{" "}
+                    {validation.islock === true && <Tag type="red">LOCKED</Tag>}
                   </span>
                 </div>
               </div>
 
               <Modal>
                 <Modal.Open opens="service-form">
-                  <div className="text-orange-300 flex text-2xl justify-center items-center hover:bg-orange-300 hover:text-white hover:cursor-pointer font-bold py-2 px-4 rounded ">
+                  <div className="text-green-300 flex text-2xl justify-center items-center hover:bg-[#229954] hover:text-white hover:cursor-pointer font-bold py-2 px-4 rounded ">
                     <IoSettingsSharp className="text-sm sm:text-4xl" />
                   </div>
                 </Modal.Open>
@@ -411,7 +442,6 @@ const AssTypeTab = () => {
     </>
   );
 };
-
 const PrecinctTab = () => {
   return (
     <>
@@ -426,6 +456,7 @@ const PrecinctTab = () => {
     </>
   );
 };
+
 const EventTypeTab = () => {
   return (
     <>
@@ -442,4 +473,5 @@ const EventTypeTab = () => {
     </>
   );
 };
+
 export default SettingsPage;

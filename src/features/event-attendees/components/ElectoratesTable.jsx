@@ -59,6 +59,7 @@ function ElectoratesTable({ onSelectElectorate, onCloseModal }) {
               qr_code: electorate.qr_code,
               precinctno: electorate.precinctno,
               brgy: electorate.brgy,
+              purok: electorate.purok,
             },
           ],
           {

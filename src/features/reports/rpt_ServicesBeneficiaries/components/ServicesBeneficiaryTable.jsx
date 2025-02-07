@@ -24,37 +24,12 @@ function ServicesBeneficiaryTable() {
   const [searchParams] = useSearchParams();
   const voters_type = searchParams.get("voters_type");
   let filteredData = all_availed;
-  if (voters_type === "BACO") {
-    filteredData = electorates.filter(
-      (item) => item.electorates.isbaco === true
-    );
-  }
-  if (voters_type === "GM") {
-    filteredData = electorates.filter(
-      (item) => item.electorates.is_gm === true
-    );
-  }
-  if (voters_type === "AGM") {
-    filteredData = electorates.filter(
-      (item) => item.electorates.is_agm === true
-    );
-  }
-  if (voters_type === "LEGEND") {
-    filteredData = electorates.filter(
-      (item) => item.electorates.is_legend === true
-    );
-  }
-  if (voters_type === "ELITE") {
-    filteredData = electorates.filter(
-      (item) => item.electorates.is_elite === true
-    );
-  }
-  if (voters_type === "TOWER") {
+  if (voters_type === "PRECINCT_LEADER") {
     filteredData = electorates.filter(
       (item) => item.electorates.isleader === true
     );
   }
-  if (voters_type === "WARRIORS") {
+  if (voters_type === "MEMBERS") {
     filteredData = electorates.filter(
       (item) =>
         item.electorates.precinctleader !== null &&
@@ -80,6 +55,8 @@ function ServicesBeneficiaryTable() {
 
   const queryClient = useQueryClient();
   const userData = queryClient.getQueryData(["user"]);
+
+  const isKalasag = userData.email === "superadmin@gmail.com";
   const allow_export = userData.user_metadata.account_role === "Super Admin";
 
   const [fetchAll, setFetchAll] = useState(false);
@@ -132,7 +109,7 @@ function ServicesBeneficiaryTable() {
             onChange={handleSearchChange}
             width="107rem"
           />
-          {allow_export && (
+          {(allow_export || isKalasag) && (
             <Button
               disabled={isPending01 || exceldata?.length === 0}
               onClick={() => exportExcel(exceldata)}

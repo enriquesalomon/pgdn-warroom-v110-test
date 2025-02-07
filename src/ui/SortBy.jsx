@@ -6,6 +6,7 @@
 //   const sortBy = searchParams.get("sortBy") || "";
 
 //   function handleChange(e) {
+//     searchParams.delete("page"); // Remove the page query parameter
 //     searchParams.set("sortBy", e.target.value);
 //     setSearchParams(searchParams);
 //   }

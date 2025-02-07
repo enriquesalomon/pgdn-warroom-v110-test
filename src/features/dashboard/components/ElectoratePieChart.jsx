@@ -37,97 +37,130 @@ function ElectoratePieChart({
   tot_Validated,
   tot_Electorates,
   Ato,
-  Unvalidated_Dili,
+  dili,
+  Unvalidated,
   tot_Ato_groundManagement,
   OT,
   INC,
   JEHOVAH,
+  undecided,
+  deceased,
+  nvs,
   isZoom,
 }) {
   const tot_dili_unvalidate =
-    tot_Electorates - (tot_Validated + tot_Ato_groundManagement);
+    tot_Electorates - (tot_Validated + tot_Ato_groundManagement + Ato + OT);
   const { isDarkMode } = useDarkMode();
   const total =
-    tot_Ato_groundManagement + Ato + Unvalidated_Dili + OT + INC + JEHOVAH;
+    tot_Ato_groundManagement +
+    Ato +
+    dili +
+    Unvalidated +
+    OT +
+    INC +
+    JEHOVAH +
+    deceased +
+    undecided +
+    nvs;
 
   // alert(total); 71005
   const startDataLight = [
     {
-      category: "UNVALIDATED_DILI",
+      category: "UNVALIDATED",
       value: tot_dili_unvalidate,
       // value: Unvalidated_Dili,
-      color: "#9E9E9E",
+      color: "#B75CFF",
     },
     {
       category: "ATO",
       value: Ato + tot_Ato_groundManagement,
-      color: "#FFA500",
+      color: "#489369",
+    },
+    {
+      category: "DILI",
+      value: dili,
+      color: "#FEE2E2",
     },
 
-    // {
-    //   category: "UNDECIDED",
-    //   value: Undecided,
-    //   color: "#9CA3AF",
-    // },
-    // {
-    //   category: "DECEASED",
-    //   value: Deceased,
-    //   color: "#080808",
-    // },
+    {
+      category: "UNDECIDED",
+      value: undecided,
+      color: "#FEF9C3",
+    },
+    {
+      category: "DECEASED",
+      value: deceased,
+      color: "#080808",
+    },
     {
       category: "Out of Town",
       value: OT,
-      color: "#90CAF9",
+      color: "#FB9EC6",
     },
     {
       category: "INC",
       value: INC,
-      color: "#8CC640",
+      color: "#00FF9C",
     },
     {
       category: "JEHOVAH",
       value: JEHOVAH,
-      color: "#4A6DA7",
+      color: "#F3F4F6",
+    },
+    {
+      category: "NVS",
+      value: nvs,
+      color: "#FFC966",
     },
   ];
 
   const startDataDark = [
     {
-      category: "UNVALIDATED_DILI",
+      category: "UNVALIDATED",
       value: tot_dili_unvalidate,
-      color: "#9E9E9E",
+      // value: Unvalidated_Dili,
+      color: "#B75CFF",
     },
     {
-      category: "Ato",
+      category: "ATO",
       value: Ato + tot_Ato_groundManagement,
-      color: "#FFA500",
+      color: "#489369",
+    },
+    {
+      category: "DILI",
+      value: dili,
+      color: "#FEE2E2",
     },
 
-    // {
-    //   category: "Undecided",
-    //   value: Undecided,
-    //   color: "#9CA3AF",
-    // },
-    // {
-    //   category: "Deceased",
-    //   value: Deceased,
-    //   color: "#080808",
-    // },
-
+    {
+      category: "UNDECIDED",
+      value: undecided,
+      color: "#FEF9C3",
+    },
+    {
+      category: "DECEASED",
+      value: deceased,
+      color: "#080808",
+    },
     {
       category: "Out of Town",
       value: OT,
-      color: "#90CAF9",
+      color: "#FB9EC6",
     },
     {
       category: "INC",
-      value: OT,
-      color: "#8CC640",
+      value: INC,
+      color: "#00FF9C",
     },
     {
       category: "JEHOVAH",
       value: JEHOVAH,
-      color: "#4A6DA7",
+      color: "#F3F4F6",
+    },
+    {
+      category: "NVS",
+      value: nvs,
+      color: "#FFC966",
     },
   ];
 
@@ -189,13 +222,15 @@ function ElectoratePieChart({
   };
   const [searchParams] = useSearchParams();
   let validationType = searchParams.get("validation");
-  validationType = validationMapping[validationType] || "first_validation";
+  validationType = validationMapping[validationType] || "Survey";
   validationType =
     validationType === "third_validation"
       ? "3rd Validation"
       : validationType === "second_validation"
       ? "2nd Validation"
-      : "1st Validation";
+      : validationType === "first_validation"
+      ? "1st Validation"
+      : "Survey";
   return (
     <ChartBox>
       <div className="flex justify-between">
@@ -204,7 +239,7 @@ function ElectoratePieChart({
           <Heading className="underline decoration-solid" as="h6">
             Including Unvalidated Data
           </Heading>
-          {/* <span className="ml-7">{validationType}</span> */}
+          <span className="ml-7">{validationType}</span>
         </div>
 
         {!isZoom && (
@@ -224,12 +259,16 @@ function ElectoratePieChart({
                 <ElectoratePieChart
                   tot_Validated={tot_Validated}
                   tot_Electorates={tot_Electorates}
+                  dili={dili}
                   Ato={Ato}
                   tot_Ato_groundManagement={tot_Ato_groundManagement}
-                  Unvalidated_Dili={Unvalidated_Dili}
+                  Unvalidated={Unvalidated}
                   OT={OT}
                   INC={INC}
                   JEHOVAH={JEHOVAH}
+                  undecided={undecided}
+                  deceased={deceased}
+                  nvs={nvs}
                   isZoom={true}
                 />
               </Modal.Window>

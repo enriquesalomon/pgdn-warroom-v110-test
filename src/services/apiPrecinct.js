@@ -30,3 +30,16 @@ export async function getPrecinct({ page, searchTerm }) {
 
   return { data, count };
 }
+
+export async function getBrgy_Precincts(brgy) {
+  // console.log("the brgy", brgy);
+  let query = supabase
+    .from("clustered_precincts")
+    .select("*", {
+      count: "exact",
+    })
+    // .eq("barangay", brgy)
+    .order("id", { ascending: true });
+  const { data } = await query;
+  return { data };
+}

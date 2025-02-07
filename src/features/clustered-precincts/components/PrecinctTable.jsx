@@ -11,12 +11,6 @@ function PrecinctTable() {
   console.log("asdasdasd", count);
   return (
     <Menus>
-      {/* <div className="flex-row">
-        <div className="w-full ">
-          <AddPrecinct />
-        </div>
-      </div> */}
-
       <Table columns="1fr 1fr 1fr 1fr 1fr">
         <Table.Header>
           <div>ID</div>

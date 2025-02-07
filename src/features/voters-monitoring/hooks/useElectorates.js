@@ -8,6 +8,7 @@ import {
   getCountUndecided,
   getCountPerBrgy,
   getCountAto_VotersMonitoring,
+  getCountVotersScannedPerBrgy,
 } from "../../../services/apiDashboardDatas";
 import { useSearchParams } from "react-router-dom";
 
@@ -109,7 +110,7 @@ export function useTotalScannedPerBrgy() {
 
   const { isPending, data, error } = useQuery({
     queryKey: ["total_Scanned_PerBrgy"],
-    queryFn: ({ queryKey }) => getCountPerBrgy(),
+    queryFn: ({ queryKey }) => getCountVotersScannedPerBrgy(),
     staleTime: 5 * 60 * 1000, // 5 minute for dashboard stats
   });
 

@@ -11,7 +11,6 @@ function Account() {
   const isAllowed = parsePage(pagePermission, "account");
 
   if (!isAllowed) {
-    // If isDashboardAllowed is false, return null or an alternative component/message
     return <UnAuthorized headerText="Page Not Found" />;
   }
   return (

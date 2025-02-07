@@ -93,20 +93,21 @@ function Pagination({ count, set_pagesize }) {
         </span>{" "}
         of <span>{count}</span> results
       </P>
+      <div className="no-print">
+        <Buttons>
+          <PaginationButton onClick={prevPage} disabled={currentPage === 1}>
+            <HiChevronLeft /> <span>Previous</span>
+          </PaginationButton>
 
-      <Buttons>
-        <PaginationButton onClick={prevPage} disabled={currentPage === 1}>
-          <HiChevronLeft /> <span>Previous</span>
-        </PaginationButton>
-
-        <PaginationButton
-          onClick={nextPage}
-          disabled={currentPage === pageCount}
-        >
-          <span>Next</span>
-          <HiChevronRight />
-        </PaginationButton>
-      </Buttons>
+          <PaginationButton
+            onClick={nextPage}
+            disabled={currentPage === pageCount}
+          >
+            <span>Next</span>
+            <HiChevronRight />
+          </PaginationButton>
+        </Buttons>
+      </div>
     </StyledPagination>
   );
 }

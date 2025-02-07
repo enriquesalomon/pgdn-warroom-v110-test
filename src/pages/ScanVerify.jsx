@@ -9,9 +9,12 @@ import BarangayFilter from "../ui/BarangayFilter";
 import ListFilter from "../features/scan_verify/components/ListFilter";
 import AddVerify from "../features/scan_verify/components/AddVerify";
 import VotersTable from "../features/scan_verify/components/VotersTable";
+import { useFetchSettings } from "../features/request/hooks/useRequest";
+import { FaCircleInfo } from "react-icons/fa6";
 // import BarangayFilter from "../ui/BarangayFilter";
 
 export default function ScanVerify() {
+  const { data: ValidationSettings } = useFetchSettings();
   const viewable_brgy = localStorage.getItem("viewable_brgy");
   const { pagePermission } = usePagePermissionContext();
   const isAllowed = parsePage(pagePermission, "scan_verify");
@@ -22,19 +25,51 @@ export default function ScanVerify() {
     // If isDashboardAllowed is false, return null or an alternative component/message
     return <UnAuthorized headerText="Page Not Found" />;
   }
+  console.log("ni select og members", JSON.stringify(ValidationSettings));
+  let notitext;
+  let isFinalValidation;
+  if (ValidationSettings?.length > 0) {
+    isFinalValidation = ValidationSettings[0].id === 4;
+    notitext = isFinalValidation
+      ? "Election Day has begun. Adding and updating team members has already been deactivated."
+      : "";
+  }
   return (
     <>
       <Row type="horizontal">
         <Heading as="h2">Affirmative Voters</Heading>
         <BarangayFilter viewable_brgy={viewable_brgy} />
       </Row>
-      <hr className="border-t-1 border-gray-300" />
-      <Row type="horizontal">
+
+      {isFinalValidation ? (
+        <>
+          <div
+            className={`px-4 py-2 rounded-md shadow-lg ${
+              !ValidationSettings?.[0]?.validation_name
+                ? "bg-yellow-500"
+                : "bg-yellow-500"
+            } text-white`}
+          >
+            <p className="flex items-center font-thin">
+              {ValidationSettings?.[0]?.validation_name ? (
+                <>
+                  <FaCircleInfo className="mr-2" />
+                  {notitext}
+                </>
+              ) : null}
+            </p>
+          </div>
+        </>
+      ) : (
+        <hr className="border-t-1 border-gray-300" />
+      )}
+
+      {/* <Row type="horizontal">
         <div></div>
         <ListFilter />
-      </Row>
+      </Row> */}
       <Row>
-        {isAllowedAction ? <AddVerify /> : null}
+        {isAllowedAction && !isFinalValidation ? <AddVerify /> : null}
         <VotersTable />
       </Row>
     </>

@@ -80,8 +80,31 @@ export async function deactivateEvent(id) {
 
   return data;
 }
+const checkIfEventExistActive = async (id) => {
+  console.log("this isx", id);
+  const { data, error } = await supabase
+    .from("events") // Replace with your table name
+    .select("id")
+    .is("is_active", true)
+    .neq("id", id);
+
+  if (error) {
+    console.error("Error checking for existing electorates team:", error);
+    return false;
+  }
+
+  return data.length > 0; // Returns true if a match is found, false otherwise
+};
 
 export async function activateEvent(id) {
+  const hasActiveEvent = await checkIfEventExistActive(id);
+
+  if (hasActiveEvent) {
+    throw new Error(
+      "Only one event can be active at a time. Activation failed."
+    );
+  }
+
   const { data, error } = await supabase
     .from("events")
     .update({ is_active: true })

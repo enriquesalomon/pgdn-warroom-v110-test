@@ -35,15 +35,16 @@ const StyledBox = styled(DashboardBox)`
   }
 `;
 function DashboardLayout() {
-  // const { isPending: isPending1, data: total_VoterAto } = useTotalVoterAto();
-  const { isPending: isPending1, data: total_VoterAto } = useTotalAto();
+  const { isPending: isPending1, data: total_VoterAto } = useTotalVoterAto();
+  console.log("--total voters ato", total_VoterAto);
+  // const { isPending: isPending1, data: total_VoterAto } = useTotalAto();
   const { isPending: isPending2, data: total_Scanned } = useTotalScanned();
   const { isPending: isPending3, data: dataScannedPerbrgy } =
     useTotalScannedPerBrgy();
-  const { isPending: isPending4, data: dataAtoPerbrgy } =
-    useTotal_Count_Summaru_PerBrgy();
+  // const { isPending: isPending4, data: dataAtoPerbrgy } =
+  //   useTotal_Count_Summaru_PerBrgy();
 
-  // const { isPending: isPending4, data: dataAtoPerbrgy } = useTotalAtoPerBrgy();
+  const { isPending: isPending4, data: dataAtoPerbrgy } = useTotalAtoPerBrgy();
   const { isPending: isPending5, data: data_lates_scanned } = useLatesScanned();
   let tot_Unscanned = total_VoterAto - total_Scanned;
   if (isPending1 || isPending2 || isPending3 || isPending4 || isPending5)

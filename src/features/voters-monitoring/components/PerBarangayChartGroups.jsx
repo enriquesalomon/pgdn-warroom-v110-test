@@ -133,8 +133,8 @@ function PerBarangayChartGroups({ data_scanned_brgy, data_ato_perBrgy }) {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="TOTAL_VOTERS_ATO" fill="#FFA500" />
-                <Bar dataKey="TOTAL_SCANNED" fill="#469E67" />
+                <Bar dataKey="TOTAL_VOTERS_ATO" fill="#52BE80" />
+                <Bar dataKey="TOTAL_SCANNED" fill="#145A32" />
                 {/* <Bar dataKey="TOTAL_UNSCANNED" fill="#9CA3AF" /> */}
               </ComposedChart>
             </ResponsiveContainer>
@@ -161,8 +161,8 @@ function PerBarangayChartGroups({ data_scanned_brgy, data_ato_perBrgy }) {
                 <XAxis dataKey="brgy" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="TOTAL_VOTERS_ATO" fill="#FFA500" />
-                <Bar dataKey="TOTAL_SCANNED" fill="#469E67" />
+                <Bar dataKey="TOTAL_VOTERS_ATO" fill="#52BE80" />
+                <Bar dataKey="TOTAL_SCANNED" fill="#145A32" />
                 {/* <Bar dataKey="TOTAL_UNSCANNED" fill="#9CA3AF" /> */}
               </ComposedChart>
             </ResponsiveContainer>
@@ -175,8 +175,8 @@ function PerBarangayChartGroups({ data_scanned_brgy, data_ato_perBrgy }) {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="TOTAL_VOTERS_ATO" fill="#FFA500" />
-                <Bar dataKey="TOTAL_SCANNED" fill="#469E67" />
+                <Bar dataKey="TOTAL_VOTERS_ATO" fill="#52BE80" />
+                <Bar dataKey="TOTAL_SCANNED" fill="#145A32" />
                 {/* <Bar dataKey="TOTAL_UNSCANNED" fill="#9CA3AF" /> */}
               </ComposedChart>
             </ResponsiveContainer>

@@ -74,7 +74,7 @@ function SignupForm({
 }) {
   console.log("userToeadasd", userToEdit);
   let account_role = ["Super Admin", "Administrator", "Staff"];
-
+  let account_role_app = ["Mayor"];
   const queryClient = useQueryClient();
   const userData = queryClient.getQueryData(["user"]);
 
@@ -295,7 +295,7 @@ function SignupForm({
           >
             {/* <option value="">Select...</option> */}
             <option value="Portal User">Portal User</option>
-            {/* <option value="App User">App User</option> */}
+            <option value="App User">App User</option>
           </StyledSelect>
         </FormRow>
         <FormRow label="Account role" error={errors?.account_role?.message}>
@@ -315,6 +315,15 @@ function SignupForm({
             {watch("accesstype") === "Portal User" && (
               <>
                 {account_role.map((option, index) => (
+                  <option key={index} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </>
+            )}
+             {watch("accesstype") === "App User" && (
+              <>
+                {account_role_app.map((option, index) => (
                   <option key={index} value={option}>
                     {option}
                   </option>

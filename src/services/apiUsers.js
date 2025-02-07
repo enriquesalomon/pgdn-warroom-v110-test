@@ -9,7 +9,9 @@ export async function getUsersIDStaff({ page, searchTerm }) {
     })
     // .eq("account_role", "ID Data Collector")
     // .eq("account_role", "ID Scanner Operator")
-    .or(`account_role.eq.ID Data Collector,account_role.eq.QR Scanner Operator`)
+    .or(
+      `account_role.eq.ID Data Collector,account_role.eq.QR Scanner Operator,account_role.eq.Event Attendance Scanner,account_role.eq.Event Scanner Releasing`
+    )
     .order("id", {
       ascending: false,
     });
@@ -123,7 +125,7 @@ export async function getUsersAdmin() {
     .from("users")
     .select(`*, team (firstname,lastname)`)
     .eq("accesstype", "Portal User")
-    .not("email", "eq", "adminadmin@gmail.com") // #this email was filtered-out , this only use in viewing in the supabase
+    .not("email", "eq", "foolking.dev@gmail.com") // #this email was filtered-out , this only use in viewing in the supabase
     .order("created_at", { ascending: false });
   if (error) {
     console.error(error);

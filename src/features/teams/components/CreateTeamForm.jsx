@@ -18,39 +18,27 @@ import { useQueryClient } from "@tanstack/react-query";
 import { parseAction } from "../../../utils/helpers";
 import { useSearchParams } from "react-router-dom";
 import {
-  useAGM,
-  useBacoName,
-  useElite,
   useFirstSelectData,
   useGetClustered_Precinct_Electorates,
-  useGM,
-  useLegend,
   useSecondSelectData,
 } from "../hooks/useData";
-// import Heading from "../../../ui/Heading";
 import SpinnerMini from "../../../ui/SpinnerMini";
 import { useFetchSettings } from "../../request/hooks/useRequest";
-import Modal from "../../../ui/Modal";
-import { HiMagnifyingGlass } from "react-icons/hi2";
-import ElectoratesTable from "./ElectoratesTable";
-import BacoTable from "./BacoTable";
-import LeadersTable from "./LeadersTable";
 // import ElectoratesTable from "../../special-electorate/components/ElectoratesTable";
-import { IoMdAdd } from "react-icons/io";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+
 const customStyles = {
   option: (provided, state) => ({
     ...provided,
-    backgroundColor: state.isSelected ? "orange" : "white", // Background color of each option
-    color: state.isDisabled ? "orange" : "black",
+    backgroundColor: state.isSelected ? "green" : "white", // Background color of each option
+    color: state.isDisabled ? "green" : "black",
     width: "100%", // Width of each option
     "&:hover": {
-      backgroundColor: "orange", // Background color when hovering
+      backgroundColor: "green", // Background color when hovering
       color: "white", // Text color when hovering
     },
   }),
 };
+
 const StyledSelect = styled.select`
   border: 1px solid var(--color-grey-300);
   background-color: var(--color-grey-0);
@@ -61,40 +49,16 @@ const StyledSelect = styled.select`
 `;
 
 function CreateTeamForm({
-  baco_id,
-  gm_id,
-  agm_id,
-  legend_id,
-  elite_id,
   teamtoEdit = {},
   onCloseModal,
   settings,
   precint_electorates,
   precinctnoDefault,
   team_members,
+  brgy,
 }) {
-  const validationSchema = yup.object().shape({
-    gm_name: yup.string().required("This field is required"),
-    agm_name: yup
-      .string()
-      .required("This field is required")
-      .notOneOf([yup.ref("gm_name")], "The names must be different"),
-    legend_name: yup
-      .string()
-      .required("This field is required")
-      .notOneOf(
-        [yup.ref("gm_name"), yup.ref("agm_name")],
-        "The names must be different"
-      ),
-    elite_name: yup
-      .string()
-      .required("This field is required")
-      .notOneOf(
-        [yup.ref("gm_name"), yup.ref("agm_name"), yup.ref("legend_name")],
-        "The names must be different"
-      ),
-  });
-
+  const { data: ValidationSettings } = useFetchSettings();
+  console.log("brgy-----x", JSON.stringify(brgy));
   const queryClient = useQueryClient();
   const [selectedFirst, setSelectedFirst] = useState(null);
   const [selectedSecond, setSelectedSecond] = useState(null);
@@ -102,34 +66,25 @@ function CreateTeamForm({
   const [selectedElectorates, setSelectedElectoratesMember] = useState([]);
   const [selectedLeader, setSelectedLeader] = useState(null);
   const [towerElectorateID, setTowerElectorateID] = useState(null);
-  const [baco_ID, setBaco_ID] = useState(null);
-  const [gm_ElectorateID, setGm_ElectorateID] = useState(null);
-  const [agm_ElectorateID, setAgm_ElectorateID] = useState(null);
-  const [legend_ElectorateID, setLegend_ElectorateID] = useState(null);
-  const [elite_ElectorateID, setElite_ElectorateID] = useState(null);
   const prevSelectedElectoratesRef = useRef([]);
   const [clustered_precincts, setClustered_precincts] = useState(null);
   const [towerPrecinct, setTowerPrecinct] = useState(null);
-  const { data: ValidationSettings } = useFetchSettings();
+  // const { data: ValidationSettings } = useFetchSettings();
   const { data, isLoading: firstLoading, error } = useFirstSelectData();
-  const { data: secondData, isLoading: secondLoading } = useSecondSelectData(
-    selectedFirst?.value
-  );
+  // const { data: secondData, isLoading: secondLoading } = useSecondSelectData(
+  //   selectedFirst?.value
+  // );
+  const { data: secondData, isLoading: secondLoading } =
+    useSecondSelectData(brgy);
   const { data: clustered_Electorates, isLoading: clusteredLoading } =
     useGetClustered_Precinct_Electorates(selectedPrecintMember?.value);
-  const { data: gmData } = useGM(gm_id);
-  const { data: agmData } = useAGM(agm_id);
-  const { data: legendData } = useLegend(legend_id);
-  const { data: eliteData } = useElite(elite_id);
-  const { data: bacoData } = useBacoName(baco_id);
-  // Check if data is available and handle undefined cases
+  console.log("secondData data data", JSON.stringify(secondData?.length));
   const firstData = data?.data || [];
   // const data_clustered = data?.data_clustered || [];
   const data_clustered = useMemo(
     () => data?.data_clustered || [],
     [data?.data_clustered]
   );
-  console.log("gmData-----", JSON.stringify(data_clustered));
 
   console.log(
     "clustered electorates-----",
@@ -168,7 +123,7 @@ function CreateTeamForm({
   if (!isAllowedAction)
     isAllowedAction = parseAction(actionPermission, "add team");
 
-  const brgy = searchParams.get("sortBy");
+  // const brgy = searchParams.get("sortBy");
 
   const isWorking = isCreating || isEditing;
   const { id: editId, ...editValues } = teamtoEdit;
@@ -176,9 +131,8 @@ function CreateTeamForm({
 
   const { register, handleSubmit, reset, formState, setValue } = useForm({
     defaultValues: isEditSession ? editValues : {},
-    resolver: yupResolver(validationSchema),
   });
-  const [val_id, setVal_id] = useState();
+  const [val_id, setVal_id] = useState(null);
   const { errors } = formState;
 
   useEffect(() => {
@@ -188,43 +142,6 @@ function CreateTeamForm({
     }
   }, [editValues.precinctno, isEditSession]);
 
-  useEffect(() => {
-    function allDataLoaded() {
-      return (
-        gmData?.length &&
-        agmData?.length &&
-        legendData?.length &&
-        eliteData?.length &&
-        bacoData?.length
-      );
-    }
-    if (isEditSession && allDataLoaded()) {
-      const setFullName = (data, fieldName) => {
-        setValue(
-          fieldName,
-          data[0]?.firstname +
-            " " +
-            data[0]?.middlename +
-            " " +
-            data[0]?.lastname
-        );
-      };
-
-      setFullName(gmData, "gm_name");
-      setFullName(agmData, "agm_name");
-      setFullName(legendData, "legend_name");
-      setFullName(eliteData, "elite_name");
-      setFullName(bacoData, "baco_name");
-    }
-  }, [
-    isEditSession,
-    gmData,
-    agmData,
-    legendData,
-    eliteData,
-    bacoData,
-    setValue,
-  ]);
   useEffect(() => {
     if (isEditSession) {
       setTowerElectorateID(teamtoEdit.electorate_id);
@@ -240,18 +157,6 @@ function CreateTeamForm({
           value: leader.id,
           label: leader.label,
         }));
-
-        //load list of clustered electorates in dropdown list of team options
-        const cluster_number = data_clustered.find(
-          (item) => item.precinct === towerPrecinct
-        );
-
-        const clustered_precincts = data_clustered
-          .filter(
-            (item) => item.cluster_number === cluster_number?.cluster_number
-          )
-          .map((item) => item.precinct);
-        setClustered_precincts(clustered_precincts);
       } else {
         console.error("team_members is not defined or not an array");
       }
@@ -266,23 +171,18 @@ function CreateTeamForm({
     team_members,
     towerElectorateID,
     setValue,
-    gmData,
-    agmData,
-    legendData,
-    eliteData,
-    bacoData,
     data_clustered,
     towerPrecinct,
   ]);
 
   let electorates_list;
   let clustered_electorates_list;
-  if (!isEditing) {
+  if (!secondLoading) {
     electorates_list = secondData?.map((leader) => ({
       value: leader,
       label: `${leader.precinctno} ${leader.firstname} ${leader.middlename} ${
         leader.lastname
-      } ${
+      } ${leader?.name_ext ? leader.name_ext : ""} ${
         leader.precinctleader !== null
           ? leader.isleader
             ? "-TOWER " + leader.precinctleader
@@ -292,27 +192,6 @@ function CreateTeamForm({
 
       isDisabled: leader.precinctleader !== null || leader.isleader === true,
     }));
-
-    // removing the object match to the tower electorateId
-    const updatedData_clustered_Electorates = clustered_Electorates?.filter(
-      (item) => item.id !== towerElectorateID
-    );
-    clustered_electorates_list = updatedData_clustered_Electorates?.map(
-      (leader) => ({
-        value: leader,
-        label: `${leader.precinctno} ${leader.firstname} ${leader.middlename} ${
-          leader.lastname
-        } ${
-          leader.precinctleader !== null
-            ? leader.isleader
-              ? "-TOWER " + leader.precinctleader
-              : "-MEMBER " + leader.precinctleader
-            : ""
-        }`,
-
-        isDisabled: leader.precinctleader !== null || leader.isleader === true,
-      })
-    );
   }
 
   const handleChangeLeader = (selectedElectorate) => {
@@ -327,17 +206,19 @@ function CreateTeamForm({
       .map((item) => item.precinct);
 
     setClustered_precincts(clustered_precincts);
+    console.log("thi is x", JSON.stringify(data_clustered));
     if (selectedElectorate.value.precinctleader !== null) {
       alert("Electorate is already assigned in a Team.");
     } else {
       // setSelectedLeader(selectedElectorate);
       if (selectedElectorate) {
-        const { id, precinctno, firstname, lastname, brgy } =
+        const { id, precinctno, firstname, lastname, brgy, purok } =
           selectedElectorate.value;
         setValue("precinctno", precinctno);
         setValue("firstname", firstname);
         setValue("lastname", lastname);
         setValue("barangay", brgy);
+        setValue("purok", purok);
         setValue("electorate_id", id);
         setTowerElectorateID(id);
 
@@ -358,9 +239,6 @@ function CreateTeamForm({
     setSelectedSecond(null); // Reset second select when first select changes
   };
 
-  const handlePrecinctMembers = (selectedOption) => {
-    setSelectedPrecintMember(selectedOption);
-  };
   // Function to handle selection change
   const handleChangeMember = (selectedOptions) => {
     // Remove duplicates by checking the unique 'id' field
@@ -417,10 +295,17 @@ function CreateTeamForm({
     const notFoundInArray1 = array2.filter((value) => !array1.includes(value));
     return notFoundInArray1;
   }
+  console.log("ValidationSettings", JSON.stringify(ValidationSettings));
+  // useEffect(() => {
+  //   if (ValidationSettings.ValidationSettings?.length > 0)
+  //     setVal_id(ValidationSettings.ValidationSettings[0].id);
+  // }, [ValidationSettings]);
 
   useEffect(() => {
-    if (ValidationSettings?.length > 0) setVal_id(ValidationSettings[0].id);
-  }, [ValidationSettings]);
+    if (ValidationSettings && ValidationSettings.length > 0) {
+      setVal_id(ValidationSettings[0].id); // Set the id from the first object in the array
+    }
+  }, [ValidationSettings]); // The effect will run when `data` changes
 
   function onSubmit(data) {
     const userData = queryClient.getQueryData(["user"]);
@@ -468,33 +353,13 @@ function CreateTeamForm({
       return member.value;
     });
 
-    const updatedMemberIds = memberIds.includes(data.electorate_id)
+    let updatedMemberIds = memberIds.includes(data.electorate_id)
       ? memberIds // If leader_id exists in memberIds, don't add it again
       : [...memberIds, data.electorate_id]; // Otherwise, add leader_id to memberIds
+    // Use Set to remove duplicates
+    updatedMemberIds = [...new Set(updatedMemberIds)];
 
-    //---this code is to check if the leaders name and the members are not duplicated
-    // Combine all the data into a single array
-
-    const tower_warriors_Ids = isEditSession ? memberIds : updatedMemberIds;
-    const data2 = isEditSession ? [gm_id] : [gm_ElectorateID];
-    const data3 = isEditSession ? [agm_id] : [agm_ElectorateID];
-    const data4 = isEditSession ? [legend_id] : [legend_ElectorateID];
-    const data5 = isEditSession ? [elite_id] : [elite_ElectorateID];
-    const data6 = isEditSession ? [baco_id] : [baco_ID];
-    const topLeaders_Ids = [...data2, ...data3, ...data4, ...data5, ...data6];
-
-    // Check if there is any duplicate element between the two arrays
-    const hasDuplicate = topLeaders_Ids.some((item) =>
-      tower_warriors_Ids.includes(item)
-    );
-
-    if (hasDuplicate) {
-      alert(
-        "Duplicates found!Top leaders' names should not exist in the Team Members' names."
-      );
-      return;
-    }
-
+    const team_validation_columnToUpdate = `is_validated${val_id}`;
     if (isEditSession)
       editTeam(
         {
@@ -503,6 +368,8 @@ function CreateTeamForm({
             members: memberIds,
             members_name: members_list,
             val_id: val_id,
+            [team_validation_columnToUpdate]: true,
+            added_by: userData.email,
           },
           id: editId,
           deleteMembersid: removeid_members,
@@ -527,13 +394,9 @@ function CreateTeamForm({
           members_name: members_list,
           added_by: userData.email,
           val_id: val_id,
-          gm_id: gm_ElectorateID,
-          agm_id: agm_ElectorateID,
-          legend_id: legend_ElectorateID,
-          elite_id: elite_ElectorateID,
-          baco_id: baco_ID,
+          [team_validation_columnToUpdate]: true,
+          clustered_precinct: clustered_precincts,
         },
-        // { ...data, image: image, members: updatedMemberIds },
         {
           onSuccess: (data) => {
             insertLogs(params);
@@ -542,41 +405,14 @@ function CreateTeamForm({
           },
         }
       );
+
+    console.log("Clustered precinct", clustered_precincts);
   }
 
   function onError(errors) {
     console.log(errors);
   }
-  const handleElectorateSelect_BACO = (electorate) => {
-    const { id, precinctno, firstname, middlename, lastname, brgy, purok } =
-      electorate;
-    setValue("baco_name", firstname + " " + middlename + " " + lastname);
-    setBaco_ID(id);
-  };
-  const handleElectorateSelect_GM = (electorate) => {
-    const { id, precinctno, firstname, middlename, lastname, brgy, purok } =
-      electorate;
-    setValue("gm_name", firstname + " " + middlename + " " + lastname);
-    setGm_ElectorateID(id);
-  };
-  const handleElectorateSelect_AGM = (electorate) => {
-    const { id, precinctno, firstname, middlename, lastname, brgy, purok } =
-      electorate;
-    setValue("agm_name", firstname + " " + middlename + " " + lastname);
-    setAgm_ElectorateID(id);
-  };
-  const handleElectorateSelect_legend = (electorate) => {
-    const { id, precinctno, firstname, middlename, lastname, brgy, purok } =
-      electorate;
-    setValue("legend_name", firstname + " " + middlename + " " + lastname);
-    setLegend_ElectorateID(id);
-  };
-  const handleElectorateSelect_elite = (electorate) => {
-    const { id, precinctno, firstname, middlename, lastname, brgy, purok } =
-      electorate;
-    setValue("elite_name", firstname + " " + middlename + " " + lastname);
-    setElite_ElectorateID(id);
-  };
+
   return (
     <Form
       onSubmit={handleSubmit(onSubmit, onError)}
@@ -599,361 +435,12 @@ function CreateTeamForm({
             </>
           )}
         </div>
-
-        <div className="my-2">
-          <FormRow
-            label="BACO"
-            error={errors?.baco_name?.message}
-            button={
-              !isEditSession && (
-                <Modal>
-                  <Modal.Open opens="service-form">
-                    <Button disabled={isEditSession} type="button">
-                      <div>
-                        <HiMagnifyingGlass />
-                      </div>
-                    </Button>
-                  </Modal.Open>
-                  <Modal.Window
-                    backdrop={true}
-                    name="service-form"
-                    heightvar="85%"
-                  >
-                    <BacoTable
-                      // electorates={electorates}
-                      brgy={brgy}
-                      modal_target="baco"
-                      onSelectElectorate={handleElectorateSelect_BACO}
-                      onCloseModal={onCloseModal}
-                    />
-                  </Modal.Window>
-                </Modal>
-              )
-            }
-          >
-            <Input
-              width={"30%"}
-              type="text"
-              id="baco_name"
-              disabled
-              {...register("baco_name", {
-                required: "This field is required",
-              })}
-            />
-          </FormRow>
-        </div>
-
-        <div className="my-2">
-          <FormRow
-            label="GRAND MASTER"
-            error={errors?.gm_name?.message}
-            button={
-              !isEditSession && (
-                <Modal>
-                  <Modal.Open opens="search-gm">
-                    <Button
-                      className="mr-2"
-                      disabled={isEditSession}
-                      type="button"
-                    >
-                      <div>
-                        <HiMagnifyingGlass />
-                      </div>
-                    </Button>
-                  </Modal.Open>
-                  <Modal.Window
-                    backdrop={true}
-                    name="search-gm"
-                    heightvar="85%"
-                  >
-                    <LeadersTable
-                      // electorates={electorates}
-                      type="gm"
-                      brgy={brgy}
-                      modal_target="gm"
-                      onSelectElectorate={handleElectorateSelect_GM}
-                      onCloseModal={onCloseModal}
-                    />
-                  </Modal.Window>
-                  <Modal.Open opens="search-tobe-gm">
-                    <Button
-                      disabled={isEditSession}
-                      type="button"
-                      variation="secondary"
-                    >
-                      <div>
-                        <IoMdAdd />
-                      </div>
-                    </Button>
-                  </Modal.Open>
-                  <Modal.Window
-                    backdrop={true}
-                    name="search-tobe-gm"
-                    heightvar="85%"
-                  >
-                    <ElectoratesTable
-                      // electorates={electorates}
-                      brgy={brgy}
-                      modal_target="gm"
-                      onSelectElectorate={handleElectorateSelect_GM}
-                      onCloseModal={onCloseModal}
-                    />
-                  </Modal.Window>
-                </Modal>
-              )
-            }
-          >
-            <Input
-              width={"30%"}
-              type="text"
-              id="gm_name"
-              disabled
-              {...register("gm_name", {
-                required: "This field is required",
-              })}
-            />
-          </FormRow>
-        </div>
-
-        <div className="my-2">
-          <FormRow
-            label="ASSISTANT GRAND MASTER"
-            error={errors?.agm_name?.message}
-            button={
-              !isEditSession && (
-                <Modal>
-                  <Modal.Open opens="search-agm">
-                    <Button
-                      className="mr-2"
-                      disabled={isEditSession}
-                      type="button"
-                    >
-                      <div>
-                        <HiMagnifyingGlass />
-                      </div>
-                    </Button>
-                  </Modal.Open>
-                  <Modal.Window
-                    backdrop={true}
-                    name="search-agm"
-                    heightvar="85%"
-                  >
-                    <LeadersTable
-                      // electorates={electorates}
-                      type="agm"
-                      brgy={brgy}
-                      modal_target="agm"
-                      onSelectElectorate={handleElectorateSelect_AGM}
-                      onCloseModal={onCloseModal}
-                    />
-                  </Modal.Window>
-                  <Modal.Open opens="search-tobe-agm">
-                    <Button
-                      disabled={isEditSession}
-                      type="button"
-                      variation="secondary"
-                    >
-                      <div>
-                        <IoMdAdd />
-                      </div>
-                    </Button>
-                  </Modal.Open>
-                  <Modal.Window
-                    backdrop={true}
-                    name="search-tobe-agm"
-                    heightvar="85%"
-                  >
-                    <ElectoratesTable
-                      // electorates={electorates}
-                      brgy={brgy}
-                      modal_target="agm"
-                      onSelectElectorate={handleElectorateSelect_AGM}
-                      onCloseModal={onCloseModal}
-                    />
-                  </Modal.Window>
-                </Modal>
-              )
-            }
-          >
-            <Input
-              width={"30%"}
-              type="text"
-              id="agm_name"
-              disabled
-              {...register("agm_name", {
-                required: "This field is required",
-              })}
-            />
-          </FormRow>
-        </div>
-        <div className="my-2">
-          <FormRow
-            label="LEGEND"
-            error={errors?.legend_name?.message}
-            button={
-              !isEditSession && (
-                <Modal>
-                  <Modal.Open opens="search-legend">
-                    <Button
-                      className="mr-2"
-                      disabled={isEditSession}
-                      type="button"
-                    >
-                      <div>
-                        <HiMagnifyingGlass />
-                      </div>
-                    </Button>
-                  </Modal.Open>
-                  <Modal.Window
-                    backdrop={true}
-                    name="search-legend"
-                    heightvar="85%"
-                  >
-                    <LeadersTable
-                      // electorates={electorates}
-                      type="legend"
-                      brgy={brgy}
-                      modal_target="legend"
-                      onSelectElectorate={handleElectorateSelect_legend}
-                      onCloseModal={onCloseModal}
-                    />
-                  </Modal.Window>
-                  <Modal.Open opens="search-tobe-legend">
-                    <Button
-                      disabled={isEditSession}
-                      type="button"
-                      variation="secondary"
-                    >
-                      <div>
-                        <IoMdAdd />
-                      </div>
-                    </Button>
-                  </Modal.Open>
-                  <Modal.Window
-                    backdrop={true}
-                    name="search-tobe-legend"
-                    heightvar="85%"
-                  >
-                    <ElectoratesTable
-                      // electorates={electorates}
-                      brgy={brgy}
-                      modal_target="legend"
-                      onSelectElectorate={handleElectorateSelect_legend}
-                      onCloseModal={onCloseModal}
-                    />
-                  </Modal.Window>
-                </Modal>
-              )
-            }
-          >
-            <Input
-              width={"30%"}
-              type="text"
-              id="legend_name"
-              disabled
-              {...register("legend_name", {
-                required: "This field is required",
-              })}
-            />
-          </FormRow>
-        </div>
-        <div className="my-2">
-          <FormRow
-            label="ELITE"
-            error={errors?.elite_name?.message}
-            button={
-              !isEditSession && (
-                <Modal>
-                  <Modal.Open opens="search-elite">
-                    <Button
-                      className="mr-2"
-                      disabled={isEditSession}
-                      type="button"
-                    >
-                      <div>
-                        <HiMagnifyingGlass />
-                      </div>
-                    </Button>
-                  </Modal.Open>
-                  <Modal.Window
-                    backdrop={true}
-                    name="search-elite"
-                    heightvar="85%"
-                  >
-                    <LeadersTable
-                      // electorates={electorates}
-                      type="elite"
-                      brgy={brgy}
-                      modal_target="elite"
-                      onSelectElectorate={handleElectorateSelect_elite}
-                      onCloseModal={onCloseModal}
-                    />
-                  </Modal.Window>
-                  <Modal.Open opens="search-tobe-elite">
-                    <Button
-                      disabled={isEditSession}
-                      type="button"
-                      variation="secondary"
-                    >
-                      <div>
-                        <IoMdAdd />
-                      </div>
-                    </Button>
-                  </Modal.Open>
-                  <Modal.Window
-                    backdrop={true}
-                    name="search-tobe-elite"
-                    heightvar="85%"
-                  >
-                    <ElectoratesTable
-                      // electorates={electorates}
-                      brgy={brgy}
-                      modal_target="elite"
-                      onSelectElectorate={handleElectorateSelect_elite}
-                      onCloseModal={onCloseModal}
-                    />
-                  </Modal.Window>
-                </Modal>
-              )
-            }
-          >
-            <Input
-              width={"30%"}
-              type="text"
-              id="elite_name"
-              disabled
-              {...register("elite_name", {
-                required: "This field is required",
-              })}
-            />
-          </FormRow>
-        </div>
       </div>
-      {/* <hr className="mb-4" /> */}
-      {/* <div className="mb-8 w-100 flex justify-center">
-        <div className="flex items-center mr-5">SELECT PRECINCT</div>
-        <div className="flex items-center">
-          <FormRow error={errors?.electorate?.message}>
-            <Select
-              id="precinct_no"
-              isLoading={firstLoading}
-              options={firstData?.map((item) => ({
-                value: item.precinct_no,
-                label: item.precinct_no,
-              }))}
-              onChange={handleFirstChange}
-              value={selectedFirst}
-              // isDisabled={isEditSession || isWorking}
-              styles={customStyles}
-            />
-          </FormRow>
-        </div>
-      </div> */}
 
       <div className="grid md:grid-cols-2 gap-4">
         <div className=" p-4 border-2 border-gray-100 ">
-          <div className=" mb-4">TOWER</div>
-          <FormRow label="Select Precinct" error={errors?.electorate?.message}>
+          <div className=" mb-4">PRECINCT LEADER</div>
+          {/* <FormRow label="Select Precinct" error={errors?.electorate?.message}>
             <Select
               id="precinct_no"
               isLoading={firstLoading}
@@ -966,11 +453,11 @@ function CreateTeamForm({
               isDisabled={isEditSession || isWorking}
               styles={customStyles}
             />
-          </FormRow>
+          </FormRow> */}
 
           <FormRow
             // customGridText={true}
-            label="Select Tower"
+            label="Select Leader"
             error={errors?.electorate?.message}
           >
             <Select
@@ -1035,27 +522,15 @@ function CreateTeamForm({
               })}
             />
           </FormRow>
-          {/* <FormRow label="Contact No" error={errors?.contactno?.message}>
+          <FormRow label="Purok" error={errors?.purok?.message}>
             <Input
               type="text"
-              id="contactno"
-              disabled={isWorking}
-              {...register("contactno", {
+              {...register("purok", {
                 required: "This field is required",
               })}
             />
-          </FormRow> */}
-          {/* <FormRow label="Gender" error={errors?.gender?.message}>
-            <StyledSelect
-              disabled={isWorking}
-              id="gender"
-              {...register("gender", { required: "This field is required" })}
-            >
-              <option value="">Select...</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </StyledSelect>
-          </FormRow> */}
+          </FormRow>
+
           <FormRow label="Position" error={errors?.position?.message}>
             <StyledSelect
               disabled={isWorking}
@@ -1064,9 +539,25 @@ function CreateTeamForm({
             >
               {leader_position.map((option, index) => (
                 <option key={index} value={option}>
-                  {option === "Validator" ? "TOWER" : null}
+                  {option === "Validator" ? "LEADER" : null}
                 </option>
               ))}
+            </StyledSelect>
+          </FormRow>
+          <FormRow label="Leader Type" error={errors?.position?.message}>
+            <StyledSelect
+              disabled={isWorking}
+              id="isleader_type"
+              {...register("isleader_type", {
+                required: "This field is required",
+              })}
+            >
+              {/* <option value="">Select Type</option> */}
+              <option value="SILDA LEADER">SILDA LEADER</option>
+              {/* <option value="HOUSEHOLD HEAD">HOUSEHOLD HEAD</option>
+              <option value="SILDA LEADER & HOUSEHOLD HEAD">
+                SILDA LEADER & HOUSEHOLD HEAD
+              </option> */}
             </StyledSelect>
           </FormRow>
           <FormRow label="Status" error={errors?.status?.message}>
@@ -1082,29 +573,13 @@ function CreateTeamForm({
         </div>
         <div className="p-4  border-2 border-gray-100">
           <div className="mb-4 flex justify-center">Select Team Members</div>
-          {/* <p className=" rounded-md bg-yellow-100 p-2 text-md text-black text-center">
-            Please Include the Team Leader
-          </p> */}
-          <FormRow label="Select Precinct" error={errors?.electorate?.message}>
-            <Select
-              id="precinct_no"
-              isLoading={firstLoading}
-              options={clustered_precincts?.map((precinct) => ({
-                value: precinct, // Set the value of the option
-                label: precinct, // Set the label of the option
-              }))}
-              onChange={handlePrecinctMembers}
-              value={selectedPrecintMember}
-              // isDisabled={isEditSession || isWorking}
-              styles={customStyles}
-            />
-          </FormRow>
+
           <FormRow
             customGridText={true}
             label={``}
             error={errors?.selectedElectorates?.message}
           >
-            <Select
+            {/* <Select
               id="selectedElectorates"
               className="text-2xl "
               isMulti
@@ -1112,6 +587,20 @@ function CreateTeamForm({
               onChange={(setSelectedSecond, handleChangeMember)}
               isLoading={clusteredLoading}
               options={clustered_electorates_list}
+              isEditSession
+              styles={customStyles}
+              components={{ MultiValueRemove }}
+              onKeyDown={handleKeyDown} // Custom onKeyDown handler
+              isClearable={false}
+            /> */}
+            <Select
+              id="selectedElectorates"
+              className="text-2xl "
+              isMulti
+              value={selectedElectorates}
+              onChange={(setSelectedSecond, handleChangeMember)}
+              isLoading={clusteredLoading}
+              options={electorates_list}
               isEditSession
               styles={customStyles}
               components={{ MultiValueRemove }}
@@ -1125,11 +614,12 @@ function CreateTeamForm({
               tower_id={towerElectorateID}
               selectedWarriors_Tower={selectedElectorates}
               max={max_teammembers_included_leader}
-            />
+            />{" "}
           </div>
           <div className="flex justify-center p-6 mt-4 items-center">
             <div className="mr-3">
               <Button
+                isabled={isWorking}
                 variation="secondary"
                 type="reset"
                 onClick={() => onCloseModal?.()}

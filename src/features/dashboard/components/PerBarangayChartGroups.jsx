@@ -30,9 +30,10 @@ const StyledBarChart = styled(DashboardBox)`
 `;
 
 function PerBarangayChartGroups(
-  { data_brgy, dataPerbrgy_unvalidated, total_count_summary_per_brgy },
+  { total_count_summary_per_brgy, validationType },
   viewFull
 ) {
+  console.log("xxxxx----group", JSON.stringify(total_count_summary_per_brgy));
   const first20 = total_count_summary_per_brgy.slice(0, 20);
   const remaining = total_count_summary_per_brgy.slice(20);
 
@@ -44,6 +45,7 @@ function PerBarangayChartGroups(
   const handleButtonClickUnsplit = () => {
     setSPlitChart(false);
   };
+
   return (
     <>
       {!splitChart && (
@@ -52,6 +54,7 @@ function PerBarangayChartGroups(
             <div className="flex justify-between">
               <div>
                 <Heading as="h2">Per Barangay Classification Chart</Heading>
+                <span className="ml-7">{validationType}</span>
               </div>
               <div>
                 <ButtonIcon onClick={handleButtonClickSplit}>
@@ -70,12 +73,17 @@ function PerBarangayChartGroups(
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="TOTAL_VALIDATED" fill="#007400" />
-                <Bar dataKey="TOTAL_ATO" fill="#FFA500" />
-                <Bar dataKey="TOTAL_OT" fill="#90CAF9" />
-                <Bar dataKey="TOTAL_INC" fill="#8CC640" />
-                <Bar dataKey="TOTAL_JEHOVAH" fill="#4A6DA7" />
-                <Bar dataKey="TOTAL_UNVALIDATED_DILI" fill="#9E9E9E" />
+                <Bar dataKey="TOTAL_VALIDATED" fill="#B75CFF" />
+                <Bar dataKey="TOTAL_ATO" fill="#DCFCE7" />
+                <Bar dataKey="TOTAL_DILI" fill="#FEE2E2" />
+                <Bar dataKey="TOTAL_OT" fill="#FB9EC6" />
+                <Bar dataKey="TOTAL_INC" fill="#00FF9C" />
+                <Bar dataKey="TOTAL_JEHOVAH" fill="#F3F4F6" />
+                <Bar dataKey="TOTAL_DECEASED" fill="#080808" />
+                <Bar dataKey="TOTAL_UNDECIDED" fill="#FEF9C3" />
+                <Bar dataKey="TOTAL_NVS" fill="#FFC966" />
+                <Bar dataKey="TOTAL_GOLD_AFFILIATES" fill="#E8B903" />
+                {/* <Bar dataKey="TOTAL_UNVALIDATED" fill="#9E9E9E" /> */}
               </ComposedChart>
             </ResponsiveContainer>
           </StyledBarChart>
@@ -88,6 +96,7 @@ function PerBarangayChartGroups(
             <div className="flex justify-between">
               <div>
                 <Heading as="h2">Per Barangay Classification Chart</Heading>
+                <span className="ml-7">{validationType}</span>
               </div>
               <div>
                 <ButtonIcon onClick={handleButtonClickUnsplit}>
@@ -102,12 +111,16 @@ function PerBarangayChartGroups(
                 <YAxis />
                 <Tooltip />
                 {/* <Legend /> */}
-                <Bar dataKey="TOTAL_VALIDATED" fill="#007400" />
-                <Bar dataKey="TOTAL_ATO" fill="#FFA500" />
-                <Bar dataKey="TOTAL_OT" fill="#90CAF9" />
-                <Bar dataKey="TOTAL_INC" fill="#8CC640" />
-                <Bar dataKey="TOTAL_JEHOVAH" fill="#4A6DA7" />
-                <Bar dataKey="TOTAL_UNVALIDATED_DILI" fill="#9E9E9E" />
+                <Bar dataKey="TOTAL_VALIDATED" fill="#B75CFF" />
+                <Bar dataKey="TOTAL_ATO" fill="#DCFCE7" />
+                <Bar dataKey="TOTAL_DILI" fill="#FEE2E2" />
+                <Bar dataKey="TOTAL_OT" fill="#FB9EC6" />
+                <Bar dataKey="TOTAL_INC" fill="#00FF9C" />
+                <Bar dataKey="TOTAL_JEHOVAH" fill="#F3F4F6" />
+                <Bar dataKey="TOTAL_DECEASED" fill="#080808" />
+                <Bar dataKey="TOTAL_UNDECIDED" fill="#FEF9C3" />
+                <Bar dataKey="TOTAL_NVS" fill="#FFC966" />
+                <Bar dataKey="TOTAL_GOLD_AFFILIATES" fill="#E8B903" />
               </ComposedChart>
             </ResponsiveContainer>
           </StyledBarChart>
@@ -124,12 +137,16 @@ function PerBarangayChartGroups(
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="TOTAL_VALIDATED" fill="#007400" />
-                <Bar dataKey="TOTAL_ATO" fill="#FFA500" />
-                <Bar dataKey="TOTAL_OT" fill="#90CAF9" />
-                <Bar dataKey="TOTAL_INC" fill="#8CC640" />
-                <Bar dataKey="TOTAL_JEHOVAH" fill="#4A6DA7" />
-                <Bar dataKey="TOTAL_UNVALIDATED_DILI" fill="#9E9E9E" />
+                <Bar dataKey="TOTAL_VALIDATED" fill="#B75CFF" />
+                <Bar dataKey="TOTAL_ATO" fill="#DCFCE7" />
+                <Bar dataKey="TOTAL_DILI" fill="#FEE2E2" />
+                <Bar dataKey="TOTAL_OT" fill="#FB9EC6" />
+                <Bar dataKey="TOTAL_INC" fill="#00FF9C" />
+                <Bar dataKey="TOTAL_JEHOVAH" fill="#F3F4F6" />
+                <Bar dataKey="TOTAL_DECEASED" fill="#080808" />
+                <Bar dataKey="TOTAL_UNDECIDED" fill="#FEF9C3" />
+                <Bar dataKey="TOTAL_NVS" fill="#FFC966" />
+                <Bar dataKey="TOTAL_GOLD_AFFILIATES" fill="#E8B903" />
               </ComposedChart>
             </ResponsiveContainer>
           </StyledBarChart>

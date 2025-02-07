@@ -17,14 +17,14 @@ function EventTable() {
         </div>
       </div>
 
-      <Table columns="1fr 1fr 1fr 1fr  1fr 1fr 1fr 1fr 1fr">
+      <Table columns="1fr 1.5fr 1.5fr 1.8fr  1fr 2.5fr 1fr 0.5fr 0.5fr">
         <Table.Header>
           <div>ID</div>
           <div>Event Type</div>
           <div>Title</div>
           <div>Description</div>
-          <div>Details</div>
           <div>QR Use</div>
+          <div>Details</div>
         </Table.Header>
         {isPending ? (
           <Spinner />

@@ -55,13 +55,13 @@ const Tab = ({ tabs }) => {
             key={index}
             className={`w-full ${
               activeTab === index
-                ? "bg-[#FFA500] text-[#ffedcc] shadow-md"
+                ? "bg-[#145A32] text-[#ffedcc] shadow-md"
                 : "bg-gray-200 text-gray-800 "
             } px-4 py-2 ${
               index === 0 ? "rounded-l-lg" : "" // Apply rounded-l-lg to the first button
             } ${
               index === tabs.length - 1 ? "rounded-r-lg" : "" // Apply rounded-r-lg to the last button
-            }  hover:bg-[#cc8400] hover:text-[#ffedcc]`}
+            }  hover:bg-[#229954] hover:text-[#ffedcc]`}
             onClick={() => setActiveTab(index)}
           >
             {tab.title}

@@ -8,6 +8,7 @@ import { useSearchParams } from "react-router-dom";
 import { barangayOptions, PAGE_SIZE } from "../../../utils/constants";
 import { useEffect, useState } from "react";
 import { getLeaders } from "../../../services/apiLeader";
+import supabase from "../../../services/supabase";
 
 export function useTeams() {
   // QUERY
@@ -283,3 +284,42 @@ export function useLeaders(searchTerm, type) {
 
   return { isPending: isLoading, error, electorates, count };
 }
+
+const fetchNames = async (id) => {
+  let { data, error } = await supabase
+    .from("electorates")
+    .select("id,precinctno")
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  return data;
+};
+
+export const useTower = (parameter) => {
+  return useQuery({
+    queryKey: ["tower", parameter],
+    queryFn: () => fetchNames(parameter),
+    enabled: !!parameter, // This ensures the second query only runs if parameter is provided
+  });
+};
+
+const fetchSecondSelectData = async (precinctleader) => {
+  let { data, error } = await supabase
+    .from("electorates")
+    .select(
+      "id,precinctno,firstname,middlename,lastname,purok,brgy,isleader_type"
+    )
+    .eq("precinctleader", precinctleader)
+    .is("isleader", null)
+    .order("lastname", { ascending: true });
+  if (error) throw new Error(error.message);
+  return data;
+};
+
+export const useGetMembers = (parameter) => {
+  return useQuery({
+    queryKey: ["team_members_to_print", parameter],
+    queryFn: () => fetchSecondSelectData(parameter),
+    enabled: !!parameter, // This ensures the second query only runs if parameter is provided
+  });
+};

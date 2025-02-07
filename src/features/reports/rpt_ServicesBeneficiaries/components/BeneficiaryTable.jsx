@@ -19,7 +19,7 @@ import styled from "styled-components";
 
 const StyledBookingDataBox = styled.section`
   /* Box */
-  background-color: var(--color-orange-500);
+  background-color: var(--color-green-500);
   border: 1px solid var(--color-grey-100);
   border-radius: var(--border-radius-md);
   padding: 1rem 2rem;

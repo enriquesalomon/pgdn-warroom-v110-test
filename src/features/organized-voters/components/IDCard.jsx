@@ -6,8 +6,8 @@ import styled, { keyframes } from "styled-components";
 import { format } from "date-fns";
 
 const companyLogo = "/logo_id.png";
-const front_template = "/id_bg.jpg";
-const back_template = "/id_bg_back.jpg";
+const backgroundImage = "/id_bg.jpg";
+const backgroundImage_back = "/id_bg_back.jpg";
 
 // Keyframe animation for dots
 const dotBlink = keyframes`
@@ -67,7 +67,6 @@ const IDCard = ({ electorate }) => {
     isleader,
     brgy,
     purok,
-    image,
     contactdetails,
     emergencycontact,
   } = electorate;
@@ -76,8 +75,9 @@ const IDCard = ({ electorate }) => {
   const fullName = `${firstname} ${middlename} ${lastname}`;
   const address = `${completeaddress}`;
   const prk_brgy = `${purok}, ${brgy}`;
-  const id_num = `SAM${id}`;
-  const pic = `${image}`;
+  const id_num = `EPS${id}`;
+  const pic = `${supabaseUrl}/storage/v1/object/public/${avatar}`;
+
   const cardRef = useRef(null);
   const backCardRef = useRef(null);
   let classification_text;
@@ -146,84 +146,97 @@ const IDCard = ({ electorate }) => {
           <div className="w-[500px] h-[300px] mx-auto ">
             <div
               ref={cardRef}
+              className="w-[500px] h-[300px] p-2  mx-auto"
               style={{
-                backgroundImage: `url(${front_template})`,
-                backgroundSize: "cover", // Change from "contain" to "cover"
+                backgroundImage: `url(${backgroundImage})`,
+                backgroundSize: "cover", // Make the image fit the card
                 backgroundPosition: "center", // Center the image within the card
                 backgroundRepeat: "no-repeat", // Prevent the image from repeating
               }}
-              className="grid grid-cols-3 grid-rows-7 h-full"
             >
-              <div className="col-span-3 row-span-2 p-1 text-center">
-                {/* First Row (Spans all 3 columns) */}
-              </div>
+              <div className="grid grid-cols-3 grid-rows-7 gap-1 h-full">
+                <div className="col-span-3 row-span-2 p-1 text-center">
+                  {/* First Row (Spans all 3 columns) */}
+                </div>
 
-              <div className="flex flex-col items-center justify-center mt-32">
-                <div className="">
-                  <div className="">
-                    <span className="text-lg ml-8">
-                      {/* {format(new Date(birthdate), "MMMM dd, yyyy")} */}
-                    </span>
+                {/* <div className="row-span-5 p-1 flex items-center justify-center">
+                <img
+                  src={pic}
+                  alt="User"
+                  className="h-[150px] w-[150px] ml-9 mb-16"
+                />
+              </div> */}
+
+                <div className="flex flex-col items-center justify-center">
+                  <div className="p-1">
+                    <img
+                      src={pic}
+                      alt="User"
+                      className="h-[150px] w-[150px] mt-60 mb-3 ml-5"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-lg ml-8">{id_num}</span>
                   </div>
                 </div>
-                <div className="mt-2">
-                  <img
-                    src={pic}
-                    alt="User"
-                    className="h-[121px] w-[122px] ml-9"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-rows-5 gap-1">
-                <div className=" mb-4 text-center text-lg pt-6">{lastname}</div>
-                <div className=" mb-4 text-center text-lg pt-14 mt-2">
-                  {firstname}
-                </div>
-                <div className=" mb-4 text-center text-lg pt-24 mt-4">
-                  {middlename}{" "}
-                </div>
-                <div className=" mb-4 text-center pt-24 text-lg mt-14">
-                  {gender}
-                </div>
-                <div className="mb-4 text-sm  text-center pt-24 mt-24 ml-7">
-                  <span className="mt-2 text-wrap">{prk_brgy}</span>
-                </div>
-                <div className=" mb-4 text-center text-lg pt-24 mt-24">
-                  {/* <div className="mt-16">{precinctno}</div> */}
-                </div>
-                {/*  <div className="bg-yellow-400 mb-4 text-center">
+                <div className="grid grid-rows-5 gap-1">
+                  <div className="mb-4 text-center text-lg pt-3">
+                    {lastname}
+                  </div>
+                  <div className=" mb-4 text-center text-lg pt-14 mt-1">
+                    {firstname}
+                  </div>
+                  <div className=" mb-4 text-center text-lg pt-24 mt-2">
+                    {middlename}{" "}
+                  </div>
+                  <div className=" mb-4 text-center pt-24 text-lg mt-14">
+                    {gender}
+                  </div>
+                  <div className="mb-4 text-center text-lg pt-24 mt-24">
+                    <div className="mt-2">{prk_brgy}</div>
+                  </div>
+                  <div className=" mb-4 text-center text-lg pt-24 mt-24">
+                    <div className="mt-16">{precinctno}</div>
+                  </div>
+                  {/*  <div className="bg-yellow-400 mb-4 text-center">
                   Row 4 inside 2nd Column
                 </div>
                 <div className="bg-yellow-400 mb-4 text-center">
                   Row 5 inside 2nd Column
                 </div> */}
-              </div>
-
-              <div className="grid grid-rows-3 gap-1  p-1">
-                <div className="text-center mt-3 text-lg">{precinctno}</div>
-                <div className=" text-center mt-9 text-lg ">{id_num}</div>
-                <div className="row-span-2 mt-11 pt-5">
-                  {qr_code && (
-                    // <div className="h-[2px] w-[2px]">
-                    <QRCode value={qr_code} />
-                    // </div>
-                  )}
                 </div>
-              </div>
 
-              <div className="col-span-3 p-1 text-center">
-                {/* Seventh Row (Spans all 3 columns) */}
+                <div className="grid grid-rows-3 gap-1  p-1">
+                  <div className=" p-1 text-center text-lg">
+                    {/* Row 1 inside 3rd Column */}
+                    <span> {birthdate}</span>
+                    {/* <span>{format(new Date(birthdate), "MMMM dd, yyyy")}</span> */}
+                  </div>
+                  <div className="p-1 text-center mt-8 text-lg ">
+                    {classification_text}
+                  </div>
+                  <div className="row-span-2 mt-11 pt-4 ">
+                    {qr_code && (
+                      <div className="ml-3 mt-1 h-[128px] w-[128px]">
+                        <QRCode value={qr_code} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="col-span-3 p-1 text-center">
+                  {/* Seventh Row (Spans all 3 columns) */}
+                </div>
               </div>
             </div>
           </div>
-
           {/* Back of ID Card */}
           <div
             ref={backCardRef}
-            className="w-[500px] h-[300px] mx-auto overflow-hidden  relative mt-8 "
+            className="w-[500px] h-[300px] mx-auto  overflow-hidden  relative mt-8 "
             style={{
-              backgroundImage: `url(${back_template})`,
-              backgroundSize: "cover",
+              backgroundImage: `url(${backgroundImage_back})`,
+              backgroundSize: "cover", // Make the image fit the card
               backgroundPosition: "center", // Center the image within the card
               backgroundRepeat: "no-repeat", // Prevent the image from repeating
             }}

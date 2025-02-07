@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 
 export function useElectoratesPerBrgy() {
   const [searchParams] = useSearchParams();
-  const brgy = searchParams.get("sortBy") || "ALEGRIA";
+  const brgy = searchParams.get("sortBy") || "Bogayo";
   // FILTER
   const filterValue = searchParams.get("status");
   const filter =

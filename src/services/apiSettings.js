@@ -41,6 +41,20 @@ export async function getValidationSettings() {
   return data;
 }
 
+export async function getValidationSettings_Running() {
+  const { data, error } = await supabase
+    .from("settings_validation")
+    .select("*")
+    .eq("isrunning", true)
+    .order("id", { ascending: true });
+
+  if (error) {
+    console.error(error);
+    throw new Error("Validation Settings could not be loaded");
+  }
+  return data;
+}
+
 export async function createEditValidationSetting(newData, id) {
   let query = supabase.from("settings_validation");
 
@@ -57,6 +71,25 @@ export async function createEditValidationSetting(newData, id) {
     .from("settings_validation")
     .update({ isactive: false })
     .neq("id", id);
+
+  if (id === 2) {
+    await supabase
+      .from("settings_validation")
+      .update({ islock: true })
+      .eq("id", 1);
+  }
+  if (id === 3) {
+    await supabase
+      .from("settings_validation")
+      .update({ islock: true })
+      .in("id", [1, 2]);
+  }
+  if (id === 4) {
+    await supabase
+      .from("settings_validation")
+      .update({ islock: true })
+      .in("id", [1, 2, 3]);
+  }
 
   return editValidation;
 }

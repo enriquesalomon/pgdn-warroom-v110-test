@@ -21,7 +21,7 @@ function AddVerify() {
           <Button>
             <div className="flex justify-center items-center">
               <HiPlus className="mr-2" />
-              Verify New Voter
+              Add a New Voter for Manual Scanning
             </div>
           </Button>
         </Modal.Open>

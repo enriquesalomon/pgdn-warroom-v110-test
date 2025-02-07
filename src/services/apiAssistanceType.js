@@ -1,19 +1,19 @@
 import { PAGE_SIZE } from "../utils/constants";
 import supabase from "./supabase";
 
-const checkIfExists = async (name) => {
-  const { data, error } = await supabase
-    .from("assistance_type") // Replace with your table name
-    .select("id")
-    .eq("name", name);
+// const checkIfExists = async (name) => {
+//   const { data, error } = await supabase
+//     .from("assistance_type") // Replace with your table name
+//     .select("id")
+//     .eq("name", name);
 
-  if (error) {
-    console.error("Error checking for existing assistance type:", error);
-    return false;
-  }
+//   if (error) {
+//     console.error("Error checking for existing assistance type:", error);
+//     return false;
+//   }
 
-  return data.length > 0; // Returns true if a match is found, false otherwise
-};
+//   return data.length > 0; // Returns true if a match is found, false otherwise
+// };
 
 export async function getAssType({ page }) {
   let query = supabase

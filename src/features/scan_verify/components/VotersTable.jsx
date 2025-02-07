@@ -23,6 +23,8 @@ function VotersTable() {
   const { isPending, electorates, count } =
     useScanned_Voters(debouncedSearchTerm);
   const [searchParams] = useSearchParams();
+
+  console.log("scannned voters", electorates);
   // 1) FILTER
   const filterValue = searchParams.get("is_active") || "all";
   let filteredUsers;
@@ -95,7 +97,7 @@ function VotersTable() {
         </div>
       </div>
 
-      <Table columns="0.5fr 2.5fr 1.8fr 1.8fr 2.8fr 1.8fr 1.8fr 1.8fr 3.5fr">
+      <Table columns="0.5fr 2.5fr 1.8fr 1.8fr 2.8fr 1.8fr 1.8fr 3.5fr">
         <Table.Header>
           <div>ID</div>
           <div>Scanned At</div>
@@ -104,9 +106,9 @@ function VotersTable() {
           <div>Voter's Name</div>
           <div>Purok</div>
           <div>Brgy</div>
-          <div>Voter Type</div>
-          {/* <div>Leader</div> */}
-          <div>Notes</div>
+          {/* <div>Voter Type</div> */}
+          <div>Leader</div>
+          {/* <div>Notes</div> */}
         </Table.Header>
         {isPending ? (
           <Spinner />
