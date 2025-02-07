@@ -17,7 +17,13 @@ export function useEditVoters() {
       toast.success("Successfully Tag");
       // queryClient.invalidateQueries({ queryKey: ["electorates"] });
       queryClient.invalidateQueries({
-        queryKey: ["scanned_voters", voters_remarks, page, brgy, searchTerm],
+        queryKey: [
+          "manual_scanned_voters",
+          voters_remarks,
+          page,
+          brgy,
+          searchTerm,
+        ],
       });
     },
     onError: (err) => toast.error(err.message),

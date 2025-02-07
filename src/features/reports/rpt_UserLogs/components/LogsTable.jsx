@@ -21,7 +21,6 @@ function LogsTable() {
 
   const queryClient = useQueryClient();
   const userData = queryClient.getQueryData(["user"]);
-  const isKalasag = userData.email === "superadmin@gmail.com";
   const allow_export = userData.user_metadata.account_role === "Super Admin";
 
   const [fetchLogs, setFetchLogs] = useState(false);
@@ -75,7 +74,7 @@ function LogsTable() {
             value={searchTerm}
             onChange={handleSearchChange}
           />
-          {(allow_export || isKalasag) && (
+          {allow_export && (
             <Button
               disabled={isPending01 || exceldata?.length === 0}
               onClick={() => exportExcel(exceldata)}

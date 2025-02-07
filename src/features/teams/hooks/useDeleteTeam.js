@@ -22,7 +22,6 @@ export function useDeleteTeam() {
       queryClient.invalidateQueries({
         queryKey: ["teams"],
       });
-      queryClient.invalidateQueries({ queryKey: ["team_list_validation"] });
     },
     onError: (err) => toast.error(err.message),
   });

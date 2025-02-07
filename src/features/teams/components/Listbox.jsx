@@ -33,6 +33,8 @@ const Listbox = ({ selectedWarriors_Tower, max, tower_id, isEditSession }) => {
             lastname: electorate.value.lastname,
           };
         } else {
+          // Simple object
+          // const nameParts = electorate.label.split(" ").slice(1).join(" ");
           return {
             id: electorate.value,
             fullname: electorate.label,
@@ -40,7 +42,9 @@ const Listbox = ({ selectedWarriors_Tower, max, tower_id, isEditSession }) => {
           };
         }
       });
-
+      // console.log(tower_id);
+      // console.log("asdasdasda", JSON.stringify(mappedItems));
+      // const updatedItems = mappedItems.filter((item) => item.id !== tower_id);
       setItems(mappedItems);
     } else {
       // Handle the case where selectedElectorates is not an array
@@ -56,7 +60,6 @@ const Listbox = ({ selectedWarriors_Tower, max, tower_id, isEditSession }) => {
             key={item.id}
             className="flex items-center justify-between py-2 px-4 bg-gray-200 rounded mb-2 w-full"
           >
-            {/* <span>{item.id} </span> */}
             <span className="text-2xl flex-grow text-gray-600">{`${
               index + 1
             }. ${

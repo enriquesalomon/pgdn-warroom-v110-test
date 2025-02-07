@@ -19,21 +19,13 @@ export function useUnscannedAto(searchTerm) {
   const [error, setError] = useState(null);
   const [electorates, setElectorates] = useState([]);
   const [count, setCount] = useState(0);
-  const validationType = "3v";
-  const queryKey = [
-    "voters_unscanned",
-    validationType,
-    ,
-    brgy,
-    page,
-    searchTerm,
-  ];
+
+  const queryKey = ["voters_unscanned", brgy, page, searchTerm];
 
   const { data, isPending: isLoading } = useQuery({
     queryKey,
     queryFn: async () => {
       const { data, count } = await getList_UnscannedAto({
-        validationType,
         brgy,
         page,
         searchTerm,
@@ -71,7 +63,6 @@ export function useUnscannedAto(searchTerm) {
         queryKey: ["voters_unscanned", brgy, page - 1],
         queryFn: () =>
           getList_UnscannedAto({
-            validationType,
             brgy,
             page: page - 1,
             searchTerm,
@@ -83,7 +74,7 @@ export function useUnscannedAto(searchTerm) {
     // Prefetch previous page
     if (page > 1) {
       queryClient.prefetchQuery({
-        queryKey: ["voters_unscanned", validationType, brgy, page - 1],
+        queryKey: ["voters_unscanned", brgy, page - 1],
         queryFn: () =>
           getList_UnscannedAto({
             brgy,

@@ -16,7 +16,7 @@ function AddAttendees() {
           <Button>
             <div className="flex justify-center items-center">
               <HiPlus className="mr-2" />
-              Add new attendeess
+              Add new attendees
             </div>
           </Button>
         </Modal.Open>

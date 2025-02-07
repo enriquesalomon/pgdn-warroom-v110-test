@@ -58,7 +58,7 @@ function AttendeesTable({ events }) {
         <div className="w-full">
           <Search
             width="106rem"
-            terms={"Search Name"}
+            terms={"Search Name, Assistance Type"}
             onChange={handleSearchChange}
           />
           <Button onClick={handlePrint}>
@@ -69,12 +69,12 @@ function AttendeesTable({ events }) {
         </div>
       </div>
 
-      <div className="mt-6 print-container" ref={componentRef}>
+      <div className="mt-6" ref={componentRef}>
         <div className="flex-row mb-6">
           {/* Event Details */}
           {currentEvent ? (
             <div className="text-xl mb-4 border p-4 rounded bg-gray-50">
-              <h2 className="font-bold mb-4">EVENT DETAILS</h2>
+              <h2 className="font-bold mb-4">Event Details</h2>
               <div className="space-y-2">
                 <div className="flex">
                   <div className="w-1/6 font-semibold">Title:</div>
@@ -126,7 +126,7 @@ function AttendeesTable({ events }) {
             <div>Name</div>
             <div>Barangay</div>
             <div>Purok</div>
-            <div>Check-in Time / Scanned Time</div>
+            <div>Check-in Time</div>
           </Table.Header>
           {isPending ? (
             <Spinner />

@@ -284,12 +284,6 @@ function SignupFormStaff({
             <option value="">Select</option>
             <option value="ID Data Collector">ID Data Collector</option>
             <option value="QR Scanner Operator">QR Scanner Operator</option>
-            <option value="Event Attendance Scanner">
-              Event Attendance Scanner
-            </option>
-            <option value="Event Scanner Releasing">
-              Event Scanner Releasing
-            </option>
           </StyledSelect>
         </FormRow>
 

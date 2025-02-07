@@ -10,8 +10,6 @@ export function useCreateTeam() {
     onSuccess: () => {
       toast.success("New Team successfully created");
       queryClient.invalidateQueries({ queryKey: ["teams"] });
-      queryClient.invalidateQueries({ queryKey: ["team_list_validation"] });
-      queryClient.invalidateQueries({ queryKey: ["team_list"] });
     },
     onError: (err) => toast.error(err.message),
   });

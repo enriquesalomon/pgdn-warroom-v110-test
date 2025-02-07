@@ -249,7 +249,6 @@ function EventForm({ userToEdit = {}, eventtype, onCloseModal }) {
           {...register("end_time")}
         />
       </FormRow>
-
       <div className="mt-12">
         <FormRowButton>
           <Button

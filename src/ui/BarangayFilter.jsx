@@ -3,7 +3,6 @@ import { barangayOptions } from "../utils/constants";
 import SortBy from "./SortBy";
 
 function BarangayFilter(viewable_brgy) {
-  console.log("brgy", JSON.stringify(viewable_brgy));
   const barangays = JSON.parse(viewable_brgy.viewable_brgy);
   const sortedBarangays = barangays.sort();
   const brgy = [

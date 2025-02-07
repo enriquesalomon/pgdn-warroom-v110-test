@@ -69,15 +69,15 @@ function EventRow({ events, index }) {
       <div>{event_type}</div>
       <div>{title}</div>
       <div>{description}</div>
-      <div>{qr_use}</div>
       <Stacked>
         <span>Venue: {location}</span>
-        <span>{format(new Date(event_date), "MMM dd, yyyy")}</span>
+        <span>{format(new Date(event_date), "MMM dd yyyy")}</span>
         <span>
           {convertTo12HourFormat(start_time)} &rarr;{" "}
           {convertTo12HourFormat(end_time)}
         </span>
       </Stacked>
+      <div>{qr_use}</div>
       {is_active && <Tag type="green">Active</Tag>}
       {!is_active && <Tag type="red">Inactive</Tag>}
 

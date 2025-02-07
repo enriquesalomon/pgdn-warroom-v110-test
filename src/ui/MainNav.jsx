@@ -9,14 +9,13 @@ import { LiaUserTagSolid } from "react-icons/lia";
 import { MdOutlineNotificationsActive } from "react-icons/md";
 import { usePagePermissionContext } from "../context/PagePermissionContext";
 import { parsePagePermission } from "../utils/helpers";
+import { useRequests } from "../features/request/hooks/useRequest";
 import { useDebounce } from "use-debounce";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { TbFileReport } from "react-icons/tb";
 import { PiCirclesThreePlusBold } from "react-icons/pi";
 import { FaPersonChalkboard } from "react-icons/fa6";
-import { LiaMapMarkedAltSolid } from "react-icons/lia";
-import { RiSurveyLine } from "react-icons/ri";
 import { MdOutlineEvent } from "react-icons/md";
 // Keyframes for shaking animation
 const shake = keyframes`
@@ -54,7 +53,7 @@ const StyledNavLink = styled(NavLink)`
   &.active:visited {
     color: var(--color-grey-800);
     background-color: var(--color-grey-100);
-    /* border-radius: var(--border-radius-sm); */
+    border-radius: var(--border-radius-sm);
   }
 
   & svg {
@@ -68,7 +67,7 @@ const StyledNavLink = styled(NavLink)`
   &:active svg,
   &.active:link svg,
   &.active:visited svg {
-    color: var(--color-green-500);
+    color: var(--color-orange-500);
   }
 
   /* Conditionally add the vertical line */
@@ -130,7 +129,7 @@ const StyledNavLinkCollapsable = styled(NavLink)`
     align-items: center;
     justify-content: space-between;
     gap: 1.2rem;
-    color: var(--color-green-600);
+    color: var(--color-grey-600);
     font-size: 1.2rem;
     font-weight: 500;
     padding: 1.2rem 2.4rem;
@@ -156,7 +155,7 @@ const StyledNavLinkCollapsable = styled(NavLink)`
     props.isactives &&
     `
     &.active:visited svg {
-      color: var(--color-green-500);
+      color: var(--color-orange-500);
     }
   `}
 `;
@@ -184,15 +183,9 @@ const NotificationIcon = styled(MdOutlineNotificationsActive)`
 
 function MainNav() {
   const [debouncedSearchTerm] = useDebounce("", 500);
-  // const { count } = useRequests(debouncedSearchTerm, "PENDING");
+  const { count } = useRequests(debouncedSearchTerm, "PENDING");
   const { pagePermission } = usePagePermissionContext();
   const permissions = parsePagePermission(pagePermission);
-  permissions.push(
-    "rpt_electorate_LP_LM_LDC_W",
-    "rpt_survey",
-    "rpt_leader_list",
-    "goldaffiliate_id"
-  );
 
   const [activeCollapse, setActiveCollapse] = useState("");
 
@@ -213,12 +206,6 @@ function MainNav() {
       label: "KAMADA",
       showverticalline: false,
     },
-    {
-      route: "/gmap",
-      icon: <LiaMapMarkedAltSolid />,
-      label: "MAP",
-      showverticalline: false,
-    },
   ];
 
   const sidebarLinks_operation = [
@@ -229,12 +216,11 @@ function MainNav() {
       showverticalline: true,
     },
     {
-      route: "/electorate_classification",
+      route: "/special_electorate",
       // icon: <RiAccountPinBoxLine />,
-      label: "Electorate Survey",
+      label: "Special Electorates",
       showverticalline: true,
     },
-
     {
       route: "/teams",
       //  icon: <GiDarkSquad />,
@@ -242,30 +228,18 @@ function MainNav() {
       showverticalline: true,
     },
     {
-      route: "/team_validation",
-      //  icon: <GiDarkSquad />,
-      label: "Team Validation",
+      route: "/team_request",
+      // icon: <MdOutlineThumbUpAlt />,
+      label: "Request",
+      notification: count > 0 ? count : "",
       showverticalline: true,
     },
     {
-      route: "/nonteam_validation",
-      //  icon: <GiDarkSquad />,
-      label: "Non-Team Validation",
+      route: "/baco",
+      // icon: <GiTeacher />,
+      label: "Baco",
       showverticalline: true,
     },
-    // {
-    //   route: "/team_request",
-    //   // icon: <MdOutlineThumbUpAlt />,
-    //   label: "Request",
-    //   notification: count > 0 ? count : "",
-    //   showverticalline: true,
-    // },
-    // {
-    //   route: "/baco",
-    //   // icon: <GiTeacher />,
-    //   label: "Baco",
-    //   showverticalline: true,
-    // },
     // {
     //   route: "/leaders",
     //   // icon: <GiTeacher />,
@@ -302,16 +276,9 @@ function MainNav() {
     {
       route: "/voters_ato",
       // icon: <AiOutlineIdcard />,
-      label: "ELECTORATE ID",
+      label: "Asenso ID Card",
       showverticalline: true,
     },
-    {
-      route: "/goldaffiliate_id",
-      // icon: <AiOutlineIdcard />,
-      label: "GOLD AFFILIATE ID",
-      showverticalline: true,
-    },
-
     {
       route: "/scan_verify",
       // icon: <AiOutlineIdcard />,
@@ -319,7 +286,6 @@ function MainNav() {
       showverticalline: true,
     },
   ];
-
   const sidebarLinks_events_monitoring = [
     {
       route: "/events",
@@ -355,48 +321,23 @@ function MainNav() {
       showverticalline: true,
     },
     {
-      route: "/rpt_survey",
-      icon: <LiaUserTagSolid />,
-      label: "Electorate Survey",
-      showverticalline: true,
-    },
-    {
       route: "/rpt_electorate_classification",
       icon: <LiaUserTagSolid />,
-      label: "Team Validation",
+      label: "Electorate Classification",
       showverticalline: true,
     },
-    {
-      route: "/rpt_nonteam_classification",
-      icon: <LiaUserTagSolid />,
-      label: "Non-Team Validation",
-      showverticalline: true,
-    },
-    {
-      route: "/rpt_electorate_LP_LM_LDC_W",
-      icon: <LiaUserTagSolid />,
-      label: "Gold Affiliates",
-      showverticalline: true,
-    },
-    {
-      route: "/rpt_leader_list",
-      icon: <LiaUserTagSolid />,
-      label: "Leaders",
-      showverticalline: true,
-    },
-
     {
       route: "/rpt_team_list",
       icon: <LiaUserTagSolid />,
-      label: "Team",
+      label: "Team List",
       showverticalline: true,
     },
-    // {
-    //   route: "/rpt_leader_hierarchy",
-    //   icon: <LiaUserTagSolid />,
-    //   label: "Leaders Hierarchy",
-    //   showverticalline: true,
-    // },
+    {
+      route: "/rpt_leader_hierarchy",
+      icon: <LiaUserTagSolid />,
+      label: "Leaders Hierarchy",
+      showverticalline: true,
+    },
     {
       route: "/rpt_ulogs",
       icon: <PiUserListLight />,
@@ -407,15 +348,6 @@ function MainNav() {
       route: "/rpt_event_attendees",
       icon: <PiUserListLight />,
       label: "Event Attendees",
-      showverticalline: true,
-    },
-  ];
-
-  const sidebarLinks_forms = [
-    {
-      route: "/forms_survey",
-      icon: <RiSurveyLine />,
-      label: "Survey Form",
       showverticalline: true,
     },
   ];
@@ -599,47 +531,6 @@ function MainNav() {
           {activeCollapse === "reports" && (
             <NavList>
               {sidebarLinks_report.map(
-                ({ route, icon, label, showverticalline }) =>
-                  permissions.includes(route.replace("/", "")) && (
-                    <li key={route}>
-                      <StyledNavLink
-                        to={route}
-                        showverticalline={showverticalline ? "true" : undefined}
-                      >
-                        <span className="ml-14">{label}</span>
-                      </StyledNavLink>
-                    </li>
-                  )
-              )}
-            </NavList>
-          )}
-        </>
-      )}
-
-      {sidebarLinks_forms.some(({ route }) =>
-        permissions.includes(route.replace("/", ""))
-      ) && (
-        <>
-          <NavList>
-            <StyledNavLinkCollapsable
-              onClick={() => toggleCollapse("forms")}
-              isactives={activeCollapse === "forms" ? "true" : undefined}
-            >
-              <LabelWithIconContainer>
-                <RiSurveyLine />
-                <span>FORMS</span>
-              </LabelWithIconContainer>
-              {activeCollapse === "forms" ? (
-                <IoIosArrowDown />
-              ) : (
-                <MdOutlineKeyboardArrowRight />
-              )}
-            </StyledNavLinkCollapsable>
-          </NavList>
-
-          {activeCollapse === "forms" && (
-            <NavList>
-              {sidebarLinks_forms.map(
                 ({ route, icon, label, showverticalline }) =>
                   permissions.includes(route.replace("/", "")) && (
                     <li key={route}>

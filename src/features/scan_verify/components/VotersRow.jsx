@@ -49,12 +49,12 @@ function VotersRow({ electorate, index }) {
 
       <div>{electorates?.purok}</div>
       <div>{brgy}</div>
-      {/* <div>{scanned_remarks}</div> */}
-      <div>
+      <div>{scanned_remarks}</div>
+      {/* <div>
         {team?.firstname} {team?.lastname}
-      </div>
+      </div> */}
 
-      {/* <div>{notes}</div> */}
+      <div>{notes}</div>
     </Table.Row>
   );
 }

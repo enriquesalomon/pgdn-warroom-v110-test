@@ -1,7 +1,7 @@
 import { PAGE_SIZE, ato, validationIds } from "../utils/constants";
 import supabase from "./supabase";
 
-export async function getScanned_Voters({
+export async function getManualScanned_Voters({
   voters_remarks,
   brgy,
   page,
@@ -16,16 +16,16 @@ export async function getScanned_Voters({
       }
     )
     .eq("brgy", brgy)
-    // .eq("scanned_type", "APP")
+    .eq("scanned_type", "MANUAL")
     .order("id", { ascending: false });
 
-  // if (voters_remarks === "1") {
-  //   query = query.eq("scanned_remarks", "ALLIED VOTER");
-  // } else if (voters_remarks === "2") {
-  //   query = query.eq("scanned_remarks", "SWING VOTER");
-  // } else {
-  //   query = query.eq("scanned_remarks", "ALLIED VOTER");
-  // }
+  if (voters_remarks === "1") {
+    query = query.eq("scanned_remarks", "ALLIED VOTER");
+  } else if (voters_remarks === "2") {
+    query = query.eq("scanned_remarks", "SWING VOTER");
+  } else {
+    query = query.eq("scanned_remarks", "ALLIED VOTER");
+  }
 
   if (searchTerm) {
     query = query.or(
@@ -49,12 +49,29 @@ export async function getScanned_Voters({
   return { data, count };
 }
 export async function getAllVoters_Unscanned({ brgy, page, searchTerm }) {
-  const { data, count, error } = await supabase.rpc(
-    "get_all_voters_unscanned",
-    { brgy_param: brgy, page: page, searchterm: searchTerm }
-  );
+  let query = supabase
+    .from("electorates")
+    .select("*", {
+      count: "exact",
+    })
+    .eq("brgy", brgy)
+    // .not("final_validation", "is", true)
+    .order("id", { ascending: false });
 
-  if (error) console.error(error);
+  if (searchTerm) {
+    query = query.or(
+      `lastname.ilike.%${searchTerm}%,firstname.ilike.%${searchTerm}%,middlename.ilike.%${searchTerm}%,sector.ilike.%${searchTerm}%`
+    );
+  }
+
+  if (!searchTerm && page) {
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+    query = query.range(from, to);
+  }
+
+  const { data, error, count } = await query;
+
   if (error) {
     console.error(error);
     throw new Error("electorates could not be loaded");

@@ -4,11 +4,11 @@ import CreateTeamForm from "./CreateTeamForm";
 import { useSettings } from "../../settings/hooks/useSettings";
 import { HiPlus } from "react-icons/hi2";
 import { useSearchParams } from "react-router-dom";
-function AddTeam(ValidationSettings) {
+function AddTeam() {
   const { settings } = useSettings();
   const [searchParams] = useSearchParams();
   const brgy = searchParams.get("sortBy");
-  console.log("ValidationSettingssss-----", JSON.stringify(ValidationSettings));
+
   return (
     <div>
       {brgy && (
@@ -28,11 +28,7 @@ function AddTeam(ValidationSettings) {
             heightvar="100%"
             widthvar="100%"
           >
-            <CreateTeamForm
-              brgy={brgy}
-              ValidationSettings={ValidationSettings}
-              settings={settings}
-            />
+            <CreateTeamForm settings={settings} />
           </Modal.Window>
         </Modal>
       )}

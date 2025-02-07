@@ -74,7 +74,7 @@ function AttendeesTable({ events }) {
         <div className="w-full ">
           <Search
             width="106rem"
-            terms={"Search Name, Assistance Type"}
+            terms={"Search Name"}
             onChange={handleSearchChange}
           />
 
@@ -92,6 +92,36 @@ function AttendeesTable({ events }) {
         <div className="flex-row mb-6">
           {/* Event Details */}
           {currentEvent ? (
+            // <div className=" text-xl mb-4 border p-4 rounded bg-gray-50">
+            //   <h2 className=" font-bold mb-2">Event Details</h2>
+            //   <p>
+            //     Title: <span className="font-medium">{currentEvent.title}</span>
+            //   </p>
+            //   <p>
+            //     Description: <span>{currentEvent.description}</span>
+            //   </p>
+            //   <p>
+            //     Date: <span>{}</span>{" "}
+            //     <span>
+            //       {format(new Date(currentEvent.event_date), "MMMM dd, yyyy")}
+            //     </span>
+            //   </p>
+            //   <p>
+            //     Start Time:{" "}
+            //     <span>
+            //       {convertTo12HourFormat(currentEvent.start_time) || "N/A"}
+            //     </span>
+            //   </p>
+            //   <p>
+            //     End Time:{" "}
+            //     <span>
+            //       {convertTo12HourFormat(currentEvent.end_time) || "N/A"}
+            //     </span>
+            //   </p>
+            //   <p>
+            //     Venue: <span>{currentEvent.location}</span>
+            //   </p>
+            // </div>
             <div className="text-xl mb-4 border p-4 rounded bg-gray-50">
               <h2 className="font-bold mb-4">Event Details</h2>
               <div className="space-y-2">

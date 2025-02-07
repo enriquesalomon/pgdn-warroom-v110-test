@@ -15,9 +15,6 @@ import {
   getCountPerBrgy_Unvalidated,
   getCountAto_groundLeaders,
   getCountPerBrgy_Summary,
-  getCountPerBrgy_BarChart,
-  getCountNVS,
-  getCountLubas,
 } from "../../../services/apiDashboardDatas";
 import { useSearchParams } from "react-router-dom";
 
@@ -29,24 +26,24 @@ export function useTotalElectorates() {
 
   return { isPending, data, error };
 }
-
-export function useTotalLubas() {
-  const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation");
-  const { isPending, data, error } = useQuery({
-    queryKey: ["total_Lubas", validationType],
-    queryFn: () => getCountLubas(validationType),
-  });
-
-  return { isPending, data, error };
-}
 export function useTotalValidated() {
   const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation") || "Survey";
+  const validationType = searchParams.get("validation");
 
   const { isPending, data, error } = useQuery({
     queryKey: ["total_Validated", validationType],
     queryFn: () => getCountValidated(validationType),
+  });
+
+  return { isPending, data, error };
+}
+
+export function useTotalUnValidated() {
+  const [searchParams] = useSearchParams();
+  const validationType = searchParams.get("validation");
+  const { isPending, data, error } = useQuery({
+    queryKey: ["total_UnValidated", validationType],
+    queryFn: () => getCountUnValidated(validationType),
   });
 
   return { isPending, data, error };
@@ -65,7 +62,7 @@ export function useTotalAto() {
 
 export function useTotalDili() {
   const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation") || "Survey";
+  const validationType = searchParams.get("validation");
   const { isPending, data, error } = useQuery({
     queryKey: ["total_Dili", validationType],
     queryFn: () => getCountDili(validationType),
@@ -73,19 +70,10 @@ export function useTotalDili() {
 
   return { isPending, data, error };
 }
-export function useTotalUnValidated() {
-  const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation") || "Survey";
-  const { isPending, data, error } = useQuery({
-    queryKey: ["total_UnValidated", validationType],
-    queryFn: () => getCountUnValidated(validationType),
-  });
 
-  return { isPending, data, error };
-}
 export function useTotalUndecided() {
   const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation") || "Survey";
+  const validationType = searchParams.get("validation");
   const { isPending, data, error } = useQuery({
     queryKey: ["total_Undecided", validationType],
     queryFn: () => getCountUndecided(validationType),
@@ -95,7 +83,7 @@ export function useTotalUndecided() {
 }
 export function useTotalDeceased() {
   const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation") || "Survey";
+  const validationType = searchParams.get("validation");
   const { isPending, data, error } = useQuery({
     queryKey: ["total_Deceased", validationType],
     queryFn: () => getCountDeceased(validationType),
@@ -103,20 +91,10 @@ export function useTotalDeceased() {
 
   return { isPending, data, error };
 }
-export function useTotalNVS() {
-  const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation") || "Survey";
-  const { isPending, data, error } = useQuery({
-    queryKey: ["total_NVS", validationType],
-    queryFn: () => getCountNVS(validationType),
-  });
-
-  return { isPending, data, error };
-}
 
 export function useTotalOT() {
   const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation") || "Survey";
+  const validationType = searchParams.get("validation");
   const { isPending, data, error } = useQuery({
     queryKey: ["total_OT", validationType],
     queryFn: () => getCountOT(validationType),
@@ -127,7 +105,7 @@ export function useTotalOT() {
 
 export function useTotalINC() {
   const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation") || "Survey";
+  const validationType = searchParams.get("validation");
   const { isPending, data, error } = useQuery({
     queryKey: ["total_INC", validationType],
     queryFn: () => getCountINC(validationType),
@@ -138,7 +116,7 @@ export function useTotalINC() {
 
 export function useTotalJEHOVAH() {
   const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation") || "Survey";
+  const validationType = searchParams.get("validation");
   const { isPending, data, error } = useQuery({
     queryKey: ["total_JEHOVAH", validationType],
     queryFn: () => getCountJEHOVAH(validationType),
@@ -156,22 +134,10 @@ export function useTotalPerBrgy() {
 
   return { isPending, data, error };
 }
-export function useTotalPerBrgy_BarChart() {
-  const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation");
-  const { isPending, data, error } = useQuery({
-    queryKey: ["total_PerBrgy", validationType],
-    queryFn: () => getCountPerBrgy_BarChart(validationType),
-  });
-
-  return { isPending, data, error };
-}
 export function useTotalPerBrgy_Unvalidated() {
-  const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation");
   const { isPending, data, error } = useQuery({
-    queryKey: ["total_PerBrgy_Unvalidated", validationType],
-    queryFn: () => getCountPerBrgy_Unvalidated(validationType),
+    queryKey: ["total_PerBrgy_Unvalidated"],
+    queryFn: () => getCountPerBrgy_Unvalidated(),
   });
 
   return { isPending, data, error };
@@ -202,7 +168,7 @@ export function useTotal_AtoGroundLeaders() {
 }
 export function useTotal_Count_Summaru_PerBrgy() {
   const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation") || "Survey";
+  const validationType = searchParams.get("validation");
   const { isPending, data, error } = useQuery({
     queryKey: ["total_count_summaru_per_brgy", validationType],
     queryFn: () => getCountPerBrgy_Summary(validationType),

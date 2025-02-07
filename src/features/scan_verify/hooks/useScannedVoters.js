@@ -5,12 +5,8 @@ import { useEffect } from "react";
 import { useState } from "react";
 import {
   getAllVoters_Unscanned,
-  getScanned_Voters,
+  getManualScanned_Voters,
 } from "../../../services/apiVoters";
-import {
-  getElectorates_Ato_Per_Brgy,
-  getElectoratesAto,
-} from "../../../services/apiElectorates";
 
 export function useScanned_Voters(searchTerm) {
   const queryClient = useQueryClient();
@@ -24,7 +20,13 @@ export function useScanned_Voters(searchTerm) {
   const [electorates, setElectorates] = useState([]);
   const [count, setCount] = useState(0);
 
-  const queryKey = ["scanned_voters", voters_remarks, page, brgy, searchTerm];
+  const queryKey = [
+    "manual_scanned_voters",
+    voters_remarks,
+    page,
+    brgy,
+    searchTerm,
+  ];
 
   const {
     data,
@@ -33,7 +35,7 @@ export function useScanned_Voters(searchTerm) {
   } = useQuery({
     queryKey,
     queryFn: async () => {
-      const { data, count } = await getScanned_Voters({
+      const { data, count } = await getManualScanned_Voters({
         voters_remarks,
         page,
         brgy,
@@ -70,8 +72,8 @@ export function useScanned_Voters(searchTerm) {
     // Prefetch next page
     if (page < pageCount) {
       queryClient.prefetchQuery({
-        queryKey: ["scanned_voters", page - 1],
-        queryFn: () => getScanned_Voters({ page: page - 1, searchTerm }),
+        queryKey: ["manual_scanned_voters", page - 1],
+        queryFn: () => getManualScanned_Voters({ page: page - 1, searchTerm }),
         staleTime: 5 * 60 * 1000, // 5 minutes
       });
     }
@@ -79,8 +81,8 @@ export function useScanned_Voters(searchTerm) {
     // Prefetch previous page
     if (page > 1) {
       queryClient.prefetchQuery({
-        queryKey: ["scanned_voters", page - 1],
-        queryFn: () => getScanned_Voters({ page: page - 1, searchTerm }),
+        queryKey: ["manual_scanned_voters", page - 1],
+        queryFn: () => getManualScanned_Voters({ page: page - 1, searchTerm }),
         staleTime: 5 * 60 * 1000, // 5 minutes
       });
     }
@@ -160,86 +162,6 @@ export function useUnscanned_Voters(searchTerm) {
         queryKey: ["unscanned_voters", brgy, page - 1],
         queryFn: () =>
           getAllVoters_Unscanned({ brgy, page: page - 1, searchTerm }),
-        staleTime: 5 * 60 * 1000, // 5 minutes
-      });
-    }
-  }, [queryClient, brgy, page, searchTerm, pageCount]);
-
-  return { isPending: isLoading, error, electorates, count };
-}
-
-export function useElectoratesPer_BrgyAto(searchTerm) {
-  const queryClient = useQueryClient();
-  const [searchParams] = useSearchParams();
-  const brgy = searchParams.get("sortBy") || barangayOptions[1].value;
-  // PAGINATION
-  const page = !searchParams.get("modal_tbl_page")
-    ? 1
-    : Number(searchParams.get("modal_tbl_page"));
-
-  const [isPending, setIsPending] = useState(true);
-  const [error, setError] = useState(null);
-  const [electorates, setElectorates] = useState([]);
-  const [count, setCount] = useState(0);
-
-  const queryKey = ["electorates2", brgy, page, searchTerm];
-
-  const {
-    data,
-    isError,
-    isPending: isLoading,
-  } = useQuery({
-    queryKey,
-    queryFn: async () => {
-      const { data, count } = await getElectorates_Ato_Per_Brgy({
-        brgy,
-        page,
-        searchTerm,
-      });
-      return { data, count };
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    onSuccess: ({ data, count }) => {
-      setElectorates(data || []);
-      setCount(count || 0);
-      setIsPending(false);
-      setError(null);
-    },
-    onError: (error) => {
-      setError(error);
-      setIsPending(false);
-    },
-    keepPreviousData: true, // Optional: Keeps previous data while fetching new data
-  });
-
-  // Update state when data changes
-  useEffect(() => {
-    if (data) {
-      setElectorates(data.data);
-      setCount(data.count);
-    }
-  }, [data]);
-
-  // PRE-FETCHING
-  const pageCount = Math.ceil(count / PAGE_SIZE);
-
-  useEffect(() => {
-    // Prefetch next page
-    if (page < pageCount) {
-      queryClient.prefetchQuery({
-        queryKey: ["electorates2", brgy, page - 1],
-        queryFn: () =>
-          getElectorates_Ato_Per_Brgy({ brgy, page: page - 1, searchTerm }),
-        staleTime: 5 * 60 * 1000, // 5 minutes
-      });
-    }
-
-    // Prefetch previous page
-    if (page > 1) {
-      queryClient.prefetchQuery({
-        queryKey: ["electorates2", brgy, page - 1],
-        queryFn: () =>
-          getElectorates_Ato_Per_Brgy({ brgy, page: page - 1, searchTerm }),
         staleTime: 5 * 60 * 1000, // 5 minutes
       });
     }

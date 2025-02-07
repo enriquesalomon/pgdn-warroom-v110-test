@@ -1,16 +1,8 @@
 import Table from "../../../ui/Table";
 import { replaceSpecialChars } from "../../../utils/helpers";
 function UnscannedTableRow({ electorate, index }) {
-  const {
-    precinctno,
-    firstname,
-    middlename,
-    lastname,
-    brgy,
-    purok,
-    leader_firstname,
-    leader_lastname,
-  } = electorate;
+  const { precinctno, firstname, middlename, lastname, brgy, purok, team } =
+    electorate;
 
   return (
     <Table.Row>
@@ -22,7 +14,7 @@ function UnscannedTableRow({ electorate, index }) {
       <div>{replaceSpecialChars(purok)}</div>
       <div>{brgy}</div>
       <div>
-        {leader_firstname} {leader_lastname}
+        {team?.firstname || ""} {team?.lastname || ""}
       </div>
     </Table.Row>
   );

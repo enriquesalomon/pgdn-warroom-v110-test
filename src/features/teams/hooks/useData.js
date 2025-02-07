@@ -23,13 +23,13 @@ const fetchFirstSelectData = async (brgy) => {
     data_clustered: data_clustered || [], // Ensure data_clustered is always defined
   };
 };
-const fetchSecondSelectData = async (brgy) => {
+const fetchSecondSelectData = async (precinct_no) => {
   let { data, error } = await supabase
     .from("electorates")
     .select(
-      "id,precinctno,firstname,middlename,lastname,name_ext,brgy,precinctleader,isleader,purok"
+      "id,precinctno,firstname,middlename,lastname,brgy,precinctleader,isleader"
     )
-    .eq("brgy", brgy)
+    .eq("precinctno", precinct_no)
     .is("precinctleader", null)
     .is("voters_type", null)
     .is("isbaco", null)
@@ -38,7 +38,6 @@ const fetchSecondSelectData = async (brgy) => {
     .is("is_legend", null)
     .is("is_elite", null)
     .is("is_pending_team", null)
-    .eq("islubas_type", "N/A")
     .order("lastname", { ascending: true });
   if (error) throw new Error(error.message);
   return data;
@@ -68,7 +67,7 @@ const fetchClustered_Electorates = async (precinct_nos) => {
   let { data, error } = await supabase
     .from("electorates")
     .select(
-      "id,precinctno,firstname,middlename,name_ext,lastname,brgy,precinctleader,isleader"
+      "id,precinctno,firstname,middlename,lastname,brgy,precinctleader,isleader"
     )
     // .eq("precinctno", precinct_nos)
     .eq("precinctno", precinct_nos)
@@ -110,57 +109,57 @@ export const useTeamMembers = (leaderId) => {
   });
 };
 
-// const fetchNames = async (id) => {
-//   let { data, error } = await supabase
-//     .from("electorates")
-//     .select("id,precinctno,firstname,middlename,lastname")
-//     .eq("id", id)
-//     .is("voters_type", null)
-//     .order("lastname", { ascending: true });
-//   if (error) throw new Error(error.message);
-//   return data;
-// };
-// const fetchNameBaco = async (id) => {
-//   let { data, error } = await supabase
-//     .from("baco")
-//     .select("id,firstname,middlename,lastname")
-//     .eq("id", id);
-//   if (error) throw new Error(error.message);
-//   return data;
-// };
+const fetchNames = async (id) => {
+  let { data, error } = await supabase
+    .from("electorates")
+    .select("id,precinctno,firstname,middlename,lastname")
+    .eq("id", id)
+    .is("voters_type", null)
+    .order("lastname", { ascending: true });
+  if (error) throw new Error(error.message);
+  return data;
+};
+const fetchNameBaco = async (id) => {
+  let { data, error } = await supabase
+    .from("baco")
+    .select("id,firstname,middlename,lastname")
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+  return data;
+};
 
-// export const useGM = (parameter) => {
-//   return useQuery({
-//     queryKey: ["gm", parameter],
-//     queryFn: () => fetchNames(parameter),
-//     enabled: !!parameter, // This ensures the second query only runs if parameter is provided
-//   });
-// };
-// export const useAGM = (parameter) => {
-//   return useQuery({
-//     queryKey: ["agm", parameter],
-//     queryFn: () => fetchNames(parameter),
-//     enabled: !!parameter, // This ensures the second query only runs if parameter is provided
-//   });
-// };
-// export const useLegend = (parameter) => {
-//   return useQuery({
-//     queryKey: ["legend", parameter],
-//     queryFn: () => fetchNames(parameter),
-//     enabled: !!parameter, // This ensures the second query only runs if parameter is provided
-//   });
-// };
-// export const useElite = (parameter) => {
-//   return useQuery({
-//     queryKey: ["elite", parameter],
-//     queryFn: () => fetchNames(parameter),
-//     enabled: !!parameter, // This ensures the second query only runs if parameter is provided
-//   });
-// };
-// export const useBacoName = (parameter) => {
-//   return useQuery({
-//     queryKey: ["baco", parameter],
-//     queryFn: () => fetchNameBaco(parameter),
-//     enabled: !!parameter, // This ensures the second query only runs if parameter is provided
-//   });
-// };
+export const useGM = (parameter) => {
+  return useQuery({
+    queryKey: ["gm", parameter],
+    queryFn: () => fetchNames(parameter),
+    enabled: !!parameter, // This ensures the second query only runs if parameter is provided
+  });
+};
+export const useAGM = (parameter) => {
+  return useQuery({
+    queryKey: ["agm", parameter],
+    queryFn: () => fetchNames(parameter),
+    enabled: !!parameter, // This ensures the second query only runs if parameter is provided
+  });
+};
+export const useLegend = (parameter) => {
+  return useQuery({
+    queryKey: ["legend", parameter],
+    queryFn: () => fetchNames(parameter),
+    enabled: !!parameter, // This ensures the second query only runs if parameter is provided
+  });
+};
+export const useElite = (parameter) => {
+  return useQuery({
+    queryKey: ["elite", parameter],
+    queryFn: () => fetchNames(parameter),
+    enabled: !!parameter, // This ensures the second query only runs if parameter is provided
+  });
+};
+export const useBacoName = (parameter) => {
+  return useQuery({
+    queryKey: ["baco", parameter],
+    queryFn: () => fetchNameBaco(parameter),
+    enabled: !!parameter, // This ensures the second query only runs if parameter is provided
+  });
+};

@@ -5,14 +5,4 @@ export default {
     extend: {},
   },
   plugins: [],
-  safelist: [
-    {
-      pattern:
-        /bg-(amber|emerald|red|purple|indigo|green)-(50|100|200|300|400|500|600|700|800|900)/,
-    },
-    {
-      pattern:
-        /fill-(amber|emerald|red|purple|indigo|green)-(50|100|200|300|400|500|600|700|800|900)/,
-    },
-  ],
 };

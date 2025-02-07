@@ -20,7 +20,7 @@ import styled from "styled-components";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLogedInUser } from "../features/authentication/hooks/useUser";
 import Spinner from "../ui/Spinner";
-// import BarangayFilterAll from "../ui/BarangayFilterAll";
+import BarangayFilterAll from "../ui/BarangayFilterAll";
 import UserTableStaff from "../features/users/app_staff/components/UserTableStaff";
 import AddUserStaff from "../features/users/app_staff/components/AddUserStaff";
 
@@ -61,10 +61,6 @@ function NewUsers() {
     actionPermission,
     "add Baco user"
   );
-  const isAllowedAction_mobileApp_user = parseAction(
-    actionPermission,
-    "add Mobile app user"
-  );
   if (!isAllowed) {
     // If isDashboardAllowed is false, return null or an alternative component/message
     return <UnAuthorized headerText="Page Not Found" />;
@@ -97,7 +93,7 @@ function NewUsers() {
         </StyledBox>
       </div> */}
 
-      {/* <div>
+      <div>
         <StyledBox>
           <Row type="horizontal">
             <Heading as="h2"></Heading>
@@ -112,7 +108,7 @@ function NewUsers() {
             <UserTableBaco />
           </Row>
         </StyledBox>
-      </div> */}
+      </div>
       <div>
         <StyledBox>
           <Row type="horizontal">
@@ -124,7 +120,7 @@ function NewUsers() {
           </Row>
 
           <Row>
-            {isAllowedAction_mobileApp_user ? <AddUserStaff /> : null}
+            {isAllowedAction_baco_user ? <AddUserStaff /> : null}
             <UserTableStaff />
           </Row>
         </StyledBox>

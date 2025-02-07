@@ -10,7 +10,7 @@ export async function getSpecialElectorate({
   let query = supabase
     .from("electorates")
     .select(
-      `id,precinctno,firstname,middlename,lastname,purok,brgy,survey_tag`,
+      `id,precinctno,firstname,middlename,lastname,purok,brgy,voters_type`,
       {
         count: "exact",
       }
@@ -19,25 +19,15 @@ export async function getSpecialElectorate({
     .order("id", { ascending: false });
 
   if (assigned === "0") {
-    query = query.not("survey_tag", "is", null);
-  } else if (assigned === "OUT OF TOWN") {
-    query = query.eq("survey_tag", "OUT OF TOWN");
-  } else if (assigned === "INC") {
-    query = query.eq("survey_tag", "INC");
-  } else if (assigned === "JEHOVAH") {
-    query = query.eq("survey_tag", "JEHOVAH");
-  } else if (assigned === "ATO") {
-    query = query.eq("survey_tag", "ATO");
-  } else if (assigned === "DILI") {
-    query = query.eq("survey_tag", "DILI");
-  } else if (assigned === "UNDECIDED") {
-    query = query.eq("survey_tag", "UNDECIDED");
-  } else if (assigned === "LUBAS CHAIRPERSON") {
-    query = query.eq("survey_tag", "LUBAS CHAIRPERSON");
-  } else if (assigned === "LUBAS MEMBER") {
-    query = query.eq("survey_tag", "LUBAS MEMBER");
+    query = query.not("voters_type", "is", null);
+  } else if (assigned === "4") {
+    query = query.eq("voters_type", "OT");
+  } else if (assigned === "5") {
+    query = query.eq("voters_type", "INC");
+  } else if (assigned === "6") {
+    query = query.eq("voters_type", "JEHOVAH");
   } else {
-    query = query.not("survey_tag", "is", null);
+    query = query.not("precinctleader", "is", null);
   }
 
   if (searchTerm) {
@@ -63,18 +53,71 @@ export async function getSpecialElectorate({
 }
 
 export async function createEditSpecial(newUserData) {
+  let tag_result;
+  if (newUserData.voters_type === "OT") {
+    tag_result = 4;
+  } else if (newUserData.voters_type === "INC") {
+    tag_result = 5;
+  } else if (newUserData.voters_type === "JEHOVAH") {
+    tag_result = 6;
+  }
+
+  // Construct the object to insert
+  const dataToInsert = {
+    electorate_id: newUserData.id, // Insert array element into electorate_id
+    leader_id: null,
+    result: tag_result,
+    validation_id: newUserData.val_id,
+    brgy: newUserData.brgy,
+    confirmed_by: newUserData.confirmed_by,
+  };
+
+  // Insert into electorate_validations table
+  const { data, error } = await supabase
+    .from("electorate_validations")
+    .insert([dataToInsert])
+    .select();
+
+  if (error) {
+    console.error(error);
+    throw new Error(
+      "Cannot proceed with tagging. The selected electorates have already been tagged."
+    );
+  } else {
+    console.log("success insterted electorate_validations", data);
+  }
+
   try {
     // Update the electorates table
-    const { data, error: err } = await supabase
+    const { data: updateData, error: updateError } = await supabase
       .from("electorates")
-      .update({ survey_tag: newUserData.voters_type })
+      .update({ voters_type: newUserData.voters_type })
       .eq("id", newUserData.id)
       .select()
       .single();
 
+    if (updateError) {
+      console.error("Error updating data:", updateError);
+
+      // Rollback: Delete the previously inserted record in electorate_validations
+      const { error: rollbackError } = await supabase
+        .from("electorate_validations")
+        .delete()
+        .eq("id", data[0].id); // Assuming data[0] contains the inserted row
+
+      if (rollbackError) {
+        console.error("Rollback failed:", rollbackError);
+        throw new Error(`Error during rollback: ${rollbackError.message}`);
+      }
+
+      throw new Error(`Error in Tagging! Error: ${updateError.message}`);
+    } else {
+      console.log("Data updated successfully:", updateData);
+    }
+
     return data;
-  } catch (err) {
-    console.error("Unexpected error:", err);
+  } catch (error) {
+    console.error("Unexpected error:", error);
     throw new Error("An unexpected error occurred during processing.");
   }
 }
@@ -82,7 +125,7 @@ export async function createEditSpecial(newUserData) {
 export async function untagSpecial(id) {
   const { data, error } = await supabase
     .from("electorates")
-    .update({ survey_tag: null })
+    .update({ voters_type: null })
     .eq("id", id)
     // .eq("final_validation", false)
     .select();

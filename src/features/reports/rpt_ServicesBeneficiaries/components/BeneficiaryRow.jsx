@@ -12,12 +12,22 @@ function BeneficiaryRow({ electorate, all_availed, index }) {
   let electorates_type;
   if (electorates) {
     if (electorates.isleader === true && electorates.precinctleader !== null) {
-      electorates_type = "PRECINCT LEADER";
+      electorates_type = "TOWER";
     } else if (
       electorates.isleader === null &&
       electorates.precinctleader !== null
     ) {
-      electorates_type = "MEMBERS";
+      electorates_type = "WARRIORS";
+    } else if (electorates.isbaco === true) {
+      electorates_type = "BACO";
+    } else if (electorates.is_gm === true) {
+      electorates_type = "GM";
+    } else if (electorates.is_agm === true) {
+      electorates_type = "AGM";
+    } else if (electorates.is_legend === true) {
+      electorates_type = "LEGEND";
+    } else if (electorates.is_elite === true) {
+      electorates_type = "ELITE";
     }
   }
 

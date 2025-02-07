@@ -22,15 +22,7 @@ const Stacked = styled.div`
   flex-direction: column;
   gap: 0.2rem;
 `;
-
-// Mapping for rmks characters
-const mapping = {
-  "*": "18-30",
-  A: "Illiterate",
-  B: "PWD",
-  C: "Senior Citizen",
-};
-function ElectoratesRow({ sector, electorate, index, searchTerm, className }) {
+function ElectoratesRow({ sector, electorate, index, searchTerm }) {
   const { actionPermission } = useActionPermissionContext();
   const { isDeleting, deleteElectorate } = useDeleteElectorate();
   const isAllowedAction = actionPermission.includes("delete electorate");
@@ -44,29 +36,40 @@ function ElectoratesRow({ sector, electorate, index, searchTerm, className }) {
     brgy,
     city,
     precinctleader,
-    rmks,
     isbaco,
     is_gm,
     is_agm,
     is_legend,
     is_elite,
-    isleader_type,
-    name_ext,
     remarks_18_30,
     remarks_pwd,
     remarks_illiterate,
     remarks_senior_citizen,
-    qr_code,
   } = electorate;
-  let asteriskEy;
-  if (
-    isleader_type === "SILDA LEADER & HOUSEHOLD LEADER" ||
-    isleader_type === "HOUSEHOLD LEADER"
-  ) {
-    asteriskEy = "*";
-  }
-
+  console.log("test", JSON.stringify(electorate));
   let ato = false;
+
+  // Reformat birthdate from dd/mm/yyy to yyyy-mm-dd to pass into the date picker input
+  // Check if birthdate exists and is in the expected format
+  if (electorate.birthdate && electorate.birthdate.includes("/")) {
+    const parts = electorate.birthdate.split("/");
+
+    if (parts.length === 3) {
+      // Ensure the split array has 3 elements
+      const day = parts[0].padStart(2, "0");
+      const month = parts[1].padStart(2, "0");
+      const year = parts[2];
+
+      electorate.birthdate = `${year}-${month}-${day}`;
+    } else {
+      console.error("Unexpected birthdate format:", electorate.birthdate);
+    }
+  } else {
+    console.log(
+      "Birthdate does not contain a '/' or is undefined:",
+      electorate.birthdate
+    );
+  }
   if (
     precinctleader !== null ||
     isbaco === true ||
@@ -79,43 +82,26 @@ function ElectoratesRow({ sector, electorate, index, searchTerm, className }) {
   }
   return (
     <Table.Row>
-      {/* <div className="flex items-center">
+      <div className="flex items-center">
         {ato === true && (
-          <span className="inline-block h-5 w-5 rounded-full bg-green-700 mr-2"></span>
+          <span className="inline-block h-5 w-5 rounded-full bg-orange-400 mr-2"></span>
         )}
-      </div> */}
+      </div>
       <div>{electorateId}</div>
       <div>{precinctno}</div>
-      <div>
-        {(asteriskEy || "") + " "}
-        {replaceSpecialChars(lastname)}
-      </div>
+      <div>{replaceSpecialChars(lastname)}</div>
       <div>{replaceSpecialChars(firstname)}</div>
       <div>{replaceSpecialChars(middlename)}</div>
-      <div> {name_ext}</div>
-      {/* <Stacked>
+      <div>{replaceSpecialChars(purok)}</div>
+      <div>{brgy}</div>
+      <Stacked>
         <span>{remarks_18_30 ? "18-30" : ""}</span>
         <span> {remarks_pwd ? "PWD" : ""}</span>
         <span> {remarks_illiterate ? "Illiterate" : ""}</span>
         <span> {remarks_senior_citizen ? "Senior Citizen" : ""}</span>
-      </Stacked> */}
-      {/* <Stacked>
-        <span>{rmks ? "18-30" : ""}</span>
-      </Stacked> */}
-      <Stacked>
-        {rmks
-          ? [...rmks]
-              .filter((char) => mapping[char]) // Only include characters that exist in the mapping
-              .map((char, index) => (
-                <span key={index}>{mapping[char]}</span> // Render each equivalent meaning
-              ))
-          : ""}
       </Stacked>
-      <div>{purok}</div>
-      <div>{brgy}</div>
-      <div>{city}</div>
 
-      <div className="no-print">
+      <div>
         <Modal>
           <Menus.Menu>
             <Menus.Toggle id={electorateId} />

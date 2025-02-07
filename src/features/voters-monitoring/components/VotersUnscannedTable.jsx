@@ -47,13 +47,26 @@ function VotersUnscannedTable() {
     useKeysAsHeaders: true,
   });
 
+  // useEffect(() => {
+  //   // Create a new array without the user_id property
+  //   const data = sortedElectorates.map((row) => {
+  //     const { total_count, ...rest } = row;
+  //     return rest;
+  //   });
+  //   console.log("yesss", JSON.stringify(data));
+  //   setExceldata(data);
+  // }, [sortedElectorates]);
   useEffect(() => {
-    // Create a new array without the user_id property
+    // Create a new array without the user_id property and map team to leader
     const data = sortedElectorates.map((row) => {
-      const { total_count, ...rest } = row;
-      return rest;
+      const { total_count, team, ...rest } = row;
+      return {
+        ...rest,
+        leader: team ? `${team.firstname} ${team.lastname}` : "None",
+      };
     });
 
+    console.log("yesss", JSON.stringify(data));
     setExceldata(data);
   }, [sortedElectorates]);
 

@@ -35,92 +35,69 @@ const ChartBox = styled.div`
 `;
 
 function ElectoratePieChartExcludeUV({
-  dili,
+  tot_Ato_groundManagement,
   Ato,
   OT,
   INC,
   JEHOVAH,
-  undecided,
-  deceased,
-  nvs,
   isZoom,
-  lubas,
 }) {
   const { isDarkMode } = useDarkMode();
   // const total = Ato + Dili + Undecided + Deceased;
-  const total = Ato + OT + dili + INC + JEHOVAH;
+  const total = tot_Ato_groundManagement + Ato + OT + INC + JEHOVAH;
 
   // alert(total); 71005
   const startDataLight = [
     {
       category: "ATO",
-      value: Ato,
-      color: "#489369",
-    },
-    {
-      category: "DILI",
-      value: dili,
-      color: "#FEE2E2",
+      value: Ato + tot_Ato_groundManagement,
+      color: "#FFA500",
     },
 
-    {
-      category: "UNDECIDED",
-      value: undecided,
-      color: "#FEF9C3",
-    },
-    {
-      category: "DECEASED",
-      value: deceased,
-      color: "#080808",
-    },
+    // {
+    //   category: "UNDECIDED",
+    //   value: Undecided,
+    //   color: "#9CA3AF",
+    // },
+    // {
+    //   category: "DECEASED",
+    //   value: Deceased,
+    //   color: "#080808",
+    // },
     {
       category: "Out of Town",
       value: OT,
-      color: "#FB9EC6",
+      color: "#90CAF9",
     },
     {
       category: "INC",
       value: INC,
-      color: "#00FF9C",
+      color: "#8CC640",
     },
     {
       category: "JEHOVAH",
       value: JEHOVAH,
-      color: "#F3F4F6",
-    },
-    {
-      category: "NVS",
-      value: nvs,
-      color: "#FFC966",
-    },
-    {
-      category: "GOLD AFFILIATES",
-      value: lubas,
-      color: "#E8B903",
+      color: "#4A6DA7",
     },
   ];
 
   const startDataDark = [
     {
       category: "Ato",
-      value: Ato,
-      color: "#145A32",
+      value: Ato + tot_Ato_groundManagement,
+      color: "#FFA500",
     },
-    {
-      category: "DILI",
-      value: dili,
-      color: "#FF0000",
-    },
-    {
-      category: "Undecided",
-      value: undecided,
-      color: "#9CA3AF",
-    },
-    {
-      category: "Deceased",
-      value: deceased,
-      color: "#080808",
-    },
+
+    // {
+    //   category: "Undecided",
+    //   value: Undecided,
+    //   color: "#9CA3AF",
+    // },
+    // {
+    //   category: "Deceased",
+    //   value: Deceased,
+    //   color: "#080808",
+    // },
 
     {
       category: "Out of Town",
@@ -137,50 +114,10 @@ function ElectoratePieChartExcludeUV({
       value: JEHOVAH,
       color: "#4A6DA7",
     },
-    {
-      category: "NVS",
-      value: nvs,
-      color: "#e9f57a",
-    },
-    {
-      category: "GOLD AFFILIATES",
-      value: lubas,
-      color: "#E8B903",
-    },
   ];
 
-  const startData = isDarkMode ? startDataLight : startDataLight;
-  const renderCustomLegend = (props) => {
-    const { payload } = props; // `payload` contains legend data
-    return (
-      <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-        {payload.map((entry, index) => (
-          <li
-            key={`item-${index}`}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "8px",
-              color: "black", // Set the text color to black
-              fontSize: "14px", // Optional: Customize font size
-            }}
-          >
-            <span
-              style={{
-                width: "15px",
-                height: "15px",
-                backgroundColor: entry.color,
-                display: "inline-block",
-                marginRight: "8px",
-                borderRadius: "50%",
-              }}
-            ></span>
-            {entry.value}
-          </li>
-        ))}
-      </ul>
-    );
-  };
+  const startData = isDarkMode ? startDataDark : startDataLight;
+
   const renderCustomizedLabel = ({
     cx,
     cy,
@@ -208,7 +145,7 @@ function ElectoratePieChartExcludeUV({
           <text
             x={x}
             y={y}
-            fill="black"
+            fill="white"
             textAnchor="middle"
             dominantBaseline="central"
           >
@@ -237,24 +174,22 @@ function ElectoratePieChartExcludeUV({
   };
   const [searchParams] = useSearchParams();
   let validationType = searchParams.get("validation");
-  validationType = validationMapping[validationType] || "Survey";
+  validationType = validationMapping[validationType] || "first_validation";
   validationType =
     validationType === "third_validation"
       ? "3rd Validation"
       : validationType === "second_validation"
       ? "2nd Validation"
-      : validationType === "first_validation"
-      ? "1st Validation"
-      : "Survey";
+      : "1st Validation";
   return (
     <ChartBox>
       <div className="flex justify-between">
         <div>
           <Heading as="h2">Electorate Classification Chart</Heading>
-          {/* <Heading className="underline decoration-solid" as="h6">
+          <Heading className="underline decoration-solid" as="h6">
             Excluding Unvalidated Data
-          </Heading> */}
-          <span className="ml-7">{validationType}</span>
+          </Heading>
+          {/* <span className="ml-7">{validationType}</span> */}
         </div>
         {!isZoom && (
           <div>
@@ -271,22 +206,12 @@ function ElectoratePieChartExcludeUV({
                 widthvar="50%"
               >
                 <ElectoratePieChartExcludeUV
-                  // dili={dili}
-                  // Ato={Ato}
-                  // OT={OT}
-                  // INC={INC}
-                  // JEHOVAH={JEHOVAH}
-                  // isZoom={true}
-                  dili={dili}
+                  tot_Ato_groundManagement={tot_Ato_groundManagement}
                   Ato={Ato}
                   OT={OT}
                   INC={INC}
                   JEHOVAH={JEHOVAH}
-                  undecided={undecided}
-                  deceased={deceased}
-                  nvs={nvs}
-                  isZoom={isZoom}
-                  lubas={lubas}
+                  isZoom={true}
                 />
               </Modal.Window>
             </Modal>
@@ -345,7 +270,6 @@ function ElectoratePieChartExcludeUV({
             layout="vertical"
             iconSize={15}
             iconType="circle"
-            content={renderCustomLegend}
           />
         </PieChart>
       </ResponsiveContainer>

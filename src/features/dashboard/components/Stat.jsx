@@ -12,7 +12,6 @@ const StyledStat = styled.div`
   grid-template-rows: auto auto;
   column-gap: 1.6rem;
   row-gap: 0.4rem;
-  background-color: var(--color-${(props) => props.color}-100);
 `;
 
 const Icon = styled.div`
@@ -29,7 +28,7 @@ const Icon = styled.div`
   & svg {
     width: 3.2rem;
     height: 3.2rem;
-    color: var(--color-${(props) => props.color}-400);
+    color: var(--color-${(props) => props.color}-700);
   }
 `;
 
@@ -50,7 +49,7 @@ const Value = styled.p`
 
 function Stat({ icon, title, value, color }) {
   return (
-    <StyledStat color={color}>
+    <StyledStat>
       <Icon color={color}>{icon}</Icon>
       <Title>{title}</Title>
       <Value>{value}</Value>

@@ -9,7 +9,6 @@ export function useElectorateValidated(searchTerm) {
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const validationType = searchParams.get("validation");
-
   const brgy = searchParams.get("sortBy") || barangayOptions[1].value;
   // PAGINATION
   const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
@@ -66,13 +65,7 @@ export function useElectorateValidated(searchTerm) {
     // Prefetch next page
     if (page < pageCount) {
       queryClient.prefetchQuery({
-        queryKey: [
-          "electorates_validated",
-          validationType,
-          brgy,
-          page - 1,
-          searchTerm,
-        ],
+        queryKey: ["electorates_validated", brgy, page - 1],
         queryFn: () =>
           getElectorateValidated({
             validationType,
@@ -86,13 +79,7 @@ export function useElectorateValidated(searchTerm) {
     // Prefetch previous page
     if (page > 1) {
       queryClient.prefetchQuery({
-        queryKey: [
-          "electorates_validated",
-          validationType,
-          brgy,
-          page - 1,
-          searchTerm,
-        ],
+        queryKey: ["electorates_validated", brgy, page - 1],
         queryFn: () =>
           getElectorateValidated({
             validationType,

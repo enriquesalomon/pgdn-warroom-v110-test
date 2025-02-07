@@ -5,7 +5,7 @@ function CopyrightNotice() {
   return (
     <div className="text-center py-4 ">
       <p className="text-sm text-gray-500 font-base">
-        Copyright APES V{appVersion} © {currentYear}
+        Copyright PGDN Warroom V {appVersion} © {currentYear}
       </p>
     </div>
   );

@@ -15,8 +15,6 @@ import Modal from "../../../ui/Modal";
 import ButtonIcon from "../../../ui/ButtonIcon";
 import { MdOpenInFull } from "react-icons/md";
 import PerBarangayChartGroups from "./PerBarangayChartGroups";
-import { validationMapping } from "../../../utils/constants";
-import { useSearchParams } from "react-router-dom";
 
 const StyledBarChart = styled(DashboardBox)`
   grid-column: 1 / -1;
@@ -29,93 +27,40 @@ const StyledBarChart = styled(DashboardBox)`
 `;
 
 function PerBarangayChart(
-  { total_count_summary_per_brgy, dataPerbrgy_unvalidated },
+  { data_brgy, dataPerbrgy_unvalidated, total_count_summary_per_brgy },
   viewFull
 ) {
-  //combining the  total_count_summary_per_brgy and  dataPerbrgy_unvalidated into one object
-
-  // Default values for missing keys
-  const defaultValues = {
-    count_ato: 0,
-    count_dili: 0,
-    count_ot: 0,
-    count_inc: 0,
-    count_jhv: 0,
-    count_deceased: 0,
-    count_undecided: 0,
-    count_nvs: 0,
-    count_lubas: 0,
-  };
-
-  // Combine data based on 'brgy'
-  const combinedData = total_count_summary_per_brgy.data.map((item) => {
-    const matchingItem = dataPerbrgy_unvalidated.data.find(
-      (secItem) => secItem.brgy === item.brgy
-    );
-    if (matchingItem) {
-      return { ...item, electorate_count: matchingItem.electorate_count };
-    }
-    return item;
-  });
-
-  // Add unmatched items from the second dataset with default values
-  dataPerbrgy_unvalidated.data.forEach((secItem) => {
-    const exists = total_count_summary_per_brgy.data.some(
-      (item) => item.brgy === secItem.brgy
-    );
-    if (!exists) {
-      combinedData.push({
-        brgy: secItem.brgy,
-        electorate_count: secItem.electorate_count,
-        ...defaultValues, // Add default values for missing keys
-      });
-    }
-  });
-
-  console.log("combinedData", JSON.stringify(combinedData));
-
-  const transformedData = combinedData?.map((item) => ({
+  const transformedData = total_count_summary_per_brgy.data.map((item) => ({
     brgy: item.brgy,
-    TOTAL_ATO: item.count_ato,
-    TOTAL_DILI: item.count_dili,
-    TOTAL_OT: item.count_ot,
-    TOTAL_INC: item.count_inc,
-    TOTAL_JEHOVAH: item.count_jhv,
-    TOTAL_DECEASED: item.count_deceased,
-    TOTAL_UNDECIDED: item.count_undecided,
-    TOTAL_NVS: item.count_nvs,
-    TOTAL_GOLD_AFFILIATES: item.count_lubas,
+    TOTAL_ATO:
+      item.warriors +
+      item.baco_count +
+      item.gm_count +
+      item.agm_count +
+      item.legend_count +
+      item.elite_count,
+    TOTAL_OT: item.ot_count,
+    TOTAL_INC: item.inc_count,
+    TOTAL_JEHOVAH: item.jehovah_count,
     TOTAL_VALIDATED:
-      item.count_ato +
-      item.count_dili +
-      item.count_ot +
-      item.count_inc +
-      item.count_jhv +
-      item.count_deceased +
-      item.count_undecided +
-      item.count_nvs +
-      item.count_lubas,
-    TOTAL_UNVALIDATED: item.electorate_count,
+      item.warriors +
+      item.baco_count +
+      item.gm_count +
+      item.agm_count +
+      item.legend_count +
+      item.elite_count +
+      item.ot_count +
+      item.inc_count +
+      item.jehovah_count, // Assuming TOTAL_VALIDATED is not provided in the first data
+    TOTAL_UNVALIDATED_DILI: item.unvalidated_count,
   }));
-
-  const [searchParams] = useSearchParams();
-  let validationType = searchParams.get("validation");
-  validationType = validationMapping[validationType] || "Survey";
-  validationType =
-    validationType === "third_validation"
-      ? "3rd Validation"
-      : validationType === "second_validation"
-      ? "2nd Validation"
-      : validationType === "first_validation"
-      ? "1st Validation"
-      : "Survey";
 
   return (
     <StyledBarChart>
       <div className="flex justify-between">
         <div>
           <Heading as="h2">Per Barangay Classification Chart</Heading>
-          <span className="ml-7">{validationType}</span>
+          {/* <span className="ml-7">{validationType}</span> */}
         </div>
         {viewFull && (
           <div>
@@ -132,10 +77,9 @@ function PerBarangayChart(
                 widthvar="100%"
               >
                 <PerBarangayChartGroups
-                  validationType={validationType}
-                  // dataPerbrgy_unvalidated={dataPerbrgy_unvalidated}
                   total_count_summary_per_brgy={transformedData}
-                  // data_brgy={dataPerbrgy}
+                  data_brgy={data_brgy}
+                  dataPerbrgy_unvalidated={dataPerbrgy_unvalidated}
                 />
               </Modal.Window>
             </Modal>
@@ -149,17 +93,12 @@ function PerBarangayChart(
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="TOTAL_VALIDATED" fill="#B75CFF" />
-          <Bar dataKey="TOTAL_ATO" fill="#DCFCE7" />
-          <Bar dataKey="TOTAL_DILI" fill="#FEE2E2" />
-          <Bar dataKey="TOTAL_OT" fill="#FB9EC6" />
-          <Bar dataKey="TOTAL_INC" fill="#00FF9C" />
-          <Bar dataKey="TOTAL_JEHOVAH" fill="#F3F4F6" />
-          <Bar dataKey="TOTAL_DECEASED" fill="#080808" />
-          <Bar dataKey="TOTAL_UNDECIDED" fill="#FEF9C3" />
-          <Bar dataKey="TOTAL_NVS" fill="#FFC966" />
-          <Bar dataKey="TOTAL_GOLD_AFFILIATES" fill="#E8B903" />
-          {/* <Bar dataKey="TOTAL_UNVALIDATED" fill="#9E9E9E" /> */}
+          <Bar dataKey="TOTAL_VALIDATED" fill="#007400" />
+          <Bar dataKey="TOTAL_ATO" fill="#FFA500" />
+          <Bar dataKey="TOTAL_OT" fill="#90CAF9" />
+          <Bar dataKey="TOTAL_INC" fill="#8CC640" />
+          <Bar dataKey="TOTAL_JEHOVAH" fill="#4A6DA7" />
+          <Bar dataKey="TOTAL_UNVALIDATED_DILI" fill="#9E9E9E" />
         </ComposedChart>
       </ResponsiveContainer>
     </StyledBarChart>

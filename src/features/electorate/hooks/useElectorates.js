@@ -186,14 +186,14 @@ export function useAllElectoratesPer_Brgy(searchTerm) {
 //   return { isPending, error, electorates_all };
 // }
 
-export function useFetchAllData() {
+export function useFetchAllData(shouldFetch) {
   const [searchParams] = useSearchParams();
   const brgy = searchParams.get("sortBy") || barangayOptions[1].value;
 
   const queryResult = useQuery({
     queryKey: ["electorates_all", brgy],
     queryFn: () => fetchAllData(brgy),
-    enabled: true, // Conditionally enable the query
+    enabled: shouldFetch, // Conditionally enable the query
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
   return {

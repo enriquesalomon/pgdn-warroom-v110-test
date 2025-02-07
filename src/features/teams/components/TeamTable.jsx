@@ -13,20 +13,15 @@ import { SiMicrosoftexcel } from "react-icons/si";
 import { barangayOptions } from "../../../utils/constants";
 import { useQueryClient } from "@tanstack/react-query";
 import { insertLogs } from "../../../utils/recordUserActivity";
-import { useReactToPrint } from "react-to-print";
-import { useRef } from "react";
-import { GrPrint } from "react-icons/gr";
-import { format } from "date-fns";
 
-function TeamTable(ValidationSettings) {
+function TeamTable() {
   const queryClient = useQueryClient();
   const userData = queryClient.getQueryData(["user"]);
-
-  const isKalasag = userData.email === "superadmin@gmail.com";
   const allow_export = userData.user_metadata.account_role === "Super Admin";
   const { isPending, teams, count } = useTeamsWithMembers();
   const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
+
   // 1) FILTER
   const filterValue = searchParams.get("status") || "all";
 
@@ -54,7 +49,7 @@ function TeamTable(ValidationSettings) {
       (item.precinctno &&
         item.precinctno.toLowerCase().includes(searchTerm.toLowerCase()))
   );
-  const componentRef = useRef(); // Ref to the component to print
+
   const brgy = searchParams.get("sortBy") || barangayOptions[1].value;
   const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
   const csvConfig = mkConfig({
@@ -110,11 +105,7 @@ function TeamTable(ValidationSettings) {
     download(csvConfig)(csv);
     insertLogs(params);
   };
-  // Print handler using react-to-print
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current, // The ref to the component you want to print
-    documentTitle: "Electorates Data", // Optional document title for the printed file
-  });
+
   return (
     <Menus>
       <div className="flex-row">
@@ -124,71 +115,46 @@ function TeamTable(ValidationSettings) {
             terms={"Search Name, Barangay, Precinct #"}
             onChange={handleSearchChange}
           />
-          {(allow_export || isKalasag) && (
-            // <Button
-            //   disabled={sortedTeams?.length === 0}
-            //   onClick={() => exportExcel(sortedTeams)}
-            // >
-            //   <div className="flex justify-center items-center">
-            //     <SiMicrosoftexcel className="mr-2" />
-            //     EXPORT
-            //   </div>
-            // </Button>
-            <Button onClick={handlePrint}>
+          {allow_export && (
+            <Button
+              disabled={sortedTeams?.length === 0}
+              onClick={() => exportExcel(sortedTeams)}
+            >
               <div className="flex justify-center items-center">
-                <GrPrint className="mr-2" />
-                PRINT
+                <SiMicrosoftexcel className="mr-2" />
+                EXPORT
               </div>
             </Button>
           )}
         </div>
       </div>
-      <div ref={componentRef}>
-        {/* Print Header */}
-        <div
-          className="print-header"
-          style={{ textAlign: "center", marginBottom: "20px" }}
-        >
-          <h1>List of Team</h1>
-          <p>Barangay: {brgy}</p>
-          <p>
-            List as of {format(new Date(new Date()), "MMM dd, yyyy  hh:mm a")}
-          </p>
-        </div>
-        <Table columns="1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr">
-          <Table.Header>
-            <div>Team ID.</div>
-            <div>Precinct Leader</div>
-
-            <div>Precint No.</div>
-            <div>Total Members</div>
-            <div>Barangay</div>
-            <div>Created By</div>
-            <div>Type</div>
-            {/* <div>Status</div> */}
-          </Table.Header>
-          {isPending ? (
-            <Spinner />
-          ) : (
-            <>
-              <Table.Body
-                data={sortedTeams}
-                render={(teams) => (
-                  <TeamRow
-                    ValidationSettings={ValidationSettings}
-                    teams={teams}
-                    key={teams.id}
-                    brgy={brgy}
-                  />
-                )}
-              />
-              <Table.Footer>
-                <Pagination count={count} />
-              </Table.Footer>
-            </>
-          )}
-        </Table>
-      </div>
+      {/* <div ref={componentRef}> */}
+      <Table columns="1fr 2fr 1fr 1fr 1fr 1fr 1fr  ">
+        <Table.Header>
+          <div>Team ID.</div>
+          <div>Tower</div>
+          <div>Precint No.</div>
+          <div>Total Members</div>
+          {/* <div>Contact No.</div> */}
+          <div>Barangay</div>
+          <div>Confirmed By</div>
+          {/* <div>Status</div> */}
+        </Table.Header>
+        {isPending ? (
+          <Spinner />
+        ) : (
+          <>
+            <Table.Body
+              data={sortedTeams}
+              render={(teams) => <TeamRow teams={teams} key={teams.id} />}
+            />
+            <Table.Footer>
+              <Pagination count={count} />
+            </Table.Footer>
+          </>
+        )}
+      </Table>
+      {/* </div> */}
     </Menus>
   );
 }

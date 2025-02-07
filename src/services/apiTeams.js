@@ -1,4 +1,4 @@
-import { PAGE_SIZE, PAGE_SIZE_bygroup } from "../utils/constants";
+import { PAGE_SIZE } from "../utils/constants";
 import supabase from "./supabase";
 
 export async function getTeams() {
@@ -241,42 +241,10 @@ export async function createEditTeam(
   deleteMembersid,
   new_membersId
 ) {
-  console.log("1data: ", JSON.stringify(newLeader));
-
-  // return null;
   let val_id = newLeader.val_id;
-  // let leadertype = newLeader.leadertype;
-  // delete newLeader.leadertype;
   delete newLeader.val_id;
   const { electorate_id, members } = newLeader;
-  console.log("newLeader data--", JSON.stringify(newLeader));
-  let colmn_validation;
-  let colmn_validation_tag;
-  if (val_id === 1) {
-    colmn_validation = "first_validation";
-    colmn_validation_tag = "firstvalidation_tag";
-  }
-  if (val_id === 2) {
-    colmn_validation = "second_validation";
-    colmn_validation_tag = "secondvalidation_tag";
-  }
-  if (val_id === 3) {
-    colmn_validation = "third_validation";
-    colmn_validation_tag = "thirdvalidation_tag";
-  }
 
-  // Function to generate random text
-  const generateRandomText = (length = 10) => {
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let result = "";
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(
-        Math.floor(Math.random() * characters.length)
-      );
-    }
-    return result;
-  };
   //---------------------------------------------MEMBERS TABLE
   //ADD TEAM
   //Insert members to the Members Table to Enforce if values in the electorate_id id unique across rows and if not unique Throws Error to Avoid Data Duplication
@@ -286,29 +254,26 @@ export async function createEditTeam(
   } else {
     array_mems = members;
   }
+
   for (let element of array_mems) {
     const mem_params = {
       team_id: null, // Insert array element into electorate_id
       electorate_id: element,
     };
-    // .from("electorate_validations") // Assuming you have an "event_attendees" table in Supabase
-    // .upsert(validatedData.validated_data, {
-    //   onConflict: ["electorate_id", "validation_id"], // Ensure these are the correct columns in your unique constraint
-    // }); // Specify the unique constraint for upsert
 
     const { data: data_mem, error } = await supabase
       .from("members")
-      .upsert([mem_params], {
-        onConflict: ["electorate_id", "team_id"], // Ensure these are the correct columns in your unique constraint
-      });
+      .insert([mem_params]);
+
     if (error) {
       console.error("Error inserting data:", error);
-      throw new Error("Creation faileds: Please retry");
+      throw new Error("Creation failed: Please retry");
     } else {
       console.log("Data inserted successfully:", JSON.stringify(data_mem));
     }
   }
   //---------------------------------------------MEMBERS TABLE
+
   //------------------------------------------------------------------
   let query = supabase.from("team");
   // A) CREATE
@@ -319,7 +284,6 @@ export async function createEditTeam(
   const { data: leaderData, error } = await query.select().single();
   if (error) {
     console.error(error);
-    console.log(error);
     throw new Error(
       "Creation failed: The selected leader is already assigned to another team."
     );
@@ -328,16 +292,13 @@ export async function createEditTeam(
     // );
   }
   const newLeaderId = leaderData.id;
+
   if (!id) {
     // in creating new team
     //update the electorates precintleader id
     const { erroe: error1 } = await supabase
       .from("electorates")
-      .update({
-        precinctleader: newLeaderId,
-        [colmn_validation]: true,
-        [colmn_validation_tag]: "ATO",
-      })
+      .update({ precinctleader: newLeaderId })
       .in("id", members);
     if (error1) {
       console.log(error1);
@@ -346,22 +307,47 @@ export async function createEditTeam(
     //update the electorates isleader true
     const { error: error2 } = await supabase
       .from("electorates")
-      .update({
-        isleader: true,
-        isleader_type: newLeader.isleader_type,
-        [colmn_validation_tag]: "ATO",
-      })
+      .update({ isleader: true })
       .eq("id", electorate_id);
-    // Loop through members to update qr_code_data
-    for (const member of members) {
-      const randomText = generateRandomText();
-      const uniqueQRCodeData = `${randomText}-${member}`; // Concatenate for each memberid
-      await supabase
-        .from("electorates")
-        .update({ qr_code: uniqueQRCodeData }) // Update the specific member's qr_code_data
-        .eq("id", member); // Ensure you're updating the correct row
+
+    //update gm
+    const { error: error3 } = await supabase
+      .from("electorates")
+      .update({ is_gm: true })
+      .eq("id", newLeader.gm_id);
+    if (error3) {
+      console.log(error3);
+      return null;
+    }
+    //update agm
+    const { error: error4 } = await supabase
+      .from("electorates")
+      .update({ is_agm: true })
+      .eq("id", newLeader.agm_id);
+    if (error4) {
+      console.log(error4);
+      return null;
+    }
+    //update legend
+    const { error: error5 } = await supabase
+      .from("electorates")
+      .update({ is_legend: true })
+      .eq("id", newLeader.legend_id);
+    if (error5) {
+      console.log(error5);
+      return null;
+    }
+    //update elite
+    const { error: error6 } = await supabase
+      .from("electorates")
+      .update({ is_elite: true })
+      .eq("id", newLeader.elite_id);
+    if (error6) {
+      console.log(error6);
+      return null;
     }
   }
+
   if (!id) {
     // in creating new team
     // //INSERT DATA TO ELECTORATE VALIDATION TABLE
@@ -376,9 +362,11 @@ export async function createEditTeam(
           brgy: newLeader.barangay,
           confirmed_by: newLeader.added_by,
         };
+
         const { data, error } = await supabase
           .from("electorate_validations")
           .insert([dataToInsert]);
+
         if (error) {
           console.error("Error inserting data:", error);
           throw new Error(
@@ -392,62 +380,35 @@ export async function createEditTeam(
       console.error("Unexpected error:", error);
     }
   }
+
   //updating to removed membersid in electorate table
   if (id && deleteMembersid.length > 0) {
     //update the electorates precintleader=null of removed members
     const { error3 } = await supabase
       .from("electorates")
-      .update({
-        precinctleader: null,
-        first_validation: false,
-        second_validation: false,
-        third_validation: false,
-        isleader_type: null,
-        firstvalidation_tag: null,
-        secondvalidation_tag: null,
-        thirdvalidation_tag: null,
-      })
+      .update({ precinctleader: null })
       .in("id", deleteMembersid);
     if (error3) {
       console.log(error3);
       return null;
     }
   }
-
-  //updating the isleader_type of the leader
-  await supabase
-    .from("electorates")
-    .update({ isleader_type: newLeader.isleader_type })
-    .eq("id", electorate_id);
   //updating to new added membersid in electorate table
   if (id && new_membersId.length > 0) {
     //update the electorates precintleader id of new added members
     const { error4 } = await supabase
       .from("electorates")
-      .update({
-        precinctleader: id,
-        [colmn_validation]: true,
-        [colmn_validation_tag]: "ATO",
-      })
+      .update({ precinctleader: id })
       .in("id", new_membersId);
     if (error4) {
       console.log(error4);
       return null;
     }
-    // Loop through members to update qr_code_data
-    for (const member of new_membersId) {
-      const randomText = generateRandomText();
-      const uniqueQRCodeData = `${randomText}-${member}`; // Concatenate for each memberid
-      await supabase
-        .from("electorates")
-        .update({ qr_code: uniqueQRCodeData }) // Update the specific member's qr_code_data
-        .eq("id", member); // Ensure you're updating the correct row
-    }
   }
+
   // removed membersid in Validation Table
   if (id && deleteMembersid.length > 0) {
     //delete electoratesvalidation record
-
     const { error: err4_dl } = await supabase
       .from("electorate_validations")
       .delete()
@@ -469,9 +430,11 @@ export async function createEditTeam(
           validation_id: val_id,
           brgy: newLeader.barangay,
         };
+
         const { data, error } = await supabase
           .from("electorate_validations")
           .insert([dataToInsert]);
+
         if (error) {
           console.error("Error inserting data:", error);
         } else {
@@ -482,6 +445,7 @@ export async function createEditTeam(
       console.error("Unexpected error:", error);
     }
   }
+
   //---------------------------------------------------- MEMBERS TABLE
   if (!id) {
     //ADD TEAM
@@ -522,6 +486,21 @@ export async function createEditTeam(
   //---------------------------------------------------- MEMBERS TABLE
 }
 
+const checkIfHasManyRecords = async (electorate_id, id, column_field) => {
+  console.log("gm_id", electorate_id);
+  console.log("id", id);
+  const { data, error } = await supabase
+    .from("team") // Replace with your table name
+    .select("id")
+    .eq(column_field, electorate_id)
+    .neq("id", id);
+  if (error) {
+    console.error("Error checking for existing sector:", error);
+    return false;
+  }
+
+  return data.length > 0; // Returns true if a match is found, false otherwise
+};
 export async function deleteTeam({
   id,
   electorate_id,
@@ -532,6 +511,12 @@ export async function deleteTeam({
 }) {
   console.log("zzzid", id);
   console.log("xxid", electorate_id);
+  const { data, error } = await supabase.from("team").delete().eq("id", id);
+
+  if (error) {
+    console.error(error);
+    throw new Error("Team could not be deleted");
+  }
 
   const { error: err_update } = await supabase
     .from("electorates")
@@ -541,24 +526,82 @@ export async function deleteTeam({
       second_validation: false,
       third_validation: false,
       final_validation: false,
-      precinctleader: null,
-      isleader_type: null,
-      firstvalidation_tag: null,
-      secondvalidation_tag: null,
-      thirdvalidation_tag: null,
     })
-    .eq("precinctleader", id);
+    .eq("id", electorate_id);
+
   if (err_update) {
     console.error(err_update);
     throw new Error("Team could not be deleted");
   }
 
-  const { data, error } = await supabase.from("team").delete().eq("id", id);
-
-  if (error) {
-    console.error(error);
-    throw new Error("Team could not be deleted");
+  // -------------------------
+  // checking the leadersif has other records when deleting the current team, if no other record found then update the electorate
+  // is_gm,is_agm,is_legend,is_elite
+  const gm_manyRecords = await checkIfHasManyRecords(gm_id, id, "gm_id");
+  const agm_manyRecords = await checkIfHasManyRecords(agm_id, id, "agm_id");
+  const legend_manyRecords = await checkIfHasManyRecords(
+    legend_id,
+    id,
+    "legend_id"
+  );
+  const elite_manyRecords = await checkIfHasManyRecords(
+    elite_id,
+    id,
+    "elite_id"
+  );
+  if (!gm_manyRecords) {
+    //then update the electorates
+    console.log("wala na laen");
+    await supabase
+      .from("electorates")
+      .update({
+        is_gm: null,
+      })
+      .eq("id", gm_id);
+  } else {
+    console.log("naa laen");
   }
+
+  if (!agm_manyRecords) {
+    //then update the electorates
+    console.log("wala na laen");
+    await supabase
+      .from("electorates")
+      .update({
+        is_agm: null,
+      })
+      .eq("id", agm_id);
+  } else {
+    console.log("naa laen");
+  }
+
+  if (!legend_manyRecords) {
+    //then update the electorates
+    console.log("wala na laen");
+    await supabase
+      .from("electorates")
+      .update({
+        is_legend: null,
+      })
+      .eq("id", legend_id);
+  } else {
+    console.log("naa laen");
+  }
+
+  if (!elite_manyRecords) {
+    //then update the electorates
+    console.log("wala na laen");
+    await supabase
+      .from("electorates")
+      .update({
+        is_elite: null,
+      })
+      .eq("id", elite_id);
+  } else {
+    console.log("naa laen");
+  }
+
+  // -------------------------
 
   return data;
 }
@@ -660,7 +703,7 @@ export async function getTeamList({ brgy, page, searchTerm }) {
 
   if (searchTerm) {
     query = query.or(
-      `lastname.ilike.%${searchTerm}%,firstname.ilike.%${searchTerm}%,precinctno.ilike.%${searchTerm}%`
+      `lastname.ilike.%${searchTerm}%,firstname.ilike.%${searchTerm}%,gm_name.ilike.%${searchTerm}%,agm_name.ilike.%${searchTerm}%,legend_name.ilike.%${searchTerm}%,elite_name.ilike.%${searchTerm}%,baco_name.ilike.%${searchTerm}%,precinctno.ilike.%${searchTerm}%`
     );
   }
 
@@ -675,75 +718,6 @@ export async function getTeamList({ brgy, page, searchTerm }) {
   if (error) {
     console.error(error);
     throw new Error("electorates could not be loaded");
-  }
-
-  return { data, count };
-}
-
-//working and 1st function running
-// export async function getTeamListByGroup({ brgy, page, searchTerm }) {
-//   let query = supabase
-//     .from("team")
-//     .select(`*`, {
-//       count: "exact",
-//     })
-//     .eq("barangay", brgy)
-//     .order("created_at", { ascending: false });
-
-//   if (searchTerm) {
-//     query = query.or(
-//       `lastname.ilike.%${searchTerm}%,firstname.ilike.%${searchTerm}%,gm_name.ilike.%${searchTerm}%,agm_name.ilike.%${searchTerm}%,legend_name.ilike.%${searchTerm}%,elite_name.ilike.%${searchTerm}%,baco_name.ilike.%${searchTerm}%,precinctno.ilike.%${searchTerm}%`
-//     );
-//   }
-
-//   if (!searchTerm && page) {
-//     const from = (page - 1) * PAGE_SIZE_bygroup;
-//     const to = from + PAGE_SIZE_bygroup - 1;
-//     query = query.range(from, to);
-//   }
-
-//   const { data, error, count } = await query;
-
-//   if (error) {
-//     console.error(error);
-//     throw new Error("teams could not be loaded");
-//   }
-
-//   return { data, count };
-// }
-export async function getTeamListByGroup({ brgy, page, searchTerm }) {
-  let query = supabase
-    .from("electorates")
-    .select(
-      `id,precinctleader,isleader,precinctno,firstname,middlename,lastname,name_ext,purok,remarks_18_30,remarks_pwd,remarks_illiterate,remarks_senior_citizen,firstvalidation_tag,secondvalidation_tag,thirdvalidation_tag,rmks`,
-      {
-        count: "exact",
-      }
-    )
-    .eq("brgy", brgy)
-    .not("precinctleader", "is", null)
-    .order("brgy", { ascending: true })
-    .order("lastname", { ascending: true }); // Add this line for ordering by lastname;
-
-  if (searchTerm) {
-    query = query
-      .or(
-        `lastname.ilike.%${searchTerm}%,firstname.ilike.%${searchTerm}%,precinctno.ilike.%${searchTerm}%`
-      )
-      .is("isleader", true);
-  }
-
-  // if (!searchTerm && page) {
-  //   const from = (page - 1) * PAGE_SIZE_bygroup;
-  //   const to = from + PAGE_SIZE_bygroup - 1;
-  //   query = query.range(from, to);
-  // }
-
-  const { data, error, count } = await query;
-
-  if (error) {
-    console.error(error);
-    throw new Error("teams could not be loaded");
   }
 
   return { data, count };
@@ -820,163 +794,4 @@ export async function getTeams_per_TopLeaders({ topleader_id, leader_type }) {
   }
 
   return { data, count };
-}
-
-export async function createTeamValidation(validatedData) {
-  // Remove the `name_ext` property
-  validatedData.validated_data.forEach((item) => delete item.name_ext);
-  console.log("validatedData------", JSON.stringify(validatedData));
-  const electorateIds = validatedData.validated_data.map(
-    (item) => item.electorate_id
-  );
-
-  const validationTable_data = {
-    team_id: validatedData.team_id,
-    val_id: validatedData.val_id,
-    validated_data: validatedData.validated_data.map(
-      ({
-        firstvalidation_tag,
-        secondvalidation_tag,
-        thirdvalidation_tag,
-        ...rest
-      }) => rest
-    ),
-  };
-
-  const team_columnToUpdate = `is_validated${validationTable_data.val_id}`;
-  console.log("validatedDatax------", JSON.stringify(validationTable_data));
-  const { error } = await supabase
-    .from("electorate_validations")
-    .upsert(validationTable_data.validated_data, {
-      onConflict: ["electorate_id", "validation_id"],
-    });
-  if (error) {
-    console.error("Error inserting data:", error);
-    throw new Error("Creation failed: Please retry");
-  } else {
-    const { erroe: error1 } = await supabase
-      .from("team")
-      .update({ [team_columnToUpdate]: true })
-      .eq("id", validatedData.team_id);
-    if (error1) {
-      console.log(error1);
-      return null;
-    }
-  }
-  let colmn;
-  if (validatedData.val_id === 1) {
-    colmn = "first_validation";
-  }
-  if (validatedData.val_id === 2) {
-    colmn = "second_validation";
-  }
-  if (validatedData.val_id === 3) {
-    colmn = "third_validation";
-  }
-  const electorates_columnToUpdate = colmn;
-  await supabase
-    .from("electorates")
-    .update({ [electorates_columnToUpdate]: true })
-    .in("id", electorateIds);
-  //----working above
-  // Function to update the database
-  const transformedData = {
-    validated_data: validatedData.validated_data.map((record) => {
-      const transformedRecord = { ...record, id: record.electorate_id };
-      delete transformedRecord.electorate_id;
-      const { result, validation_id } = record;
-      if (result === "1") {
-        if (validation_id === 1) transformedRecord.firstvalidation_tag = "ATO";
-        else if (validation_id === 2)
-          transformedRecord.secondvalidation_tag = "ATO";
-        else if (validation_id === 3)
-          transformedRecord.thirdvalidation_tag = "ATO";
-      } else if (result === "4") {
-        if (validation_id === 1)
-          transformedRecord.firstvalidation_tag = "OUT OF TOWN";
-        else if (validation_id === 2)
-          transformedRecord.secondvalidation_tag = "OUT OF TOWN";
-        else if (validation_id === 3)
-          transformedRecord.thirdvalidation_tag = "OUT OF TOWN";
-      }
-      delete transformedRecord.result;
-      delete transformedRecord.validation_id;
-      return transformedRecord;
-    }),
-    team_id: validatedData.team_id,
-    val_id: validatedData.val_id,
-  };
-  async function updateElectorates() {
-    for (const record of transformedData.validated_data) {
-      const {
-        id,
-        firstvalidation_tag,
-        secondvalidation_tag,
-        thirdvalidation_tag,
-      } = record;
-      let updateData = {};
-      if (firstvalidation_tag)
-        updateData.firstvalidation_tag = firstvalidation_tag;
-      if (secondvalidation_tag)
-        updateData.secondvalidation_tag = secondvalidation_tag;
-      if (thirdvalidation_tag)
-        updateData.thirdvalidation_tag = thirdvalidation_tag;
-      // Update the database
-      const { data, error } = await supabase
-        .from("electorates")
-        .update(updateData)
-        .eq("id", id);
-      if (error) {
-        console.error(`Failed to update record with ID ${id}:`, error.message);
-      } else {
-        console.log(`Record with ID ${id} updated successfully:`, data);
-      }
-    }
-  }
-  // Call the function to perform the updates
-  updateElectorates();
-}
-
-export async function updateTeamMembersTag(validatedData) {
-  console.log("taggingData------", JSON.stringify(validatedData));
-
-  // Access `validated_data`
-  const membersData = validatedData.validated_data;
-
-  // Extract `electorate_id` and `isleader_type`
-  const extractedData = membersData.map(({ electorate_id, isleader_type }) => ({
-    id: electorate_id, // Renamed for clarity
-    isleader_type,
-  }));
-
-  console.log("extractedData------", JSON.stringify(extractedData));
-
-  const updateElectorates = async (data) => {
-    // Validate that data is an array
-    if (!Array.isArray(data)) {
-      console.error("Error: Provided data is not an array.");
-      return;
-    }
-
-    // Iterate over the data array and update each record
-    for (const { id, isleader_type } of data) {
-      try {
-        const { error } = await supabase
-          .from("electorates")
-          .update({ isleader_type })
-          .eq("id", id); // Use `id` to identify the row to update
-
-        if (error) {
-          console.error(`Failed to update electorate with ID ${id}:`, error);
-        } else {
-          console.log(`Successfully updated electorate with ID ${id}`);
-        }
-      } catch (err) {
-        console.error(`Unexpected error for ID ${id}:`, err);
-      }
-    }
-  };
-
-  // Call the function
-  updateElectorates(extractedData);
 }

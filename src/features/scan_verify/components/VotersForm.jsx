@@ -22,8 +22,6 @@ import FormRowButton from "../../../ui/FormRowButton";
 import { useEditVoters } from "../hooks/useEditVoters";
 import FormRowVertical from "../../../ui/FormRowVertical";
 import Textarea from "../../../ui/Textarea";
-import { useElectoratesPer_BrgyAto } from "../hooks/useScannedVoters";
-import { TbTextScan2 } from "react-icons/tb";
 const StyledSelect = styled.select`
   border: 1px solid var(--color-grey-300);
   background-color: var(--color-grey-0);
@@ -43,7 +41,7 @@ function VotersForm({ electorateToEdit = {}, onCloseModal }) {
   const { isEditing, editSpecialElectorate } = useEditVoters();
   const [searchTerm] = useState("");
   const [debouncedSearchTerm] = useDebounce(searchTerm, 500); // Debounce search term
-  const { electorates } = useElectoratesPer_BrgyAto(debouncedSearchTerm);
+  const { electorates } = useElectoratesPer_Brgy2(debouncedSearchTerm);
   const isWorking = isEditing;
   const [val_id, setVal_id] = useState();
   const { id, ...editValues } = electorateToEdit;
@@ -148,7 +146,7 @@ function VotersForm({ electorateToEdit = {}, onCloseModal }) {
       style={{ width: "100%" }}
     >
       <div className="mb-5 flex text-m font-semibold px-8">
-        {isEditSession ? "NEW" : "MANUAL SCANNING"}
+        {isEditSession ? "NEW" : "NEW"}
       </div>
 
       <div className="grid gap-4">
@@ -265,7 +263,11 @@ function VotersForm({ electorateToEdit = {}, onCloseModal }) {
         {isAllowedAction ? (
           <Button disabled={isWorking}>
             <div className="flex justify-center items-center">
-              {!isWorking ? <TbTextScan2 className="mr-2" /> : <SpinnerMini />}
+              {!isWorking ? (
+                <LiaUserTagSolid className="mr-2" />
+              ) : (
+                <SpinnerMini />
+              )}
 
               {isEditSession ? "Save" : " Save"}
             </div>

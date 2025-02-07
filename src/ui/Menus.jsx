@@ -31,7 +31,7 @@ const StyledToggle = styled.button`
 
 const StyledList = styled.ul`
   position: fixed;
-  border: 1px solid green; /* Orange border when clicked */
+  border: 1px solid orange; /* Orange border when clicked */
   padding: 2px;
   background-color: var(--color-grey-0);
   box-shadow: var(--shadow-md);

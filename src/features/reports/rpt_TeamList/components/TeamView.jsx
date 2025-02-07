@@ -14,33 +14,85 @@ const StyledHeader = styled.thead`
 `;
 
 const TeamView = React.forwardRef((props, ref) => {
-  const { id, lastname, firstname, barangay, electorate_id, isleader_type } =
-    props.electorate;
-  let asteriskEy;
-  if (
-    isleader_type === "SILDA LEADER & HOUSEHOLD LEADER" ||
-    isleader_type === "HOUSEHOLD LEADER"
-  ) {
-    asteriskEy = "*";
-  }
+  const {
+    id,
+    precinctno,
+    lastname,
+    firstname,
+    members,
+    members_name,
+    purok,
+    barangay,
+    team,
+    gm_id,
+    agm_id,
+    legend_id,
+    elite_id,
+    baco_id,
+    gm_name,
+    agm_name,
+    legend_name,
+    elite_name,
+    baco_name,
+    electorate_id,
+  } = props.electorate;
+
+  console.log("-=-02=-304234", JSON.stringify(props.l_precinctNo));
+  console.log("-=-02=-304234", JSON.stringify(props.e_precinctNo));
+  console.log("-=-02=-304234", JSON.stringify(props.t_precinctNo));
   const { data: team_members, isLoading } = useGetMembers(id);
+
+  console.log("xxxx---team_members1", JSON.stringify(team_members));
+  console.log("xxxx---team_member2", JSON.stringify(props.electorate));
+  // Filter the data to find the object with id 89563
   const warriors_only = team_members?.filter(
     (item) => item.id !== electorate_id
   );
+  console.log("xxxx---warriors_only", JSON.stringify(warriors_only));
   return (
     <div className="p-12" ref={ref}>
       <div className="p-6">
         <div className="mb-4">
           <div className="flex items-center mb-2">
-            <div className="w-40 text-2xl">BARANGAY:</div>
+            <div className="w-40 text-2xl">Barangay:</div>
             <div className="w-3/4 text-2xl font-semibold">{barangay}</div>
           </div>
           <hr className="py-2" />
-
           <div className="flex items-center mb-2">
-            <div className="w-40 text-2xl">LEADER:</div>
+            <div className="w-40 text-2xl">BACO:</div>
             <div className="w-3/4 text-2xl font-semibold">
-              {(asteriskEy || "") + " "}
+              {replaceSpecialChars(baco_name)}
+            </div>
+          </div>
+          <div className="flex items-center mb-2">
+            <div className="w-40 text-2xl">GM:</div>
+            <div className="w-3/4 text-2xl font-semibold">
+              {replaceSpecialChars(gm_name)}
+            </div>
+          </div>
+          <div className="flex items-center mb-2">
+            <div className="w-40 text-2xl">AGM:</div>
+            <div className="w-3/4 text-2xl font-semibold">
+              {replaceSpecialChars(agm_name)}
+            </div>
+          </div>
+          <div className="flex items-center mb-2">
+            <div className="w-40 text-2xl">LEGEND:</div>
+            <div className="w-3/4 text-2xl font-semibold">
+              {replaceSpecialChars(legend_name)}
+              <span className="ml-6 font-thin">{props.l_precinctNo}</span>
+            </div>
+          </div>
+          <div className="flex items-center mb-2">
+            <div className="w-40 text-2xl">ELITE:</div>
+            <div className="w-3/4 text-2xl font-semibold">
+              {replaceSpecialChars(elite_name)}
+              <span className="ml-6 font-thin">{props.e_precinctNo}</span>
+            </div>
+          </div>
+          <div className="flex items-center mb-2">
+            <div className="w-40 text-2xl">TOWER:</div>
+            <div className="w-3/4 text-2xl font-semibold">
               {replaceSpecialChars(firstname) +
                 " " +
                 replaceSpecialChars(lastname)}

@@ -1,145 +1,45 @@
 import Stat from "./Stat";
 import { FaPersonChalkboard } from "react-icons/fa6";
-import { TbUserCancel, TbUserQuestion } from "react-icons/tb";
+import { TbUserQuestion } from "react-icons/tb";
 import { LiaUserTagSolid } from "react-icons/lia";
-import { SlQuestion, SlUserFollowing } from "react-icons/sl";
+import { SlUserFollowing } from "react-icons/sl";
 // import { FaUserTie } from "react-icons/fa6";
 // import { FaBuildingUser } from "react-icons/fa6";
 import { PiAirplaneTakeoffBold } from "react-icons/pi";
 import { BsBuildings } from "react-icons/bs";
 // import { HiOutlineBuildingLibrary } from "react-icons/hi2";
 import { GiChurch } from "react-icons/gi";
-import { FiUsers } from "react-icons/fi";
-import { FaUserXmark } from "react-icons/fa6";
-import { FaUserSecret } from "react-icons/fa6";
-import { PiCoinsLight } from "react-icons/pi";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 function Stats({
   tot_Electorates,
   tot_Validated,
-  tot_Dili,
   tot_Ato,
   total_OT,
   total_INC,
   total_JEHOVAH,
-  tot_deceased,
-  tot_nvs,
-  tot_undecided,
-  tot_lubas,
+  tot_Ato_groundManagement,
 }) {
-  const [searchParams] = useSearchParams();
-  const validationType = searchParams.get("validation") || "Survey";
-
   const navigate = useNavigate();
-
-  const handleClickAffiliates = () => {
-    navigate("/rpt_electorate_LP_LM_LDC_W"); // Replace '/target-page' with your desired route
-  };
   const handleElectorates = () => {
     navigate("/electorate"); // Replace '/target-page' with your desired route
   };
-  const handleElecValidated = () => {
-    if (validationType === "1v") {
-      navigate("/rpt_electorate_classification?validation=1v&assigned=all"); // Replace '/target-page' with your desired route
-    } else if (validationType === "2v") {
-      navigate("/rpt_electorate_classification?validation=2v&assigned=all"); // Replace '/target-page' with your desired route
-    } else if (validationType === "3v") {
-      navigate("/rpt_electorate_classification?validation=3v&assigned=all"); // Replace '/target-page' with your desired route
-    } else if (validationType === "Survey") {
-      navigate("/rpt_survey?result=ALL"); // Replace '/target-page' with your desired route
-    }
-  };
-  const handleSurveyAto = () => {
-    if (validationType === "1v") {
-      navigate("/rpt_electorate_classification?validation=1v&assigned=1"); // Replace '/target-page' with your desired route
-    } else if (validationType === "2v") {
-      navigate("/rpt_electorate_classification?validation=2v&assigned=1"); // Replace '/target-page' with your desired route
-    } else if (validationType === "3v") {
-      navigate("/rpt_electorate_classification?validation=3v&assigned=1"); // Replace '/target-page' with your desired route
-    } else if (validationType === "Survey") {
-      navigate("/rpt_survey?result=ATO"); // Replace '/target-page' with your desired route
-    }
-  };
-  const handleSurveyDili = () => {
-    if (validationType === "1v") {
-      navigate("/rpt_nonteam_classification?validation=1v&result=DILI"); // Replace '/target-page' with your desired route
-    } else if (validationType === "2v") {
-      navigate("/rpt_nonteam_classification?validation=2v&result=DILI"); // Replace '/target-page' with your desired route
-    } else if (validationType === "3v") {
-      navigate("/rpt_nonteam_classification?validation=3v&result=DILI"); // Replace '/target-page' with your desired route
-    } else if (validationType === "Survey") {
-      navigate("/rpt_survey?result=DILI"); // Replace '/target-page' with your desired route
-    }
-  };
-  const handleSurveyUndecided = () => {
-    if (validationType === "1v") {
-      navigate("/rpt_nonteam_classification?validation=1v&result=UNDECIDED"); // Replace '/target-page' with your desired route
-    } else if (validationType === "2v") {
-      navigate("/rpt_nonteam_classification?validation=2v&result=UNDECIDED"); // Replace '/target-page' with your desired route
-    } else if (validationType === "3v") {
-      navigate("/rpt_nonteam_classification?validation=3v&result=UNDECIDED"); // Replace '/target-page' with your desired route
-    } else if (validationType === "Survey") {
-      navigate("/rpt_survey?result=UNDECIDED"); // Replace '/target-page' with your desired route
-    }
-  };
-  const handleSurveyDeceased = () => {
-    if (validationType === "1v") {
-      navigate("/rpt_nonteam_classification?validation=1v&result=DECEASED"); // Replace '/target-page' with your desired route
-    } else if (validationType === "2v") {
-      navigate("/rpt_nonteam_classification?validation=2v&result=DECEASED"); // Replace '/target-page' with your desired route
-    } else if (validationType === "3v") {
-      navigate("/rpt_nonteam_classification?validation=3v&result=DECEASED"); // Replace '/target-page' with your desired route
-    } else if (validationType === "Survey") {
-      navigate("/rpt_survey?result=DECEASED"); // Replace '/target-page' with your desired route
-    }
-  };
-  const handleSurveyNVS = () => {
-    if (validationType === "1v") {
-      navigate("/rpt_nonteam_classification?validation=1v&result=NVS"); // Replace '/target-page' with your desired route
-    } else if (validationType === "2v") {
-      navigate("/rpt_nonteam_classification?validation=2v&result=NVS"); // Replace '/target-page' with your desired route
-    } else if (validationType === "3v") {
-      navigate("/rpt_nonteam_classification?validation=3v&result=NVS"); // Replace '/target-page' with your desired route
-    } else if (validationType === "Survey") {
-      navigate("/rpt_survey?result=NVS"); // Replace '/target-page' with your desired route
-    }
-  };
-  const handleSurveyOT = () => {
-    if (validationType === "1v") {
-      navigate("/rpt_electorate_classification?validation=1v&assigned=4"); // Replace '/target-page' with your desired route
-    } else if (validationType === "2v") {
-      navigate("/rpt_electorate_classification?validation=2v&assigned=4"); // Replace '/target-page' with your desired route
-    } else if (validationType === "3v") {
-      navigate("/rpt_electorate_classification?validation=3v&assigned=4"); // Replace '/target-page' with your desired route
-    } else if (validationType === "Survey") {
-      navigate("/rpt_survey?result=OUT OF TOWN"); // Replace '/target-page' with your desired route
-    }
-  };
-  const handleSurveyInc = () => {
-    if (validationType === "1v") {
-      navigate("/rpt_nonteam_classification?validation=1v&result=INC"); // Replace '/target-page' with your desired route
-    } else if (validationType === "2v") {
-      navigate("/rpt_nonteam_classification?validation=2v&result=INC"); // Replace '/target-page' with your desired route
-    } else if (validationType === "3v") {
-      navigate("/rpt_nonteam_classification?validation=3v&result=INC"); // Replace '/target-page' with your desired route
-    } else if (validationType === "Survey") {
-      navigate("/rpt_survey?result=INC"); // Replace '/target-page' with your desired route
-    }
-  };
-  const handleSurveyJehovah = () => {
-    if (validationType === "1v") {
-      navigate("/rpt_nonteam_classification?validation=1v&result=JEHOVAH"); // Replace '/target-page' with your desired route
-    } else if (validationType === "2v") {
-      navigate("/rpt_nonteam_classification?validation=2v&result=JEHOVAH"); // Replace '/target-page' with your desired route
-    } else if (validationType === "3v") {
-      navigate("/rpt_nonteam_classification?validation=3v&result=JEHOVAH"); // Replace '/target-page' with your desired route
-    } else if (validationType === "Survey") {
-      navigate("/rpt_survey?result=JEHOVAH"); // Replace '/target-page' with your
-    }
 
-    //  desired route
+  const handleElectoratesAto = () => {
+    navigate("/rpt_electorate_classification?assigned=1"); // Replace '/target-page' with your desired route
   };
-
+  const handleElectoratesDiliUnval = () => {
+    navigate("/rpt_electorate_classification?assigned=0"); // Replace '/target-page' with your desired route
+  };
+  const handleElectoratesOT = () => {
+    navigate("/rpt_electorate_classification?assigned=4"); // Replace '/target-page' with your desired route
+  };
+  const handleElectoratesINC = () => {
+    navigate("/rpt_electorate_classification?assigned=5"); // Replace '/target-page' with your desired route
+  };
+  const handleElectoratesJH = () => {
+    navigate("/rpt_electorate_classification?assigned=6"); // Replace '/target-page' with your desired route
+  };
   return (
     <>
       <div onClick={handleElectorates}>
@@ -150,122 +50,77 @@ function Stats({
           value={tot_Electorates}
         />
       </div>
-      <div onClick={handleElecValidated}>
-        <Stat
-          title="Total Validated"
-          color="violet"
-          icon={<LiaUserTagSolid />}
-          value={
-            tot_Ato +
-            total_OT +
-            tot_Dili +
-            tot_undecided +
-            tot_deceased +
-            tot_nvs +
-            total_INC +
-            total_JEHOVAH +
-            tot_lubas
-          }
-          // value={validationType === "Survey" ? tot_Validated : 0}
-          // + tot_Ato_groundManagement + tot_Ato + total_OT
-        />{" "}
-      </div>
+
       <Stat
-        title="Total Unvalidated"
-        color="grey"
-        icon={<TbUserQuestion />}
-        value={
-          tot_Electorates -
-          (tot_Ato +
-            total_OT +
-            tot_Dili +
-            tot_undecided +
-            tot_deceased +
-            tot_nvs +
-            total_INC +
-            total_JEHOVAH +
-            tot_lubas)
-        }
+        title="Total Validated"
+        color="green"
+        icon={<LiaUserTagSolid />}
+        value={tot_Validated + tot_Ato_groundManagement}
       />
+      <div onClick={handleElectoratesDiliUnval}>
+        <Stat
+          title="Total Unvalidated / DILI"
+          color="grey"
+          icon={<TbUserQuestion />}
+          value={tot_Electorates - (tot_Validated + tot_Ato_groundManagement)}
+        />
+      </div>
 
       <div className="grid grid-cols-subgrid gap-4 col-span-4">
-        <div className="col-start-1" onClick={handleSurveyAto}>
+        <div className="col-start-1" onClick={handleElectoratesAto}>
           <Stat
-            // title="Total Ato"
-            title=""
-            color="green"
+            title="Total Ato"
+            color="orange"
             icon={<SlUserFollowing />}
-            value={tot_Ato}
+            value={tot_Ato + tot_Ato_groundManagement}
           />
         </div>
-        <div className="col-start-2" onClick={handleSurveyDili}>
+        {/* <div className="col-start-2">
           <Stat
-            // title="Total Dili"
-            title=""
+            title="Total Dili"
             color="red"
-            icon={<FaUserXmark />}
+            icon={<SlUserUnfollow />}
             value={tot_Dili}
           />
-        </div>
-        <div className="col-start-3" onClick={handleSurveyUndecided}>
+        </div> */}
+        {/* <div className="col-start-3">
           <Stat
-            // title="Total Undecided"
-            color="yellow"
+            title="Total Undecided"
+            color="grey"
             icon={<SlQuestion />}
-            value={tot_undecided}
+            value={tot_Undecided}
           />
-        </div>
-        <div className="col-start-1" onClick={handleSurveyDeceased}>
+        </div> */}
+        {/* <div className="col-start-1">
           <Stat
-            // title="Total Deceased"
-            color="black"
+            title="Total Deceased"
+            color="grey"
             icon={<TbUserCancel />}
-            value={tot_deceased}
+            value={tot_Deceased}
           />
-        </div>
-        <div className="col-start-2" onClick={handleSurveyNVS}>
+        </div> */}
+        <div className="col-start-2" onClick={handleElectoratesOT}>
           <Stat
-            // title="NVS- (SPECIAL OPERATION)"
-            color="orange"
-            icon={<FaUserSecret />}
-            value={tot_nvs}
-          />
-        </div>
-        <div className="col-start-3" onClick={handleSurveyOT}>
-          <Stat
-            // title="TOTAL OUT OF TOWN"
-            color="pink"
+            title="TOTAL OUT OF TOWN"
+            color="blue"
             icon={<PiAirplaneTakeoffBold />}
             value={total_OT}
           />
         </div>
-        <div className="col-start-1" onClick={handleSurveyInc}>
+        <div className="col-start-3" onClick={handleElectoratesINC}>
           <Stat
-            // title="TOTAL INC"
-            color="mintgreen"
+            title="TOTAL INC"
+            color="grey"
             icon={<GiChurch />}
             value={total_INC}
           />
         </div>
-        <div className="col-start-2" onClick={handleSurveyJehovah}>
+        <div className="col-start-1" onClick={handleElectoratesJH}>
           <Stat
             title="TOTAL JEHOVAH"
             color="grey"
             icon={<BsBuildings />}
             value={total_JEHOVAH}
-          />
-        </div>
-
-        <div
-          className="col-start-3"
-          onClick={handleClickAffiliates}
-          style={{ cursor: "pointer" }}
-        >
-          <Stat
-            // title="TOTAL LUBAS"
-            color="gold"
-            icon={<PiCoinsLight />}
-            value={tot_lubas}
           />
         </div>
       </div>

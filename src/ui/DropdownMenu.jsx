@@ -52,7 +52,7 @@ const StyledNavLink = styled(NavLink)`
   &:active svg,
   &.active:link svg,
   &.active:visited svg {
-    color: var(--color-green-500);
+    color: var(--color-orange-500);
   }
 `;
 

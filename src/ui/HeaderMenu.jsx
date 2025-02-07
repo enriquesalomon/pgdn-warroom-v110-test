@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import DarkModeToggle from "./DarkModeToggle";
 import { usePagePermissionContext } from "../context/PagePermissionContext";
 import { parsePage } from "../utils/helpers";
-// import NotiIcon from "./NotiIcon";
-// import { useCheckReq } from "../features/request/hooks/useRequest";
+import NotiIcon from "./NotiIcon";
+import { useCheckReq } from "../features/request/hooks/useRequest";
 
 const StyledHeaderMenu = styled.ul`
   display: flex;
@@ -17,9 +17,9 @@ const StyledHeaderMenu = styled.ul`
 function HeaderMenu() {
   const { pagePermission } = usePagePermissionContext();
   const isAllowed = parsePage(pagePermission, "account");
-  // const isAllowed_req = parsePage(pagePermission, "team_request");
+  const isAllowed_req = parsePage(pagePermission, "team_request");
   const navigate = useNavigate();
-  // const { count } = useCheckReq();
+  const { count } = useCheckReq();
   return (
     <StyledHeaderMenu>
       {isAllowed ? (
@@ -33,11 +33,11 @@ function HeaderMenu() {
       <li>
         <DarkModeToggle />
       </li>
-      {/* {isAllowed_req && count > 0 && (
+      {isAllowed_req && count > 0 && (
         <li>
           <NotiIcon />
         </li>
-      )} */}
+      )}
       <li>
         <Logout />
       </li>

@@ -17,6 +17,7 @@ import styled from "styled-components";
 import {
   barangayOptions,
   electorate_pcvl_remarks,
+  religionOptions,
   // sectorOptions
 } from "../../../utils/constants";
 import { useSector } from "../hooks/useElectorates";
@@ -31,7 +32,6 @@ const StyledSelect = styled.select`
   box-shadow: var(--shadow-sm);
   width: 19.7rem;
 `;
-
 const Option = (props) => {
   return (
     <div>
@@ -47,14 +47,12 @@ const Option = (props) => {
   );
 };
 function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
-  console.log("is to edit ", JSON.stringify(electorateToEdit));
   const [stateRemarks, setStateRemarks] = useState({ optionSelected: [] });
   // States for specific options
   const [isAge1830, setIsAge1830] = useState(false);
   const [isIlliterate, setIsIlliterate] = useState(false);
   const [isPwd, setIsPwd] = useState(false);
   const [isSenior, setISSenior] = useState(false);
-
   useEffect(() => {
     // Map database fields to electorate_pcvl_remarks options
     const initialSelected = electorate_pcvl_remarks.filter((option) => {
@@ -103,7 +101,7 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
       setISSenior(false);
     }
   };
-
+  console.log("updated birthdate", JSON.stringify(electorateToEdit));
   const queryClient = useQueryClient();
   const { actionPermission } = useActionPermissionContext();
   const isAllowedAction = parseAction(actionPermission, "update electorate");
@@ -119,9 +117,11 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
     defaultValues: isEditSession ? editValues : {},
   });
   const { errors } = formState;
-
+  const remarks_18_30 = isAge1830 ? true : false;
+  const remarks_pwd = isPwd ? true : false;
+  const remarks_illiterate = isIlliterate ? true : false;
+  const remarks_senior_citizen = isSenior ? true : false;
   function onSubmit(data) {
-    console.log("remarks data to submit", JSON.stringify(data.islubas_type));
     const userData = queryClient.getQueryData(["user"]);
     const action = !isEditSession
       ? "User created a new electorate information"
@@ -135,31 +135,23 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
 
     const image =
       typeof data.image === "string" ? data.image : data.image?.[0] || null;
-    const remarks_18_30 = isAge1830 ? true : false;
-    const remarks_pwd = isPwd ? true : false;
-    const remarks_illiterate = isIlliterate ? true : false;
-    const remarks_senior_citizen = isSenior ? true : false;
+    if (data.birthdate) {
+      data.birthdate = data.birthdate.split("-").reverse().join("/");
+    }
+
     if (isEditSession)
       editElectorate(
         {
           newElectorateData: {
             ...data,
             image,
-            qr_code: electorateToEdit.qr_code,
+            remarks_18_30,
+            remarks_pwd,
+            remarks_illiterate,
+            remarks_senior_citizen,
           },
           id: editId,
         },
-        // {
-        //   newElectorateData: {
-        //     ...data,
-        //     image,
-        //     remarks_18_30,
-        //     remarks_pwd,
-        //     remarks_illiterate,
-        //     remarks_senior_citizen,
-        //   },
-        //   id: editId,
-        // },
         {
           onSuccess: (data) => {
             insertLogs(params);
@@ -243,7 +235,7 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
             id="purok"
             disabled={isWorking}
             {...register("purok", {
-              // required: "This field is required",
+              required: "This field is required",
             })}
           />
         </FormRow>
@@ -262,17 +254,29 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
           </StyledSelect>
         </FormRow>
 
-        <FormRow label="Municipality" error={errors?.city?.message}>
-          <Input value="KUMALARANG" type="text" id="city" disabled />
+        <FormRow label="City" error={errors?.city?.message}>
+          <Input value="PAGADIAN" type="text" id="city" disabled />
         </FormRow>
 
-        <FormRow label="Religion" error={errors?.religion?.message}>
+        {/* <FormRow label="Religion" error={errors?.religion?.message}>
           <Input
             type="text"
             id="religion"
             disabled={isWorking}
             {...register("religion")}
           />
+        </FormRow> */}
+        <FormRow label="Religion" error={errors?.religion?.message}>
+          <StyledSelect
+            id="religion"
+            {...register("religion", { required: "This field is required" })}
+          >
+            {religionOptions.map((religion) => (
+              <option key={religion.value} value={religion.value}>
+                {religion.label}
+              </option>
+            ))}
+          </StyledSelect>
         </FormRow>
 
         <FormRow label="Profession" error={errors?.profession?.message}>
@@ -284,7 +288,11 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
           />
         </FormRow>
         <FormRow label="Sector" error={errors?.sector?.message}>
-          <StyledSelect disabled={isWorking} id="brgy" {...register("sector")}>
+          <StyledSelect
+            disabled={isWorking}
+            id="sector"
+            {...register("sector")}
+          >
             <option key="" value="">
               SELECT SECTOR
             </option>
@@ -295,7 +303,7 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
             ))}
           </StyledSelect>
         </FormRow>
-        {/* <FormRow label="Remarks" error={errors?.remarks?.message}>
+        <FormRow label="Remarks" error={errors?.remarks?.message}>
           <ReactSelect
             options={electorate_pcvl_remarks}
             isMulti
@@ -306,8 +314,9 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
             }}
             onChange={handleChange}
             value={stateRemarks.optionSelected}
+            menuPlacement="top"
           />
-        </FormRow> */}
+        </FormRow>
 
         <FormRow label="Birthdate" error={errors?.birthdate?.message}>
           <Input
@@ -318,38 +327,7 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
           />
         </FormRow>
 
-        <FormRow label="Tag 1" error={errors?.islubas_type?.message}>
-          <StyledSelect
-            disabled={isWorking}
-            id="islubas_type"
-            {...register("islubas_type", {
-              required: "This field is required",
-            })}
-          >
-            <option value={null}>Select Type</option>
-            <option value="LUBAS CHAIRPERSON">LUBAS CHAIRPERSON</option>
-            <option value="LUBAS MEMBER">LUBAS MEMBER</option>
-            <option value="LDC">LDC</option>
-            <option value="WATCHER">WATCHER</option>
-            <option value="N/A">N/A</option>
-          </StyledSelect>
-        </FormRow>
-        <FormRow label="Tag 2" error={errors?.isleader_type?.message}>
-          <StyledSelect
-            disabled={isWorking}
-            id="isleader_type"
-            {...register("isleader_type")}
-          >
-            <option value={null}>Select Type</option>
-            <option value="SILDA LEADER">SILDA LEADER</option>
-            <option value="HOUSEHOLD LEADER">HOUSEHOLD LEADER</option>
-            <option value="SILDA LEADER & HOUSEHOLD LEADER">
-              SILDA LEADER & HOUSEHOLD LEADER
-            </option>
-          </StyledSelect>
-        </FormRow>
-
-        <FormRow label="Electorate photo">
+        {/* <FormRow label="Electorate photo">
           <FileInput
             id="image"
             accept="image/*"
@@ -357,7 +335,7 @@ function ElectorateForm({ electorateToEdit = {}, onCloseModal, searchText }) {
               required: isEditSession ? false : "This field is required",
             })}
           />
-        </FormRow>
+        </FormRow> */}
       </div>
       <FormRowButton>
         <Button
